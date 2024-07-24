@@ -48,8 +48,8 @@ val basePluginArchiveName = "intellij-rust"
 plugins {
     idea
     kotlin("jvm") version "1.9.0"
-    id("org.jetbrains.intellij") version "1.16.1"
-    id("org.jetbrains.grammarkit") version "2022.3.1"
+    id("org.jetbrains.intellij") version "1.17.4"
+    id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
     id("org.gradle.test-retry") version "1.5.3"
 }
@@ -467,13 +467,12 @@ project(":") {
     tasks {
         generateLexer {
             sourceFile.set(file("src/main/grammars/RustLexer.flex"))
-            targetDir.set("src/gen/org/rust/lang/core/lexer")
-            targetClass.set("_RustLexer")
+            targetOutputDir.set(file("src/gen/org/rust/lang/core/lexer"))
             purgeOldFiles.set(true)
         }
         generateParser {
             sourceFile.set(file("src/main/grammars/RustParser.bnf"))
-            targetRoot.set("src/gen")
+            targetRootOutputDir.set(file("src/gen"))
             pathToParser.set("org/rust/lang/core/parser/RustParser.java")
             pathToPsiRoot.set("org/rust/lang/core/psi")
             purgeOldFiles.set(true)
