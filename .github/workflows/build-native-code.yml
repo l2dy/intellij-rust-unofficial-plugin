@@ -22,13 +22,13 @@ jobs:
                     - name: linux
                       arch: x86-64
                       os: ubuntu-latest
-                      container: ubuntu:18.04
+                      container: ubuntu:20.04
                       target: x86_64-unknown-linux-gnu
                       artifact_path: native-helper/target/x86_64-unknown-linux-gnu/release/intellij-rust-native-helper
                     - name: linux
                       arch: arm64
                       os: ubuntu-latest
-                      container: ubuntu:18.04
+                      container: ubuntu:20.04
                       target: aarch64-unknown-linux-gnu
                       artifact_path: native-helper/target/aarch64-unknown-linux-gnu/release/intellij-rust-native-helper
                     - name: windows
@@ -70,7 +70,7 @@ jobs:
             # Since we use pure ubuntu container, it doesn't contain `curl` and `rustup`.
             # So let's install them manually
             - name: Install Rust toolchain dependencies
-              if: ${{ matrix.config.container == 'ubuntu:18.04' && (!inputs.cache || !steps.cache-native-code-artifact.outputs.cache-hit) }}
+              if: ${{ matrix.config.container == 'ubuntu:20.04' && (!inputs.cache || !steps.cache-native-code-artifact.outputs.cache-hit) }}
               shell: bash
               run: |
                   apt-get update && apt-get install -y build-essential curl
