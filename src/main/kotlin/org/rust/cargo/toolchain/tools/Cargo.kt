@@ -696,7 +696,7 @@ class Cargo(
 
         fun checkNeedInstallEvcxr(project: Project): Boolean {
             val crateName = "evcxr_repl"
-            val minVersion = "0.14.2".parseSemVer()
+            val minVersion = "0.17.0".parseSemVer()
             return checkNeedInstallBinaryCrate(
                 project,
                 crateName,

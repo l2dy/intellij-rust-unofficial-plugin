@@ -103,7 +103,7 @@ jobs:
             ORG_GRADLE_PROJECT_platformVersion: ${{ matrix.platform-version }}
             ORG_GRADLE_PROJECT_compileNativeCode: false
             DEFAULT_EDITION_FOR_TESTS: ${{ matrix.default-edition-for-tests }}
-            EVCXR_REPL_VERSION: 0.14.2
+            EVCXR_REPL_VERSION: 0.17.0
             CARGO_GENERATE_VERSION: 0.15.2
 
         steps:
@@ -147,8 +147,8 @@ jobs:
                       ${{ runner.os }}-cache-cargo-binaries-${{ matrix.rust-version }}-
 
             - name: Install evcxr
-              # BACKCOMPAT: Evcxr 0.13 requires at least stable-1.59
-              if: matrix.os != 'windows-latest' && matrix.rust-version >= '1.59.0'
+              # BACKCOMPAT: Evcxr 0.17 requires at least stable-1.74
+              if: matrix.os != 'windows-latest' && matrix.rust-version >= '1.74.0'
               uses: actions-rs/cargo@v1
               with:
                   command: install

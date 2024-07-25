@@ -47,8 +47,13 @@ class RsEvcxrTest : RsWithToolchainTestBase() {
             // fail command
             writer.println("let foo = bar;")
             writer.flush()
-            scanner.nextLine()  // "not found in this scope"
             scanner.nextLine()  // "cannot find value `bar` in this scope"
+            scanner.nextLine()  // "[command:1:1]"
+            scanner.nextLine()  //
+            scanner.nextLine()  // "let foo = bar;"
+            scanner.nextLine()  //
+            scanner.nextLine()  // "not found in this scope"
+            scanner.nextLine()  //
             expectPrompt(scanner, false)
         } finally {
             process.destroy()
