@@ -455,7 +455,7 @@ project(":") {
             exclude(module = "jackson-databind")
             exclude(module = "jackson-annotations")
         }
-        api("io.github.z4kn4fein:semver:1.4.2") {
+        api("io.github.z4kn4fein:semver:2.0.0") {
             excludeKotlinDeps()
         }
         implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") {
