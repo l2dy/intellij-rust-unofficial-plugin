@@ -5,18 +5,18 @@
 
 package org.rust.clion.valgrind
 
-typealias MemoryProfileOutputPanel = com.jetbrains.cidr.cpp.profiling.memory.ui.MemoryProfileOutputPanel
-typealias EditValgrindSettingsAction = com.jetbrains.cidr.cpp.profiling.valgrind.actions.EditValgrindSettingsAction
-typealias CLionProfilingBundle = com.jetbrains.cidr.cpp.profiling.CLionProfilingBundle
-typealias ValgrindSettings = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindSettings
-typealias ValgrindConfigurable = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindConfigurable
-typealias ValgrindCommandLineParametersBuilder = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindCommandLineParametersBuilder
-typealias MemoryProfileTreeDataModel = com.jetbrains.cidr.cpp.profiling.memory.MemoryProfileTreeDataModel
-typealias ValgrindUtil = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindUtil
-typealias ValgrindExecutor = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindExecutor
-typealias MemoryProfileConsoleViewWrapper = com.jetbrains.cidr.cpp.profiling.memory.MemoryProfileConsoleViewWrapper
-typealias ValgrindHandler = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindHandler
-typealias ValgrindOutputConsumer = com.jetbrains.cidr.cpp.profiling.valgrind.ValgrindOutputConsumer
-typealias MemoryProfileStringAccumulator = com.jetbrains.cidr.cpp.profiling.memory.MemoryProfileStringAccumulator
-typealias MemoryProfileCompositeConsumer = com.jetbrains.cidr.cpp.profiling.memory.MemoryProfileCompositeConsumer
-typealias MemoryProfileFileReader = com.jetbrains.cidr.cpp.profiling.memory.MemoryProfileFileReader
+typealias MemoryProfileOutputPanel = com.intellij.cidr.profiling.memory.ui.MemoryProfileOutputPanel
+typealias EditValgrindSettingsAction = com.intellij.cidr.profiling.valgrind.actions.EditValgrindSettingsAction
+typealias CLionProfilingBundle = com.intellij.clion.profiling.CLionProfilingBundle
+typealias ValgrindSettings = com.intellij.cidr.profiling.valgrind.ValgrindSettings
+typealias ValgrindConfigurable = com.intellij.cidr.profiling.valgrind.ValgrindConfigurable
+typealias ValgrindCommandLineParametersBuilder = com.intellij.cidr.profiling.valgrind.ValgrindCommandLineParametersBuilder
+typealias MemoryProfileTreeDataModel = com.intellij.cidr.profiling.memory.MemoryProfileTreeDataModel
+typealias ValgrindUtil = com.intellij.cidr.profiling.valgrind.ValgrindUtil
+typealias ValgrindExecutor = com.intellij.cidr.profiling.valgrind.ValgrindExecutor
+typealias MemoryProfileConsoleViewWrapper = com.intellij.cidr.profiling.memory.MemoryProfileConsoleViewWrapper
+typealias ValgrindHandler = com.intellij.cidr.profiling.valgrind.ValgrindHandler
+typealias ValgrindOutputConsumer = com.intellij.cidr.profiling.valgrind.ValgrindOutputConsumer
+typealias MemoryProfileStringAccumulator = com.intellij.cidr.profiling.memory.MemoryProfileStringAccumulator
+typealias MemoryProfileCompositeConsumer = com.intellij.cidr.profiling.memory.MemoryProfileCompositeConsumer
+typealias MemoryProfileFileReader = com.intellij.cidr.profiling.memory.MemoryProfileFileReader

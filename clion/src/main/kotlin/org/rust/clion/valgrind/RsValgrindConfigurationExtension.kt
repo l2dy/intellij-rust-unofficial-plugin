@@ -5,6 +5,7 @@
 
 package org.rust.clion.valgrind
 
+import com.intellij.clion.profiling.memory.CLionMemoryProfileEnvironment
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -131,7 +132,7 @@ class RsValgrindConfigurationExtension : CargoCommandConfigurationExtension() {
         val treeDataModel = getUserData<MemoryProfileTreeDataModel>(DATA_MODEL_KEY, configuration, context) ?: return
         val outputPanel = getUserData<MemoryProfileOutputPanel>(OUTPUT_PANEL_KEY, configuration, context) ?: return
         try {
-            val valgrindHandler = ValgrindHandler(treeDataModel, CidrToolEnvironment())
+            val valgrindHandler = ValgrindHandler(treeDataModel, CLionMemoryProfileEnvironment(CidrToolEnvironment()))
             val outputFileConsumer = ValgrindOutputConsumer(valgrindHandler, null)
             val accumulator = MemoryProfileStringAccumulator()
             val compositeConsumer = MemoryProfileCompositeConsumer(outputFileConsumer, accumulator)
