@@ -125,7 +125,7 @@ jobs:
 
             - name: Cache debuggers
               id: cache-debuggers
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   # Cache only GDB for Linux because we run gdb pretty-printer tests only on Linux for now
                   path: |
@@ -151,7 +151,7 @@ jobs:
                       caches/modules-2/files-2.1/com.jetbrains.intellij.clion
 
             - name: Cache pretty printer test binaries
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: |
                       ~/.cargo/bin/
@@ -225,7 +225,7 @@ jobs:
                   default: false
 
             - name: Cache cargo binaries
-              uses: actions/cache@v3
+              uses: actions/cache@v4
               with:
                   path: |
                       ~/.cargo/bin/evcxr
