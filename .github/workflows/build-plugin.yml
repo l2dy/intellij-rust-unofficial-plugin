@@ -57,7 +57,7 @@ jobs:
                       caches/modules-2/files-2.1/com.jetbrains.intellij.clion
 
             - name: Save artifacts
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: intellij-rust
                   path: plugin/build/distributions/*.zip

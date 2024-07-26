@@ -310,7 +310,7 @@ jobs:
 
             - name: Collect fail reports
               if: failure()
-              uses: actions/upload-artifact@v3
+              uses: actions/upload-artifact@v4
               with:
                   name: tests-report-${{ matrix.os }}-${{ matrix.rust-version }}-${{ matrix.base-ide }}-${{ matrix.platform-version }}
                   path: |
