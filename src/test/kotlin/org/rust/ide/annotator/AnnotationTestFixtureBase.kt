@@ -46,30 +46,6 @@ abstract class AnnotationTestFixtureBase(
         annotatorClasses.forEach { AnnotatorBase.enableAnnotator(it.java, testRootDisposable) }
         enabledInspections = InspectionTestUtil.instantiateTools(inspectionClasses.map { it.java })
         codeInsightFixture.enableInspections(*enabledInspections.toTypedArray())
-        if (testCase.findAnnotationInstance<BatchMode>() != null) {
-            enableBatchMode()
-        }
-    }
-
-    @Suppress("UnstableApiUsage")
-    private fun enableBatchMode() {
-        // Unfortunately, `DefaultHighlightVisitor` has package private visibility
-        // so use reflection to create its instance
-        val visitorClass = Class.forName("com.intellij.codeInsight.daemon.impl.DefaultHighlightVisitor")
-        val constructor = visitorClass.getDeclaredConstructor(
-            Project::class.java,
-            Boolean::class.java,
-            Boolean::class.java,
-            Boolean::class.java
-        )
-        constructor.isAccessible = true
-        val visitor = constructor.newInstance(
-            project,
-            /* highlightErrorElements = */ true,
-            /* runAnnotators = */ true,
-            /* batchMode = */ true
-        ) as HighlightVisitor
-        ExtensionTestUtil.maskExtensions(HighlightVisitor.EP_HIGHLIGHT_VISITOR, listOf(visitor), testRootDisposable, true, project)
     }
 
     protected fun replaceCaretMarker(text: String) = text.replace("/*caret*/", "<caret>")

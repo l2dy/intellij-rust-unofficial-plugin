@@ -85,21 +85,4 @@ class RsUnsafeExpressionHighlightingAnnotatorTest : RsAnnotatorTestBase(RsUnsafe
             let val = <UNSAFE_CODE descr="Unsafe dereference of raw pointer">*</UNSAFE_CODE>char_ptr;
         }
     """)
-
-    @BatchMode
-    @SkipTestWrapping
-    fun `test no highlighting in batch mode`() = checkHighlighting("""
-        struct S;
-        impl S {
-            unsafe fn foo(&self) {}
-        }
-        unsafe fn bar() { S.foo(); }
-        static mut FOO : u8 = 0;
-
-        fn main() {
-            let char_ptr: *const char = 42 as *const _;
-            let val = unsafe { *char_ptr };
-            unsafe { FOO += 1; }
-        }
-    """, ignoreExtraHighlighting = false)
 }

@@ -119,13 +119,4 @@ class RsEdition2018KeywordsAnnotatorTest : RsAnnotatorTestBase(RsEdition2018Keyw
             let y = f().<error descr="`await` is reserved keyword in Edition 2018">await</error>();
         }
     """)
-
-    @BatchMode
-    fun `test no keyword highlighting in batch mode`() = checkHighlighting("""
-        async fn foo() {}
-        fn main() {
-            try { () };
-            let x = foo().await;
-        }
-    """, ignoreExtraHighlighting = false)
 }

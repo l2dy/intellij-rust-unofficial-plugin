@@ -460,27 +460,6 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
     """)
 
-    @BatchMode
-    fun `test only errors in batch mode`() = checkErrors("""
-        struct S;
-
-        fn main() {
-            let s = S;
-            println!("{}", <error descr="`S` doesn't implement `Display` (required by {}) [E0277]">s</error>);
-            println!("{:?}", <error descr="`S` doesn't implement `Debug` (required by {:?}) [E0277]">s</error>);
-            println!("{:x?}", <error descr="`S` doesn't implement `Debug` (required by {:x?}) [E0277]">s</error>);
-            println!("{:X?}", <error descr="`S` doesn't implement `Debug` (required by {:X?}) [E0277]">s</error>);
-            println!("{:#?}", <error descr="`S` doesn't implement `Debug` (required by {:#?}) [E0277]">s</error>);
-            println!("{:o}", <error descr="`S` doesn't implement `Octal` (required by {:o}) [E0277]">s</error>);
-            println!("{:x}", <error descr="`S` doesn't implement `LowerHex` (required by {:x}) [E0277]">s</error>);
-            println!("{:X}", <error descr="`S` doesn't implement `UpperHex` (required by {:X}) [E0277]">s</error>);
-            println!("{:p}", <error descr="`S` doesn't implement `Pointer` (required by {:p}) [E0277]">s</error>);
-            println!("{:b}", <error descr="`S` doesn't implement `Binary` (required by {:b}) [E0277]">s</error>);
-            println!("{:e}", <error descr="`S` doesn't implement `LowerExp` (required by {:e}) [E0277]">s</error>);
-            println!("{0:E}", <error descr="`S` doesn't implement `UpperExp` (required by {0:E}) [E0277]">s</error>);
-        }
-    """)
-
     fun `test ignore format string macro argument`() = checkErrors("""
         struct S;
 

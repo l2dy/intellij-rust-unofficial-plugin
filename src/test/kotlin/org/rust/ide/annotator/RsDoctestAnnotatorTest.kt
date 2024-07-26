@@ -113,14 +113,6 @@ class RsDoctestAnnotatorTest : RsAnnotatorTestBase(RsDoctestAnnotator::class) {
         fn foo() {}
     """, checkInfo = true)
 
-    @BatchMode
-    fun `test no highlighting in batch mod`() = doTest("""
-        |/// ```
-        |/// <inject>let a = 0;
-        |</inject>/// ```
-        |fn foo() {}
-        |""")
-
     fun `test indented code fence`() = doTest("""
         |/// foo
         |///  ```

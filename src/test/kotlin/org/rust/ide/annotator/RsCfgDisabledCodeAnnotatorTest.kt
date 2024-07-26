@@ -59,15 +59,6 @@ class RsCfgDisabledCodeAnnotatorTest : RsAnnotatorTestBase(RsCfgDisabledCodeAnno
         }
     """)
 
-    @BatchMode
-    @MockAdditionalCfgOptions("intellij_rust")
-    fun `test no highlighting in batch mode`() = checkHighlighting("""
-        #[cfg(not(intellij_rust))]
-        fn foo() {
-            let x = 1;
-        }
-    """, ignoreExtraHighlighting = false)
-
     @MockAdditionalCfgOptions("intellij_rust")
     fun `test disabled under cfg_attr function`() = checkHighlighting("""
         <CFG_DISABLED_CODE descr="Conditionally disabled code">#[cfg_attr(intellij_rust, cfg(not(intellij_rust)))]

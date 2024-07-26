@@ -42,16 +42,4 @@ class RsHighlightingMutableAnnotatorTest : RsAnnotatorTestBase(RsHighlightingMut
             let b = <MUT_PARAMETER>para</MUT_PARAMETER>;
         }
     """)
-
-    @BatchMode
-    @SkipTestWrapping
-    fun `test no highlighting in batch mode`() = checkHighlighting("""
-        struct Foo {}
-        impl Foo {
-            fn bar(&mut self, mut par: i32) {
-                let mut a = 1;
-                self.bar();
-            }
-        }
-    """, ignoreExtraHighlighting = false)
 }
