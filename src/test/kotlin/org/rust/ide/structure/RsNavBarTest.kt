@@ -5,8 +5,7 @@
 
 package org.rust.ide.structure
 
-import com.intellij.ide.navigationToolbar.NavBarModel
-import com.intellij.ide.navigationToolbar.NavBarPresentation
+import com.intellij.ide.navbar.tests.contextNavBarPathStrings
 import com.intellij.openapi.editor.ex.EditorEx
 import org.intellij.lang.annotations.Language
 import org.rust.RsTestBase
@@ -139,12 +138,9 @@ class RsNavBarTest : RsTestBase() {
     fun doTest(@Language("Rust") code: String, vararg items: String) {
         InlineFile(code).withCaret()
 
-        val model = NavBarModel(myFixture.project)
-        model.updateModel((myFixture.editor as EditorEx).dataContext)
+        val dataContext = (myFixture.editor as EditorEx).dataContext
 
-        val actualItems = (0 until model.size()).map {
-            NavBarPresentation.calcPresentableText(model[it], false)
-        }
+        val actualItems = contextNavBarPathStrings(dataContext)
         val expected = listOf("src", "main.rs", *items)
         assertEquals(expected, actualItems)
     }
