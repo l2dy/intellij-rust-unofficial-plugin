@@ -43,12 +43,12 @@ jobs:
                       artifact_path: native-helper/target/aarch64-pc-windows-msvc/release/intellij-rust-native-helper.exe
                     - name: macos
                       arch: x86-64
-                      os: macos-latest
+                      os: macos-13
                       target: x86_64-apple-darwin
                       artifact_path: native-helper/target/x86_64-apple-darwin/release/intellij-rust-native-helper
                     - name: macos
                       arch: arm64
-                      os: macos-11
+                      os: macos-latest
                       target: aarch64-apple-darwin
                       artifact_path: native-helper/target/aarch64-apple-darwin/release/intellij-rust-native-helper
 
