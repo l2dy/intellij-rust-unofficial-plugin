@@ -461,7 +461,7 @@ project(":") {
         implementation("org.eclipse.jgit:org.eclipse.jgit:6.5.0.202303070854-r") {
             exclude("org.slf4j")
         }
-        testImplementation("com.squareup.okhttp3:mockwebserver:4.11.0")
+        testImplementation("com.squareup.okhttp3:mockwebserver:4.12.0")
     }
 
     tasks {
