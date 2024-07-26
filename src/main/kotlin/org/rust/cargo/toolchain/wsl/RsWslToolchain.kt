@@ -11,12 +11,12 @@ import com.intellij.execution.wsl.WSLDistribution
 import com.intellij.execution.wsl.WSLUtil
 import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.isFile
 import com.intellij.util.io.systemIndependentPath
 import org.rust.cargo.toolchain.RsToolchainBase
 import org.rust.stdext.toPath
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.isRegularFile
 
 class RsWslToolchain(
     val wslPath: WslPath
@@ -69,10 +69,10 @@ class RsWslToolchain(
     override fun pathToExecutable(toolName: String): Path = linuxPath.pathToExecutableOnWsl(toolName)
 
     override fun hasExecutable(exec: String): Boolean =
-        distribution.getWindowsPath(pathToExecutable(exec)).isFile()
+        distribution.getWindowsPath(pathToExecutable(exec)).isRegularFile()
 
     override fun hasCargoExecutable(exec: String): Boolean =
-        distribution.getWindowsPath(pathToCargoExecutable(exec)).isFile()
+        distribution.getWindowsPath(pathToCargoExecutable(exec)).isRegularFile()
 
     companion object {
 
