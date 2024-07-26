@@ -196,6 +196,7 @@ jobs:
             ORG_GRADLE_PROJECT_compileNativeCode: false
             DEFAULT_EDITION_FOR_TESTS: ${{ matrix.default-edition-for-tests }}
             EVCXR_REPL_VERSION: 0.14.2
+            CARGO_GENERATE_VERSION: 0.15.2
 
         steps:
             - uses: actions/checkout@v3
@@ -252,7 +253,7 @@ jobs:
               uses: actions-rs/cargo@v1
               with:
                   command: install
-                  args: cargo-generate --locked
+                  args: cargo-generate --locked --version ${{ env.CARGO_GENERATE_VERSION }}
 
             - name: Check environment
               run: |
