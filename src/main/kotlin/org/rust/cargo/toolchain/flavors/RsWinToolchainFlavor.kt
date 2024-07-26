@@ -7,7 +7,7 @@ package org.rust.cargo.toolchain.flavors
 
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.isDirectory
+import kotlin.io.path.isDirectory
 import org.rust.stdext.list
 import org.rust.stdext.toPath
 import java.nio.file.Path

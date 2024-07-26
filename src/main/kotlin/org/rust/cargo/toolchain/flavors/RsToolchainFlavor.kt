@@ -6,7 +6,7 @@
 package org.rust.cargo.toolchain.flavors
 
 import com.intellij.openapi.extensions.ExtensionPointName
-import com.intellij.util.io.isDirectory
+import kotlin.io.path.isDirectory
 import org.rust.cargo.toolchain.tools.Cargo
 import org.rust.cargo.toolchain.tools.Rustc
 import org.rust.cargo.util.hasExecutable

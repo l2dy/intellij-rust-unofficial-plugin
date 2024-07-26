@@ -11,7 +11,7 @@ import com.intellij.execution.wsl.WslDistributionManager
 import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.NlsContexts.ProgressTitle
-import com.intellij.util.io.isDirectory
+import kotlin.io.path.isDirectory
 import org.rust.RsBundle
 import org.rust.cargo.toolchain.flavors.RsToolchainFlavor
 import org.rust.ide.experiments.RsExperiments.WSL_TOOLCHAIN

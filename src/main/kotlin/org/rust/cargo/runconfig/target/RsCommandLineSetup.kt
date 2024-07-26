@@ -19,7 +19,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.util.io.FileUtil
-import com.intellij.util.io.isDirectory
+import kotlin.io.path.isDirectory
 import org.jetbrains.concurrency.AsyncPromise
 import org.jetbrains.concurrency.Promise
 import org.rust.stdext.toPath
