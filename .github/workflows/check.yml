@@ -136,7 +136,7 @@ jobs:
 
             - name: Set up JDK 17
               if: ${{ !steps.cache-debuggers.outputs.cache-hit }}
-              uses: actions/setup-java@v3
+              uses: actions/setup-java@v4
               with:
                   distribution: corretto
                   java-version: 17
@@ -202,7 +202,7 @@ jobs:
             - uses: actions/checkout@v4
 
             - name: Set up JDK 17
-              uses: actions/setup-java@v3
+              uses: actions/setup-java@v4
               with:
                   distribution: corretto
                   java-version: 17
