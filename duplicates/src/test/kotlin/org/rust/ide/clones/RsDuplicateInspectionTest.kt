@@ -6,6 +6,7 @@
 package org.rust.ide.clones
 
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.indexing.FileBasedIndex
 import com.jetbrains.clones.DuplicateInspection
@@ -176,6 +177,7 @@ class RsDuplicateInspectionTest : RsInspectionsTestBase(DuplicateInspection::cla
         indexState.configure()
         HashFragmentIndex.requestRebuild()
         PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        IndexingTestUtil.waitUntilIndexesAreReady(project)
         @Suppress("UnstableApiUsage")
         FileBasedIndex.getInstance().ensureUpToDate(HashFragmentIndex.NAME, project, GlobalSearchScope.projectScope(project))
     }
