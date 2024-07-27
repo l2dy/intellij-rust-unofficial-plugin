@@ -39,12 +39,12 @@ class RsFormatMacroAnnotatorToolchainTest : RsWithToolchainAnnotatorTestBase<Uni
 
                 /*caret*/
                 fn main() {
-                    log::trace!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::debug!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::info!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::warn!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::error!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::log!(log::Level::Warn, "<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
+                    log::trace!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::debug!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::info!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::warn!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::error!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::log!(log::Level::Warn, "<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
                 }
             """)
         }
@@ -72,8 +72,8 @@ class RsFormatMacroAnnotatorToolchainTest : RsWithToolchainAnnotatorTestBase<Uni
 
                 /*caret*/
                 fn main() {
-                    log::debug!(target: "events", "<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-                    log::log!(target: "events", log::Level::Warn, "<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
+                    log::debug!(target: "events", "<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+                    log::log!(target: "events", log::Level::Warn, "<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
                 }
             """)
         }

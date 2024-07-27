@@ -20,10 +20,10 @@ class RsFormatMacroAnnotatorTest : RsAnnotatorTestBase(RsFormatMacroAnnotator::c
 
     fun `test missing argument`() = checkErrors("""
         fn main() {
-            println!("<error descr="Invalid reference to positional argument 0 (no arguments were given)">{}</error>");
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<error descr="Invalid reference to positional argument 1 (there is 1 argument)">1</error>}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<error descr="Invalid reference to positional argument 3 (there are 2 arguments)">3</error>}</FORMAT_PARAMETER>", 1, 1);
-            println!("Hello <FORMAT_PARAMETER>{:<error descr="Invalid reference to positional argument 1 (there is 1 argument)">1${'$'}</error>}</FORMAT_PARAMETER>", 1);
+            println!("<error descr="Invalid reference to positional argument 0 (no arguments were given)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>");
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<error descr="Invalid reference to positional argument 1 (there is 1 argument)">1</error>}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<error descr="Invalid reference to positional argument 3 (there are 2 arguments)">3</error>}</FORMAT_PARAMETER>", 1, 1);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<error descr="Invalid reference to positional argument 1 (there is 1 argument)">1${'$'}</error>}</FORMAT_PARAMETER>", 1);
         }
     """)
 
@@ -32,15 +32,15 @@ class RsFormatMacroAnnotatorTest : RsAnnotatorTestBase(RsFormatMacroAnnotator::c
     fun `test missing explicit arguments 1`() = checkErrors("""
         #![feature(format_args_capture)]
 
-        println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
-        println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>foo${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
+        println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
+        println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>foo${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
     """)
 
     // TODO: the plugin should highlight unknown argument even if `format_args_capture` is available
     @MinRustcVersion("1.58.0-nightly")
     fun `test missing explicit arguments 2`() = checkErrors("""
-        println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
-        println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>foo${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
+        println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
+        println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>foo${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
     """)
 
     @MockRustcVersion("1.50.0-nightly")
@@ -49,7 +49,7 @@ class RsFormatMacroAnnotatorTest : RsAnnotatorTestBase(RsFormatMacroAnnotator::c
 
         fn main() {
             let foo = 1;
-            println!("Hello <FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
+            println!("Hello <FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
         }
     """)
 
@@ -57,21 +57,21 @@ class RsFormatMacroAnnotatorTest : RsAnnotatorTestBase(RsFormatMacroAnnotator::c
     fun `test implicit named arguments 2`() = checkErrors("""
         fn main() {
             let foo = 1;
-            println!("Hello <FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
+            println!("Hello <FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>");
         }
     """)
 
     fun `test missing parameter`() = checkErrors("""
         fn main() {
             println!("", <error descr="Argument never used">1.2</error>);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, <error descr="Argument never used">1.2</error>);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, <error descr="Argument never used">1.2</error>);
             println!("", <error descr="Named argument never used">foo=1.2</error>);
         }
     """)
 
     fun `test invalid parameter type`() = checkErrors("""
         fn main() {
-            println!("<FORMAT_PARAMETER>{:<error descr="Unknown format trait `u`">u</error>}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{:<error descr="Unknown format trait `u`">u</error>}</FORMAT_PARAMETER>", 1);
         }
     """)
 
@@ -82,139 +82,139 @@ class RsFormatMacroAnnotatorTest : RsAnnotatorTestBase(RsFormatMacroAnnotator::c
         }
 
         fn main() {
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", foo=1);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER><FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", 1, 1);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", foo=1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", foo=1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", 1, 1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", foo=1);
 
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, Debug);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, Debug);
 
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>bar</FORMAT_SPECIFIER>:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1, bar=Debug);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>bar</FORMAT_SPECIFIER>:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1, bar=Debug);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>foo</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", foo=1);
         }
     """)
 
     fun `test invalid syntax 1`() = checkErrors("""
         fn main() {
             println!("<error descr="Invalid format string: } expected.
-If you intended to print `{` symbol, you can escape it using `{{`">{</error>");
+If you intended to print `{` symbol, you can escape it using `{{`"><FORMAT_PARAMETER descr="null">{</FORMAT_PARAMETER></error>");
             //~^ ERROR invalid format string: expected `'}'` but string was terminated
-            println!("<FORMAT_PARAMETER>{{</FORMAT_PARAMETER><FORMAT_PARAMETER>}}</FORMAT_PARAMETER>");
-            println!("<error descr="Invalid format string: unmatched '}'">}</error>");
+            println!("<FORMAT_PARAMETER descr="null">{{</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">}}</FORMAT_PARAMETER>");
+            println!("<error descr="Invalid format string: unmatched '}'"><FORMAT_PARAMETER descr="null">}</FORMAT_PARAMETER></error>");
             //~^ ERROR invalid format string: unmatched `}` found
 //            let _ = format!("{_foo}", _foo = 6usize);
             //~^ ERROR invalid format string: invalid argument name `_foo`
 //            let _ = format!("{_}", _ = 6usize);
             //~^ ERROR invalid format string: invalid argument name `_`
             let _ = format!("<error descr="Invalid format string: } expected.
-If you intended to print `{` symbol, you can escape it using `{{`">{</error>");
+If you intended to print `{` symbol, you can escape it using `{{`"><FORMAT_PARAMETER descr="null">{</FORMAT_PARAMETER></error>");
             //~^ ERROR invalid format string: expected `'}'` but string was terminated
-            let _ = format!("<error descr="Invalid format string: unmatched '}'">}</error>");
+            let _ = format!("<error descr="Invalid format string: unmatched '}'"><FORMAT_PARAMETER descr="null">}</FORMAT_PARAMETER></error>");
             //~^ ERROR invalid format string: unmatched `}` found
-            let _ = format!("<FORMAT_PARAMETER>{<error descr="Invalid format string">\</error>\}</FORMAT_PARAMETER>");
+            let _ = format!("<FORMAT_PARAMETER descr="null">{<error descr="Invalid format string">\</error>\}</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string: expected `'}'`, found `'\\'`
-            let _ = format!("\n\n\n<FORMAT_PARAMETER>{\n\n<error descr="Invalid format string: } expected.
+            let _ = format!("\n\n\n<FORMAT_PARAMETER descr="null">{\n\n<error descr="Invalid format string: } expected.
 If you intended to print `{` symbol, you can escape it using `{{`">\</error></FORMAT_PARAMETER>n");
             //~^ ERROR invalid format string
             let _ = format!(r###"
             <error descr="Invalid format string: } expected.
-If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###);
+If you intended to print `{` symbol, you can escape it using `{{`"><FORMAT_PARAMETER descr="null">{</FORMAT_PARAMETER></error>"###);
             //~^ ERROR invalid format string
             let _ = format!(r###"
-            <error descr="Invalid format string: unmatched '}'">}</error>
+            <error descr="Invalid format string: unmatched '}'"><FORMAT_PARAMETER descr="null">}</FORMAT_PARAMETER></error>
             "###);
             //~^^^ ERROR invalid format string: unmatched `}` found
         }     """)
 
     fun `test invalid syntax 2`() = checkErrors("""
         fn main() {
-            format!("<FORMAT_PARAMETER>{
+            format!("<FORMAT_PARAMETER descr="null">{
            <error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>a</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string
-            format!("<FORMAT_PARAMETER>{<error descr="Invalid format string: } expected.
+            format!("<FORMAT_PARAMETER descr="null">{<error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>\
             b</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string
-            format!(r#"<FORMAT_PARAMETER>{<error descr="Invalid format string: } expected.
+            format!(r#"<FORMAT_PARAMETER descr="null">{<error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>\
             rawc</FORMAT_PARAMETER>"#);
             //~^^^ ERROR invalid format string
-            format!(r#"<FORMAT_PARAMETER>{<error descr="Invalid format string: } expected.
+            format!(r#"<FORMAT_PARAMETER descr="null">{<error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>\n
         \n
            rawd</FORMAT_PARAMETER>"#);
             //~^^^ ERROR invalid format string
-            format!("<FORMAT_PARAMETER>{ \n
+            format!("<FORMAT_PARAMETER descr="null">{ \n
         \n
            <error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>e</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string
             format!("
-            <FORMAT_PARAMETER>{
+            <FORMAT_PARAMETER descr="null">{
            <error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>a</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string
             format!("
-            <FORMAT_PARAMETER>{
+            <FORMAT_PARAMETER descr="null">{
            <error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>a
             </FORMAT_PARAMETER>");
             //~^^ ERROR invalid format string
             format!(r#"
-        raw  <FORMAT_PARAMETER>{<error descr="Invalid format string: } expected.
+        raw  <FORMAT_PARAMETER descr="null">{<error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>\
             c</FORMAT_PARAMETER>"#);
             //~^^^ ERROR invalid format string
             format!(r#"
-        raw  <FORMAT_PARAMETER>{<error descr="Invalid format string: } expected.
+        raw  <FORMAT_PARAMETER descr="null">{<error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>\n
         \n
            d</FORMAT_PARAMETER>"#);
             //~^^^ ERROR invalid format string
             format!("
-          <FORMAT_PARAMETER>{ \n
+          <FORMAT_PARAMETER descr="null">{ \n
         \n
            <error descr="Invalid format string: } expected.
         If you intended to print `{` symbol, you can escape it using `{{`"> </error>e</FORMAT_PARAMETER>");
             //~^ ERROR invalid format string
 
             format!("
-            <FORMAT_PARAMETER>{<FORMAT_SPECIFIER>asdf</FORMAT_SPECIFIER>
+            <FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>asdf</FORMAT_SPECIFIER>
             }</FORMAT_PARAMETER>
             ", asdf=1);
             // ok - this is supported
             format!("
-            <FORMAT_PARAMETER>{
+            <FORMAT_PARAMETER descr="null">{
             <error descr="Invalid format string">asdf</error>}</FORMAT_PARAMETER>
             ", asdf=1);
             //~^^ ERROR invalid format string
 
             // note: `\x7B` is `{`
-            println!("<FORMAT_PARAMETER>\x7B}</FORMAT_PARAMETER>\u{8} <error descr="Invalid format string: } expected.
-        If you intended to print `{` symbol, you can escape it using `{{`">{</error>", 1);
+            println!("<FORMAT_PARAMETER descr="null">\x7B}</FORMAT_PARAMETER>\u{8} <error descr="Invalid format string: } expected.
+        If you intended to print `{` symbol, you can escape it using `{{`"><FORMAT_PARAMETER descr="null">{</FORMAT_PARAMETER></error>", 1);
             //~^ ERROR invalid format string: expected `'}'` but string was terminated
 
-            println!("<FORMAT_PARAMETER>\x7B}</FORMAT_PARAMETER>\u8 {", 1);
+            println!("<FORMAT_PARAMETER descr="null">\x7B}</FORMAT_PARAMETER>\u8 {", 1);
             //~^ ERROR incorrect unicode escape sequence
 
             // note: raw strings don't escape `\xFF` and `\u{FF}` sequences
-            println!(r#"\x7B<error descr="Invalid format string: unmatched '}'">}</error>\u<FORMAT_PARAMETER>{8}</FORMAT_PARAMETER> <error descr="Invalid format string: } expected.
-        If you intended to print `{` symbol, you can escape it using `{{`">{</error>"#, 1);
+            println!(r#"\x7B<error descr="Invalid format string: unmatched '}'"><FORMAT_PARAMETER descr="null">}</FORMAT_PARAMETER></error>\u<FORMAT_PARAMETER descr="null">{8}</FORMAT_PARAMETER> <error descr="Invalid format string: } expected.
+        If you intended to print `{` symbol, you can escape it using `{{`"><FORMAT_PARAMETER descr="null">{</FORMAT_PARAMETER></error>"#, 1);
             //~^ ERROR invalid format string: unmatched `}` found
         }
     """)
 
     fun `test invalid inner syntax`() = checkErrors("""
         fn main() {
-            println!("<FORMAT_PARAMETER>{3<error descr="Invalid format string">a</error>}</FORMAT_PARAMETER>");
-            println!("<FORMAT_PARAMETER>{:<error descr="Invalid format string">|</error>}</FORMAT_PARAMETER>");
-            println!("<FORMAT_PARAMETER>{:>><error descr="Invalid format string">></error>}</FORMAT_PARAMETER>");
-            println!("<FORMAT_PARAMETER>{<error descr="Invalid format string">!:?</error>}</FORMAT_PARAMETER>");
-            println!("<FORMAT_PARAMETER>{:?<error descr="Invalid format string">?</error>}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{3<error descr="Invalid format string">a</error>}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{:<error descr="Invalid format string">|</error>}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{:>><error descr="Invalid format string">></error>}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{<error descr="Invalid format string">!:?</error>}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{:?<error descr="Invalid format string">?</error>}</FORMAT_PARAMETER>");
         }
     """)
 
@@ -236,28 +236,28 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main(){
-            println!("<FORMAT_PARAMETER>{{</FORMAT_PARAMETER><FORMAT_PARAMETER>}}</FORMAT_PARAMETER>");
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>x</FORMAT_SPECIFIER>:}</FORMAT_PARAMETER>", x=S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:0<}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:0<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S, 1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>b${'$'}</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S, a=2, b=3);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>number</FORMAT_SPECIFIER>:*>+#0<FORMAT_SPECIFIER>width${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", number=S, width=1);
-            println!("<FORMAT_PARAMETER>{:-}</FORMAT_PARAMETER> <FORMAT_PARAMETER>{:#}</FORMAT_PARAMETER> <FORMAT_PARAMETER>{:+#}</FORMAT_PARAMETER>", S, S, S);
+            println!("<FORMAT_PARAMETER descr="null">{{</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">}}</FORMAT_PARAMETER>");
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>x</FORMAT_SPECIFIER>:}</FORMAT_PARAMETER>", x=S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:0<}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:0<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S, 1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>b${'$'}</FORMAT_SPECIFIER><FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S, a=2, b=3);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>number</FORMAT_SPECIFIER>:*>+#0<FORMAT_SPECIFIER>width${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>10</FORMAT_SPECIFIER><FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", number=S, width=1);
+            println!("<FORMAT_PARAMETER descr="null">{:-}</FORMAT_PARAMETER> <FORMAT_PARAMETER descr="null">{:#}</FORMAT_PARAMETER> <FORMAT_PARAMETER descr="null">{:+#}</FORMAT_PARAMETER>", S, S, S);
             println!("");
-            println!("<FORMAT_PARAMETER>\x7B}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">\x7B}</FORMAT_PARAMETER>", S);
             let mut w = Vec::new();
-            write!(&mut w, "<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            format_args!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
+            write!(&mut w, "<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            format_args!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
         }
     """)
 
@@ -266,18 +266,18 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
 
         fn main() {
             let s = S;
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Display` (required by {}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:?}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:x?}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>X?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:X?}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:#?}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>o</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Octal` (required by {:o}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `LowerHex` (required by {:x}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>X</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `UpperHex` (required by {:X}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>p</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Pointer` (required by {:p}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>b</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Binary` (required by {:b}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `LowerExp` (required by {:e}) [E0277]">s</error>);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>E</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `UpperExp` (required by {0:E}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Display` (required by {}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:?}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:x?}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>X?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:X?}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Debug` (required by {:#?}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>o</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Octal` (required by {:o}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `LowerHex` (required by {:x}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>X</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `UpperHex` (required by {:X}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>p</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Pointer` (required by {:p}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>b</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `Binary` (required by {:b}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `LowerExp` (required by {:e}) [E0277]">s</error>);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:<FUNCTION>E</FUNCTION>}</FORMAT_PARAMETER>", <error descr="`S` doesn't implement `UpperExp` (required by {0:E}) [E0277]">s</error>);
         }
     """)
 
@@ -314,18 +314,18 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main() {
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>X?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>o</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>X</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>p</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>b</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{:<FUNCTION>E</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>x?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>X?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:#<FUNCTION>?</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>o</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>x</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>X</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>p</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>b</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>e</FUNCTION>}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{:<FUNCTION>E</FUNCTION>}</FORMAT_PARAMETER>", S);
         }
     """)
 
@@ -346,54 +346,54 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main() {
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", *W { s: S });
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", *W { s: S });
         }
     """)
 
     fun `test format trait is implemented behind reference`() = checkErrors("""
         fn main() {
             let s = S;
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", &1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", &1);
         }
     """)
 
     fun `test match format parameters`() = checkErrors("""
         fn main() {
             let a = 5;
-            println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, a);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, a);
 
-            println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, 5);
-            println!("Hello <FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 5, 1);
-            println!("Hello <FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>2${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, 1, 4);
-            println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>width${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, width = 5);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, 5);
+            println!("Hello <FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 5, 1);
+            println!("Hello <FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:<FORMAT_SPECIFIER>0${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>2${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, 1, 4);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>width${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, width = 5);
         }
     """)
 
     fun `test check format parameters type`() = checkErrors("""
         fn main() {
-            println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Width specifier must be of type `usize`">"asd"</error>);
-            println!("Hello <FORMAT_PARAMETER>{:.<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Precision specifier must be of type `usize`">2.0</error>);
-            println!("Hello <FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Precision specifier must be of type `usize`"><error descr="Width specifier must be of type `usize`">2.0</error></error>);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Width specifier must be of type `usize`">"asd"</error>);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:.<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Precision specifier must be of type `usize`">2.0</error>);
+            println!("Hello <FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>1${'$'}</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 1, <error descr="Precision specifier must be of type `usize`"><error descr="Width specifier must be of type `usize`">2.0</error></error>);
         }
     """)
 
     fun `test check precision asterisk`() = checkErrors("""
         fn main() {
-            println!("<FORMAT_PARAMETER>{:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 2);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>name</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 3, name=2);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>2</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 5, 2);
-            println!("<FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 5, 1, a=3);
+            println!("<FORMAT_PARAMETER descr="null">{:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 2);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>name</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 3, name=2);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>2</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>", 1, 5, 2);
+            println!("<FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", 5, 1, a=3);
         }
     """)
 
     fun `test check precision after dot omitted`() = checkErrors("""
         fn main() {
-            println!("<FORMAT_PARAMETER>{:.}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>name</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1, name=2);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER><FORMAT_PARAMETER>{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1, 2);
-            println!("<FORMAT_PARAMETER>{:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.}</FORMAT_PARAMETER>!", 5, a=3);
+            println!("<FORMAT_PARAMETER descr="null">{:.}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>name</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1, name=2);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER><FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>1</FORMAT_SPECIFIER>:.}</FORMAT_PARAMETER>", 1, 2);
+            println!("<FORMAT_PARAMETER descr="null">{:<FORMAT_SPECIFIER>a${'$'}</FORMAT_SPECIFIER>.}</FORMAT_PARAMETER>!", 5, a=3);
         }
     """)
 
@@ -406,8 +406,8 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main() {
-            println!("<FORMAT_PARAMETER>{:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", <error descr="Precision specifier must be of type `usize`">"asd"</error>, S);
-            println!("<FORMAT_PARAMETER>{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", <error descr="Precision specifier must be of type `usize`">S</error>);
+            println!("<FORMAT_PARAMETER descr="null">{:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", <error descr="Precision specifier must be of type `usize`">"asd"</error>, S);
+            println!("<FORMAT_PARAMETER descr="null">{<FORMAT_SPECIFIER>0</FORMAT_SPECIFIER>:.<FORMAT_SPECIFIER>*</FORMAT_SPECIFIER>}</FORMAT_PARAMETER>!", <error descr="Precision specifier must be of type `usize`">S</error>);
         }
     """)
 
@@ -419,8 +419,8 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
 
         fn main() {
             let g: G<S> = G(S);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", g);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", g);
         }
     """)
 
@@ -428,7 +428,7 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         fn never() -> ! { unimplemented!() }
 
         fn main() {
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", never());
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", never());
         }
     """)
 
@@ -444,11 +444,11 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
 
     fun `test raw format string`() = checkErrors("""
         fn main() {
-            println!(r"\<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>!", 1);
-            println!(r"\u<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>!", 1);
-            println!(r##"<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>
+            println!(r"\<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>!", 1);
+            println!(r"\u<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>!", 1);
+            println!(r##"<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>
 
-            <error descr="Invalid reference to positional argument 1 (there is 1 argument)">{}</error>"##, 1);
+            <error descr="Invalid reference to positional argument 1 (there is 1 argument)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>"##, 1);
         }
     """)
 
@@ -475,9 +475,9 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
             fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result { unimplemented!() }
         }
         fn main() {
-            std::println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            std::println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)">{}</error>", S);
-            std::println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
+            std::println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            std::println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>", S);
+            std::println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
         }
     """)
 
@@ -500,9 +500,9 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main() {
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)">{}</error>", S);
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>", S);
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
         }
     """)
 
@@ -523,10 +523,10 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         }
 
         fn main() {
-            panic!("<error descr="Invalid reference to positional argument 0 (no arguments were given)">{}</error>");
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S);
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)">{}</error>", S);
-            panic!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
+            panic!("<error descr="Invalid reference to positional argument 0 (no arguments were given)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>");
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S);
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER> <error descr="Invalid reference to positional argument 1 (there is 1 argument)"><FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER></error>", S);
+            panic!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", S, <error descr="Argument never used">S</error>);
         }
     """)
 
@@ -534,7 +534,7 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
         macro_rules! as_is { ($($ t:tt)*) => {$($ t)*}; }
         fn main() {
             as_is! {
-                println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", 1);
+                println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", 1);
                 println!("", <error descr="Argument never used">1</error>);
             }
         }
@@ -836,7 +836,7 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
 
         fn main() {
             let v = vec![S2 { a: 0, b: 0 }];
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", /*error descr="`Vec<S2>` doesn't implement `Display` (required by {}) [E0277]"*/v/*error**//*caret*/);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", /*error descr="`Vec<S2>` doesn't implement `Display` (required by {}) [E0277]"*/v/*error**//*caret*/);
         }
     """)
 
@@ -846,7 +846,7 @@ If you intended to print `{` symbol, you can escape it using `{{`">{</error>"###
 
         fn main() {
             let v = vec![S2 { a: 0, b: 0 }];
-            println!("<FORMAT_PARAMETER>{}</FORMAT_PARAMETER>", /*error descr="`Vec<S2>` doesn't implement `Display` (required by {}) [E0277]"*/v/*error**//*caret*/);
+            println!("<FORMAT_PARAMETER descr="null">{}</FORMAT_PARAMETER>", /*error descr="`Vec<S2>` doesn't implement `Display` (required by {}) [E0277]"*/v/*error**//*caret*/);
         }
     """)
 }
