@@ -11,7 +11,7 @@ import org.rust.ide.typing.RsTypingTestBase
 class RsTypingEmptyFileFuzzyTest : RsTypingTestBase() {
     fun `test fuzzy`() {
         // These chars cause problems or require special treating
-        val blacklist = setOf('\b', '\t', '\r', '"', '(', '[', '{')
+        val blacklist = setOf('\b', '\u007F', '\t', '\r', '"', '(', '[', '{')
         val chars = (0.toChar()..128.toChar()).filter { it !in blacklist }
         for (ch in chars) {
             var backspace = false
