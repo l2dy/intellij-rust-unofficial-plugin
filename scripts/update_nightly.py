@@ -38,7 +38,7 @@ def main():
 
     repo = env("GITHUB_REPOSITORY")
 
-    updater = NightlyUpdater(repo, args.token, branch_name="nightly", message=":arrow_up: nightly", assignee="Undin")
+    updater = NightlyUpdater(repo, args.token, branch_name="nightly", message=":arrow_up: nightly", assignee="l2dy")
     updater.update()
 
 

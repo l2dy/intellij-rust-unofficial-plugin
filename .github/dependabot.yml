@@ -7,8 +7,6 @@ updates:
           time: "04:00" # UTC
       open-pull-requests-limit: 0
       labels: [ ]
-      assignees:
-          - "vlad20012"
 
     - package-ecosystem: "gradle"
       directory: "/"
@@ -18,8 +16,6 @@ updates:
           time: "04:00" # UTC
       open-pull-requests-limit: 10
       labels: [ ]
-      assignees:
-          - "Undin"
 
     # Updates action versions in workflows located in `.github/workflows`
     - package-ecosystem: "github-actions"
@@ -30,8 +26,6 @@ updates:
           time: "04:00" # UTC
       open-pull-requests-limit: 10
       labels: [ ]
-      assignees:
-          - "Undin"
 
     # Update action versions in composite actions located in `.github/actions/%action_name%`
     # Currently, dependabot doesn't scan `.github/actions` automatically at all
@@ -45,8 +39,6 @@ updates:
           time: "04:00" # UTC
       open-pull-requests-limit: 10
       labels: [ ]
-      assignees:
-          - "Undin"
 
     - package-ecosystem: "github-actions"
       directory: "/.github/actions/preparations-for-updates"
@@ -56,5 +48,3 @@ updates:
           time: "04:00" # UTC
       open-pull-requests-limit: 10
       labels: [ ]
-      assignees:
-          - "Undin"

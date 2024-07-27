@@ -121,7 +121,7 @@ def main():
     repo = env("GITHUB_REPOSITORY")
 
     updater = LintsUpdater(repo, args.token, branch_name="lints-update", message="Update rustc and clippy lints",
-                           assignee="neonaot")
+                           assignee="l2dy")
     updater.update()
 
 

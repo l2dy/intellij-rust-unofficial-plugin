@@ -40,7 +40,7 @@ def main():
 
     repo = env("GITHUB_REPOSITORY")
 
-    updater = ReplUpdater(repo, args.token, branch_name="evcxr_repl", message=":arrow_up: evcxr_repl", assignee="dima74")
+    updater = ReplUpdater(repo, args.token, branch_name="evcxr_repl", message=":arrow_up: evcxr_repl", assignee="l2dy")
 
     updater.update()
 
