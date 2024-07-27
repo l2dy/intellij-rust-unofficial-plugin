@@ -118,22 +118,9 @@ abstract class RsSuggestedRefactoringTestBase : RsTestBase() {
 
     private fun executeEditingAction(
         action: () -> Unit,
-        wrapIntoCommandAndWriteActionAndCommitAll: Boolean = true
     ) {
-        val psiDocumentManager = PsiDocumentManager.getInstance(project)
-        if (wrapIntoCommandAndWriteActionAndCommitAll) {
-            executeCommand {
-                runWriteAction {
-                    action()
-                    psiDocumentManager.commitAllDocuments()
-                    psiDocumentManager.doPostponedOperationsAndUnblockDocument(myFixture.editor.document)
-                }
-            }
-        } else {
-            action()
-        }
-
-        psiDocumentManager.commitAllDocuments()
+        action()
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
     }
 }
 
