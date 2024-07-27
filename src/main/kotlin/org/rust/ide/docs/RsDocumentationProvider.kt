@@ -15,6 +15,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.*
 import org.jetbrains.annotations.TestOnly
 import org.rust.cargo.project.workspace.PackageOrigin.*
+import org.rust.cargo.util.AutoInjectedCrates.CORE
 import org.rust.cargo.util.AutoInjectedCrates.STD
 import org.rust.ide.presentation.presentableQualifiedName
 import org.rust.ide.presentation.presentationInfo
@@ -127,12 +128,16 @@ class RsDocumentationProvider : AbstractDocumentationProvider() {
 
     private fun generateDoc(element: RsPath, buffer: StringBuilder) {
         val primitive = TyPrimitive.fromPath(element) ?: return
-        val primitiveDocs = element.project.findFileInStdCrate("primitive_docs.rs") ?: return
+        val primitiveDocs = element.project.findFileInCoreCrate("primitive_docs.rs") ?:
+        // BACKCOMPAT: Rust 1.74.
+        // Since Rust 1.74 `library/std/src/primitive_docs.rs` is replaced with `library/core/src/primitive_docs.rs`.
+        // https://github.com/rust-lang/rust/commit/7b7caae30e2b23055f2cb686b15757904a3d840d
+        element.project.findFileInStdCrate("primitive_docs.rs") ?: return
 
         val mod = primitiveDocs.childrenOfType<RsModItem>().find {
             it.queryAttributes.hasAttributeWithValue("rustc_doc_primitive", primitive.name) ||
             // BACKCOMPAT: Rust 1.71.
-            // Since Rust 1.71 `#[doc(primitive = "primitive_name")]` is replace with `#[rustc_doc_primitive = "primitive_name"]`
+            // Since Rust 1.71 `#[doc(primitive = "primitive_name")]` is replaced with `#[rustc_doc_primitive = "primitive_name"]`
             // https://github.com/rust-lang/rust/commit/364e961417c4308f8a1d3b7ec69ead9d98af2a01
             it.queryAttributes.hasAttributeWithKeyValue("doc", "primitive", primitive.name)
         } ?: return
@@ -263,6 +268,15 @@ class RsDocumentationProvider : AbstractDocumentationProvider() {
             // instead of already resolved item path
             return containingMod.superMods.all { it.isPublic }
         }
+
+    private fun Project.findFileInCoreCrate(name: String): RsFile? {
+        return crateGraph.topSortedCrates
+            .find { it.origin == STDLIB && it.normName == CORE }
+            ?.rootMod
+            ?.parent
+            ?.findFile(name)
+            ?.rustFile
+    }
 
     private fun Project.findFileInStdCrate(name: String): RsFile? {
         return crateGraph.topSortedCrates
