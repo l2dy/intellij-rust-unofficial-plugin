@@ -22,8 +22,6 @@ val platformVersion = prop("platformVersion").toInt()
 val baseIDE = prop("baseIDE")
 val ideToRun = prop("ideToRun").ifEmpty { baseIDE }
 val ideaVersion = prop("ideaVersion")
-val clionVersion = prop("clionVersion")
-val rustRoverVersion = prop("rustRoverVersion")
 val baseVersion = versionForIde(baseIDE)
 val baseVersionForRun = versionForIde(ideToRun)
 
@@ -36,7 +34,6 @@ val copyrightPlugin = "com.intellij.copyright"
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
-val clionPlugins = listOf("com.intellij.cidr.base", "com.intellij.clion", nativeDebugPlugin)
 val mlCompletionPlugin = "com.intellij.completion.ml.ranking"
 
 val compileNativeCodeTaskName = "compileNativeCode"
@@ -290,9 +287,6 @@ project(":plugin") {
     dependencies {
         implementation(project(":"))
         implementation(project(":idea"))
-        implementation(project(":clion"))
-        implementation(project(":debugger"))
-        implementation(project(":profiler"))
         implementation(project(":copyright"))
         implementation(project(":coverage"))
         implementation(project(":intelliLang"))
@@ -338,7 +332,6 @@ project(":plugin") {
     val createSourceJar = task<Jar>("createSourceJar") {
         dependsOn(":generateLexer")
         dependsOn(":generateParser")
-        dependsOn(":debugger:generateGrammarSource")
 
         for (prj in pluginProjects) {
             from(prj.kotlin.sourceSets.main.get().kotlin) {
@@ -384,11 +377,6 @@ project(":plugin") {
             from("${rootDir}/bin") {
                 into("${pluginName.get()}/bin")
                 include("**")
-            }
-            // Copy pretty printers
-            from("$rootDir/prettyPrinters") {
-                into("${pluginName.get()}/prettyPrinters")
-                include("**/*.py")
             }
         }
 
@@ -510,75 +498,6 @@ project(":idea") {
             // this plugin registers `com.intellij.ide.projectView.impl.ProjectViewPane` for IDEA that we use in tests
             javaIdePlugin
         ))
-    }
-    dependencies {
-        implementation(project(":"))
-        testImplementation(project(":", "testOutput"))
-    }
-}
-
-project(":clion") {
-    intellij {
-        version.set(clionVersion)
-        plugins.set(clionPlugins)
-    }
-    dependencies {
-        implementation(project(":"))
-        implementation(project(":debugger"))
-        testImplementation(project(":", "testOutput"))
-    }
-}
-
-project(":debugger") {
-    apply {
-        plugin("antlr")
-    }
-    intellij {
-        if (baseIDE == "idea") {
-            plugins.set(listOf(nativeDebugPlugin))
-        } else {
-            version.set(clionVersion)
-            plugins.set(clionPlugins)
-        }
-    }
-
-    // Kotlin Gradle support doesn't generate proper extensions if the plugin is not declared in `plugin` block.
-    // But if we do it, `antlr` plugin will be applied to root project as well that we want to avoid.
-    // So, let's define all necessary things manually
-    val antlr by configurations
-    val generateGrammarSource: AntlrTask by tasks
-    val generateTestGrammarSource: AntlrTask by tasks
-
-    dependencies {
-        implementation(project(":"))
-        antlr("org.antlr:antlr4:4.13.0")
-        implementation("org.antlr:antlr4-runtime:4.13.0")
-        testImplementation(project(":", "testOutput"))
-    }
-    tasks {
-        compileKotlin {
-            dependsOn(generateGrammarSource)
-        }
-        compileTestKotlin {
-            dependsOn(generateTestGrammarSource)
-        }
-
-        generateGrammarSource {
-            arguments.add("-no-listener")
-            arguments.add("-visitor")
-            outputDirectory = file("src/gen/org/rust/debugger/lang")
-        }
-    }
-    // Exclude antlr4 from transitive dependencies of `:debugger:api` configuration (https://github.com/gradle/gradle/issues/820)
-    configurations.api {
-        setExtendsFrom(extendsFrom.filter { it.name != "antlr" })
-    }
-}
-
-project(":profiler") {
-    intellij {
-        version.set(clionVersion)
-        plugins.set(clionPlugins)
     }
     dependencies {
         implementation(project(":"))
@@ -756,8 +675,6 @@ fun prop(name: String): String =
 
 fun versionForIde(ideName: String): String = when (ideName) {
     "idea" -> ideaVersion
-    "clion" -> clionVersion
-    "rustRover" -> rustRoverVersion
     else -> error("Unexpected IDE name: `$baseIDE`")
 }
 

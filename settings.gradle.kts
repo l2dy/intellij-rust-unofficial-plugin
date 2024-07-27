@@ -4,9 +4,6 @@ include("plugin")
 include(
     "grammar-kit-fake-psi-deps",
     "idea",
-    "clion",
-    "debugger",
-    "profiler",
     "copyright",
     "coverage",
     "intelliLang",

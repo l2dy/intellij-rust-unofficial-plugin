@@ -1366,8 +1366,6 @@
                      defaultValue="true"
                      description="Enable new Cargo project model reloading"
                      restartRequired="true"/>
-        <registryKey key="org.rust.debugger.lldb.rust.msvc" defaultValue="true" restartRequired="false"
-                     description="Enable Rust MSVC support in LLDB (Windows-only)"/>
         <registryKey key="org.rust.code.vision.author"
                      defaultValue="true"
                      description="Enable version control author Code Vision hints for Rust" />

@@ -15,7 +15,6 @@ import java.nio.file.Paths
 object RsPathManager {
     const val INTELLIJ_RUST_NATIVE_HELPER: String = "intellij-rust-native-helper"
 
-    fun prettyPrintersDir(): Path = pluginDir().resolve("prettyPrinters")
     private fun pluginDir(): Path = plugin().pluginPath
 
     fun nativeHelper(isWslToolchain: Boolean): Path? {

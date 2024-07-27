@@ -1,5 +1,0 @@
-pretty_printers_path = "./../prettyPrinters/"
-print_stdout = true
-
-[lldb]
-lldb_batchmode = "./lldb_batchmode.py"
