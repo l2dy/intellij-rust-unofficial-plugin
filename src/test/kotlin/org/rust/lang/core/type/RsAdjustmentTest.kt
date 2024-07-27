@@ -17,7 +17,7 @@ import org.rust.lang.core.types.adjustments
 import org.rust.lang.core.types.infer.Adjustment
 import org.rust.lang.core.types.ty.Mutability
 
-@MinRustcVersion("1.42.0")
+@MinRustcVersion("1.73.0")
 class RsAdjustmentTest : RsTestBase() {
     fun `test never to any`() = testExpr("""
         fn main() {
@@ -225,7 +225,7 @@ class RsAdjustmentTest : RsTestBase() {
         struct S;
         fn main() {
             let _: &S = &Rc::new(S);
-        }             //^ deref(Rc<S>), overloaded_deref(S), borrow(&S)
+        }             //^ deref(Rc<S, Global>), overloaded_deref(S), borrow(&S)
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
@@ -234,7 +234,7 @@ class RsAdjustmentTest : RsTestBase() {
         struct S;
         fn main() {
             let _: &mut S = &mut Rc::new(S);
-        }                 //^ deref(Rc<S>), overloaded_deref_mut(S), borrow(&mut S)
+        }                 //^ deref(Rc<S, Global>), overloaded_deref_mut(S), borrow(&mut S)
     """)
 
     fun `test reference coercion in field shorthand`() = testFieldShorthand("""
@@ -478,7 +478,7 @@ class RsAdjustmentTest : RsTestBase() {
         use std::rc::Rc;
         fn f(a: Rc<i32>) {
             let _ = &*a;
-        }           //^ borrow(&Rc<i32>)
+        }           //^ borrow(&Rc<i32, Global>)
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
@@ -486,7 +486,7 @@ class RsAdjustmentTest : RsTestBase() {
         use std::rc::Rc;
         fn f(a: Rc<i32>) {
             *a = 1;
-        }  //^ borrow(&mut Rc<i32>)
+        }  //^ borrow(&mut Rc<i32, Global>)
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
@@ -494,7 +494,7 @@ class RsAdjustmentTest : RsTestBase() {
         use std::rc::Rc;
         fn f(a: Rc<i32>) {
             *(a) = 1;
-        }   //^ borrow(&mut Rc<i32>)
+        }   //^ borrow(&mut Rc<i32, Global>)
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
@@ -502,7 +502,7 @@ class RsAdjustmentTest : RsTestBase() {
         use std::rc::Rc;
         fn f(a: Rc<i32>) {
             (*(a)) = 1;
-        }    //^ borrow(&mut Rc<i32>)
+        }    //^ borrow(&mut Rc<i32, Global>)
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
