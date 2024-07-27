@@ -10,15 +10,6 @@ import org.rust.ide.annotator.RsAnnotatorTestBase
 import org.rust.ide.annotator.RsErrorAnnotator
 
 class AddMissingSupertraitImplFixTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
-    fun `test availability range`() = checkFixAvailableInSelectionOnly("Implement missing supertrait(s)", """
-        trait A {}
-        trait B: A {}
-
-        struct S;
-
-        <selection>impl <error>B</error> for S</selection> {}
-    """)
-
     fun `test empty supertrait`() = checkFixByText("Implement missing supertrait(s)", """
         trait A {}
         trait B: A {}

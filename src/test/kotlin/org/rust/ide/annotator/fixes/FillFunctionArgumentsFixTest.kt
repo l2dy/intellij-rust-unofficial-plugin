@@ -10,22 +10,6 @@ import org.rust.ide.annotator.RsAnnotatorTestBase
 import org.rust.ide.annotator.RsErrorAnnotator
 
 class FillFunctionArgumentsFixTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
-    fun `test availability range one parameter no arguments`() = checkFixAvailableInSelectionOnly("Fill missing arguments", """
-        fn foo(a: u32) {}
-
-        fn main() {
-            foo<selection>(<error>)</error></selection>;
-        }
-    """)
-
-    fun `test availability range multiple parameters single argument`() = checkFixAvailableInSelectionOnly("Fill missing arguments", """
-        fn foo(a: u32, b: u32, c: &str) {}
-
-        fn main() {
-            foo<selection>(1<error>)</error></selection>;
-        }
-    """)
-
     fun `test simple call`() = checkFixByText("Fill missing arguments", """
         fn foo(a: u32) {}
 

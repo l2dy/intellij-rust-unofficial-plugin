@@ -165,38 +165,6 @@ abstract class AnnotationTestFixtureBase(
         preview = preview,
     )
 
-    open fun checkFixAvailableInSelectionOnly(
-        fixName: String,
-        before: String,
-        checkWarn: Boolean = true,
-        checkInfo: Boolean = false,
-        checkWeakWarn: Boolean = false,
-    ) {
-        if (ApplicationInfo.getInstance().build.baselineVersion == 233) {
-            // BACKCOMPAT: 2023.2; in 233 a quick-fix is available withing the whole line, so
-            //   `checkFixAvailableInSelectionOnly` tests start behaving differently.
-            //   Also, because of that we probably should stop care about QF availability ranges
-            //   and just remove all tests that use `checkFixAvailableInSelectionOnly`
-            return // Pass
-        }
-        configureByText(before.replace("<selection>", "<selection><caret>"))
-        checkHighlighting(checkWarn, checkInfo, checkWeakWarn, ignoreExtraHighlighting = false)
-        val selections = codeInsightFixture.editor.selectionModel.let { model ->
-            model.blockSelectionStarts.zip(model.blockSelectionEnds)
-                .map { TextRange(it.first, it.second + 1) }
-        }
-        for (pos in codeInsightFixture.file.text.indices) {
-            codeInsightFixture.editor.caretModel.moveToOffset(pos)
-            val expectAvailable = selections.any { it.contains(pos) }
-            val isAvailable = codeInsightFixture.filterAvailableIntentions(fixName).size == 1
-            check(isAvailable == expectAvailable) {
-                "Expect ${if (expectAvailable) "available" else "unavailable"}, " +
-                    "actually ${if (isAvailable) "available" else "unavailable"} " +
-                    "at `${StringBuilder(codeInsightFixture.file.text).insert(pos, "/*caret*/")}`"
-            }
-        }
-    }
-
     protected open fun <T> check(
         content: T,
         checkWarn: Boolean,

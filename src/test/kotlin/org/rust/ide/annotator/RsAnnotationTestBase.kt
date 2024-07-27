@@ -149,12 +149,4 @@ abstract class RsAnnotationTestBase : RsTestBase() {
         myFixture.configureFromExistingVirtualFile(codeFragment.virtualFile)
         myFixture.testHighlighting(checkWarn, checkInfo, checkWeakWarn)
     }
-
-    protected fun checkFixAvailableInSelectionOnly(
-        fixName: String,
-        @Language("Rust") before: String,
-        checkWarn: Boolean = true,
-        checkInfo: Boolean = false,
-        checkWeakWarn: Boolean = false,
-    ) = annotationFixture.checkFixAvailableInSelectionOnly(fixName, before, checkWarn, checkInfo, checkWeakWarn)
 }

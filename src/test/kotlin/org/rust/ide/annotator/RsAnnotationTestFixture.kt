@@ -116,20 +116,6 @@ open class RsAnnotationTestFixture<C>(
         configure = { configureByFile(file, context) },
     )
 
-    override fun checkFixAvailableInSelectionOnly(
-        fixName: String,
-        before: String,
-        checkWarn: Boolean,
-        checkInfo: Boolean,
-        checkWeakWarn: Boolean,
-    ) {
-        if (testWrapping == TestWrapping.NONE) {
-            super.checkFixAvailableInSelectionOnly(fixName, before, checkWarn, checkInfo, checkWeakWarn)
-        } else {
-            // Pass
-        }
-    }
-
     private fun checkByFileTree(text: String) {
         fileTreeFromText(replaceCaretMarker(text)).check(codeInsightFixture)
     }

@@ -10,14 +10,6 @@ import org.rust.ide.annotator.RsAnnotatorTestBase
 import org.rust.ide.annotator.RsErrorAnnotator
 
 class RemoveRedundantFunctionArgumentsFixTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
-    fun `test availability range`() = checkFixAvailableInSelectionOnly("Remove redundant arguments", """
-        fn foo() {}
-
-        fn main() {
-            foo<selection>(<error>1, 2</error>)</selection>;
-        }
-    """)
-
     fun `test no parameters`() = checkFixByText("Remove redundant arguments", """
         fn foo() {}
 
