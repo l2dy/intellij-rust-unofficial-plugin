@@ -7,10 +7,61 @@ package org.rust.cargo.project.workspace
 
 import org.rust.cargo.CfgOptions
 import org.rust.cargo.toolchain.impl.CargoMetadata
+import org.rust.cargo.util.parseSemVer
 import org.rust.stdext.HashCode
+import java.net.URL
 import java.nio.file.Path
 
 typealias PackageId = String
+
+/** Refers to [Package ID specification](https://doc.rust-lang.org/cargo/reference/pkgid-spec.html) */
+data class PackageIdSpec(
+    val name: String,
+    val version: String?,
+) {
+    companion object {
+        fun parse(spec: String): PackageIdSpec {
+            if (spec.contains("://")) {
+                val url = "http://" + spec.split("://", limit = 2)[1]
+                return fromUrl(URL(url))
+            }
+            val parts = spec.split(':', '@', limit = 2)
+
+            return if (parts.size > 1) {
+                PackageIdSpec(parts[0], parts[1])
+            } else {
+                PackageIdSpec(parts[0], null)
+            }
+        }
+
+        private fun fromUrl(url: URL): PackageIdSpec {
+            val frag: String? = url.ref
+            val pathName = url.path.substringAfterLast("/")
+
+            if (frag == null || frag == "") {
+                return PackageIdSpec(pathName, null)
+            }
+
+            val parts = frag.split(':', '@', limit = 2)
+
+            return if (parts.size > 1) {
+                // name ("@" | ":" ) semver
+                PackageIdSpec(parts[0], parts[1])
+            } else {
+                // ( name | semver )
+                val first = frag[0]
+                if (first.isLetter() || first == '_') {
+                    // A valid package name starts with a letter or `_`.
+                    // https://github.com/rust-lang/cargo/blob/master/crates/cargo-util-schemas/src/restricted_names.rs#L64
+                    PackageIdSpec(frag, null)
+                } else {
+                    frag.parseSemVer()
+                    PackageIdSpec(pathName, frag)
+                }
+            }
+        }
+    }
+}
 
 /** Refers to [org.rust.cargo.project.workspace.PackageImpl.rootDirectory] */
 typealias PackageRoot = Path

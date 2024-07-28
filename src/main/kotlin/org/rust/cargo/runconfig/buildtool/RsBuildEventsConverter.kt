@@ -22,6 +22,7 @@ import com.intellij.openapi.util.NlsSafe
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.annotations.Nls
 import org.rust.RsBundle
+import org.rust.cargo.project.workspace.PackageIdSpec
 import org.rust.cargo.runconfig.RsAnsiEscapeDecoder.Companion.quantizeAnsiColors
 import org.rust.cargo.runconfig.removeEscapeSequences
 import org.rust.cargo.toolchain.impl.CargoMetadata
@@ -73,7 +74,25 @@ class RsBuildEventsConverter(private val context: CargoBuildContextBase) : Build
         val message = rustcMessage.message.trim().capitalized().trimEnd('.')
         if (message.startsWith("Aborting due") || message.endsWith("emitted")) return true
 
-        val parentEventId = topMessage.package_id.substringBefore("(").trimEnd()
+        val packageId = topMessage.package_id
+        val parentEventId = if (packageId.endsWith(")")) {
+            // BACKCOMPAT: Rust 1.77.
+            // Cargo 1.77 stabilized a new package identifier format.
+            // https://github.com/rust-lang/cargo/blob/5046f25d05310805d62cc7b46b7ffcf27166334e/CHANGELOG.md#cargo-177-2024-03-21
+            // https://github.com/rust-lang/cargo/commit/77f2da7b926008b7edcca2fcf6bf1ed4eee56872
+            packageId.substringBefore("(").trimEnd()
+        } else {
+            try {
+                val spec = PackageIdSpec.parse(packageId)
+                if (spec.version != null) {
+                    "${spec.name} ${spec.version}"
+                } else {
+                    spec.name
+                }
+            } catch (_: Exception) {
+                packageId
+            }
+        }
 
         val kind = getMessageKind(rustcMessage.level)
         if (kind == MessageEvent.Kind.SIMPLE) return true
