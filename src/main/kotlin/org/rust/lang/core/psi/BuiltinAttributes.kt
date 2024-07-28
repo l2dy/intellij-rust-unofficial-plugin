@@ -17,8 +17,8 @@ const val RS_BUILTIN_ATTRIBUTES_VERSION: Int = 1
 
 val RS_BUILTIN_ATTRIBUTES: Map<String, AttributeInfo> = BuiltinAttributeInfoLoader.loadAttributes()
 
-// https://github.com/rust-lang/rust/blob/76d18cfb8945f824c8777e04981e930d2037954e/compiler/rustc_resolve/src/macros.rs#L153
-val RS_BUILTIN_TOOL_ATTRIBUTES = setOf("rustfmt", "clippy")
+// https://github.com/rust-lang/rust/blob/3954398882707ce3f683722795d1a7111312b5d9/compiler/rustc_resolve/src/macros.rs#L149
+val RS_BUILTIN_TOOL_ATTRIBUTES = setOf("rustfmt", "clippy", "diagnostic", "miri", "rust_analyzer")
 
 sealed interface AttributeInfo
 
