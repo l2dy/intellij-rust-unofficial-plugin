@@ -9,6 +9,8 @@ enum class ProMacroExpanderVersion {
     NO_VERSION_CHECK_VERSION,
     VERSION_CHECK_VERSION,
     ENCODE_CLOSE_SPAN_VERSION,
+    HAS_GLOBAL_SPANS,
+    RUST_ANALYZER_SPAN_SUPPORT,
     ;
 
     companion object {

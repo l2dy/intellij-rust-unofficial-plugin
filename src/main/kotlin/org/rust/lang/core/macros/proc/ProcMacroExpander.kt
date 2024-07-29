@@ -122,6 +122,8 @@ class ProcMacroExpander private constructor(
             remoteLib,
             envMapped.map { listOf(it.key, it.value) },
             envMapped["CARGO_MANIFEST_DIR"],
+            Request.ExpnGlobals(0, -1, 0),
+            null,
         )
         val response = server.send(request, timeout).unwrapOrElse { return Err(it.toProcMacroExpansionError()) }
         check(response is Response.ExpandMacro)
