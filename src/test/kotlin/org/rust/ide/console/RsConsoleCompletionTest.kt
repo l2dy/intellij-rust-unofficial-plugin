@@ -14,9 +14,7 @@ class RsConsoleCompletionTest : RsConsoleCompletionTestBase() {
     """, variants = listOf(
         "let",
         "fn",
-        "struct",
-        "Some",
-        "None"
+        "struct"
     ))
 
     fun `test variables (primitive types)`() = checkContainsCompletion("""
@@ -27,6 +25,14 @@ class RsConsoleCompletionTest : RsConsoleCompletionTestBase() {
     """, variants = listOf(
         "var1",
         "var2"
+    ))
+
+    fun `test variants (type from prelude)`() = checkContainsCompletion("""
+
+    """, """
+        S/*caret*/
+    """, variants = listOf(
+        "Some"
     ))
 
     fun `test variables (type from prelude)`() = checkSingleCompletion("""
