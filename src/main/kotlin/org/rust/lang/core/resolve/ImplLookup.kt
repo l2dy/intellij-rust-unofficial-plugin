@@ -255,7 +255,8 @@ class ImplLookup(
     private val traitSelectionCache: MutableMap<TraitRef, SelectionResult<SelectionCandidate>> = hashMapOf()
     private val findImplsAndTraitsCache: MutableMap<Ty, List<TraitImplSource>> = hashMapOf()
     private val indexCache = RsImplIndexAndTypeAliasCache.getInstance(project)
-    private val fnTraits = listOfNotNull(items.Fn, items.FnMut, items.FnOnce)
+    private val fnTraits =
+        listOfNotNull(items.Fn, items.FnMut, items.FnOnce, items.AsyncFn, items.AsyncFnMut, items.AsyncFnOnce)
     private val fnOnceOutput: RsTypeAlias? by lazy(NONE) {
         val trait = items.FnOnce ?: return@lazy null
         trait.findAssociatedType("Output")

@@ -1292,21 +1292,21 @@ class RsCompletionTest : RsCompletionTestBase() {
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
-    fun `test complete parentheses for FnMut trait`() = doSingleCompletion("""
+    fun `test complete parentheses for FnMut trait`() = doFirstCompletion("""
         fn foo(f: &FnMut/*caret*/) {}
     """, """
         fn foo(f: &FnMut(/*caret*/)) {}
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
-    fun `test complete parentheses for FnOnce trait`() = doSingleCompletion("""
+    fun `test complete parentheses for FnOnce trait`() = doFirstCompletion("""
         fn foo(f: &FnOnce/*caret*/) {}
     """, """
         fn foo(f: &FnOnce(/*caret*/)) {}
     """)
 
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
-    fun `test move cursor if parentheses of Fn trait already exist`() = doSingleCompletion("""
+    fun `test move cursor if parentheses of Fn trait already exist`() = doFirstCompletion("""
         fn foo(f: &FnOnce/*caret*/()) {}
     """, """
         fn foo(f: &FnOnce(/*caret*/)) {}
