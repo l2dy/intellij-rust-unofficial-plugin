@@ -187,9 +187,12 @@ val RsFunction.isIntrinsic: Boolean
     }
 
 
-// Taken from https://github.com/rust-lang/rust/blob/6b4563bf93f4b103ed22507ed825008b89e4f5d9/compiler/rustc_typeck/src/check/intrinsic.rs#L65-L108
+// Taken from https://github.com/rust-lang/rust/blob/e69c19ea0b8cf29ab8188a0eb5e899655464a1ff/compiler/rustc_hir_analysis/src/check/intrinsic.rs#L81-L150
 private val SAFE_INTRINSICS: Set<String> = hashSetOf(
     "abort",
+    "assert_inhabited",
+    "assert_zero_valid",
+    "assert_mem_uninitialized_valid",
     "size_of",
     "min_align_of",
     "needs_drop",
@@ -209,21 +212,37 @@ private val SAFE_INTRINSICS: Set<String> = hashSetOf(
     "cttz",
     "bswap",
     "bitreverse",
+    "three_way_compare",
     "discriminant_value",
     "type_id",
     "likely",
     "unlikely",
-    "ptr_guaranteed_eq",
-    "ptr_guaranteed_ne",
+    "select_unpredictable",
+    "ptr_guaranteed_cmp",
+    "minnumf16",
     "minnumf32",
     "minnumf64",
+    "minnumf128",
+    "maxnumf16",
     "maxnumf32",
-    "rustc_peek",
     "maxnumf64",
+    "maxnumf128",
+    "rustc_peek",
     "type_name",
     "forget",
     "black_box",
     "variant_count",
+    "is_val_statically_known",
+    "ptr_mask",
+    "aggregate_raw_ptr",
+    "ptr_metadata",
+    "ub_checks",
+    "fadd_algebraic",
+    "fsub_algebraic",
+    "fmul_algebraic",
+    "fdiv_algebraic",
+    "frem_algebraic",
+    "const_eval_select",
 )
 
 val RsFunction.isBangProcMacroDef: Boolean
