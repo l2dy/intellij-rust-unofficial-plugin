@@ -464,7 +464,10 @@ val RsElement.isFnLikeTrait: Boolean
         val knownItems = knownItems
         return this == knownItems.Fn ||
             this == knownItems.FnMut ||
-            this == knownItems.FnOnce
+            this == knownItems.FnOnce ||
+            this == knownItems.AsyncFn ||
+            this == knownItems.AsyncFnMut ||
+            this == knownItems.AsyncFnOnce
     }
 
 private fun RsFunction.getExtraTailText(subst: Substitution): String {
