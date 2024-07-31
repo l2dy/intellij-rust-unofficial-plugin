@@ -1310,40 +1310,6 @@ class RsErrorAnnotatorTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
         impl Trait for S {}
     """)
 
-    @MockRustcVersion("1.21.0")
-    fun `test yield syntax feature E0658 1`() = checkErrors("""
-        fn main() {
-            let mut generator = || {
-                <error descr="`yield` syntax is experimental [E0658]">yield</error> 1;
-                return "foo"
-            };
-        }
-    """)
-
-    @MockRustcVersion("1.21.0-nightly")
-    fun `test yield syntax feature E0658 2`() = checkErrors("""
-        #![feature(generators)]
-
-        fn main() {
-            let mut generator = || {
-                yield 1;
-                return "foo"
-            };
-        }
-    """)
-
-    @MockRustcVersion("1.21.0-nightly")
-    fun `test yield syntax feature E0658 3`() = checkErrors("""
-        #![feature(generators, box_syntax)]
-
-        fn main() {
-            let mut generator = || {
-                yield 1;
-                return "foo"
-            };
-        }
-    """)
-
     @MockRustcVersion("1.0.0")
     fun `test box expression feature E0658 1`() = checkErrors("""
         struct S;
@@ -4044,7 +4010,6 @@ class RsErrorAnnotatorTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
         extern <error descr="system-unwind ABI is experimental [E0658]">"system-unwind"</error> fn fn24() {}
         extern <error descr="rust-intrinsic ABI is experimental [E0658]">"rust-intrinsic"</error> fn fn25() {}
         extern <error descr="rust-call ABI is experimental [E0658]">"rust-call"</error> fn fn26() {}
-        extern <error descr="platform-intrinsic ABI is experimental [E0658]">"platform-intrinsic"</error> fn fn27() {}
         extern <error descr="unadjusted ABI is experimental [E0658]">"unadjusted"</error> fn fn28() {}
     """)
 
