@@ -6,7 +6,7 @@ edition = "2018"
 [dependencies.ra_ap_proc_macro_srv]
 git = "https://github.com/rust-analyzer/rust-analyzer"
 package = "proc-macro-srv"
-rev = "6cb0746f8223cc674f1a4496f80b21d7cf231799"
+rev = "ea22d245b671f97b820cf761108251c6292c3152"
 
 [target."cfg(windows)".dependencies.winapi]
 version = "*"
