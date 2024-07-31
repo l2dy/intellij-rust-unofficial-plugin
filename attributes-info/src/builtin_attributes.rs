@@ -1,7 +1,7 @@
 use std::fs::File;
 
-use serde::{Serialize, Serializer};
 use serde::ser::SerializeSeq;
+use serde::{Serialize, Serializer};
 
 use rustc_feature::{AttributeDuplicates, AttributeGate, AttributeType, BUILTIN_ATTRIBUTES};
 
@@ -40,9 +40,7 @@ pub(crate) fn generate_builtin_attributes_json(builtin_attributes_json_path: &st
     let mut serializer = serde_json::Serializer::with_formatter(f, MyFormatter::new());
 
     let mut seq = serializer.serialize_seq(None).unwrap();
-    let mut sorted_builtin_attributes = BUILTIN_ATTRIBUTES
-        .iter()
-        .collect::<Vec<_>>();
+    let mut sorted_builtin_attributes = BUILTIN_ATTRIBUTES.iter().collect::<Vec<_>>();
     sorted_builtin_attributes.sort_by_key(|a| a.name.as_str());
     for attr in sorted_builtin_attributes {
         let attr_info = BuiltinAttributeInfo {

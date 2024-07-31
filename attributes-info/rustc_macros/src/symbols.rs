@@ -26,7 +26,8 @@ use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use std::collections::HashMap;
 use syn::parse::{Parse, ParseStream, Result};
-use syn::{braced, punctuated::Punctuated, Ident, LitStr, Token};
+use syn::{braced, punctuated::Punctuated, Expr, ExprLit, Ident, Lit, LitStr, Token};
+
 mod kw {
     syn::custom_keyword!(Keywords);
     syn::custom_keyword!(Symbols);
@@ -49,7 +50,7 @@ impl Parse for Keyword {
 
 struct Symbol {
     name: Ident,
-    value: Option<LitStr>,
+    value: Option<Expr>,
 }
 
 impl Parse for Symbol {
@@ -116,7 +117,10 @@ fn symbols_with_errors(input: TokenStream) -> (TokenStream, Vec<syn::Error>) {
             // This allows us to display errors at the proper span, while minimizing
             // unrelated errors caused by bailing out (and not generating code).
             errors.list.push(e);
-            Input { keywords: Default::default(), symbols: Default::default() }
+            Input {
+                keywords: Default::default(),
+                symbols: Default::default(),
+            }
         }
     };
 
@@ -140,8 +144,14 @@ fn symbols_with_errors(input: TokenStream) -> (TokenStream, Vec<syn::Error>) {
     let mut check_order = |span: Span, str: &str, errors: &mut Errors| {
         if let Some((prev_span, ref prev_str)) = prev_key {
             if str < prev_str {
-                errors.error(span, format!("Symbol `{}` must precede `{}`", str, prev_str));
-                errors.error(prev_span, format!("location of previous symbol `{}`", prev_str));
+                errors.error(
+                    span,
+                    format!("Symbol `{}` must precede `{}`", str, prev_str),
+                );
+                errors.error(
+                    prev_span,
+                    format!("location of previous symbol `{}`", prev_str),
+                );
             }
         }
         prev_key = Some((span, str.to_string()));
@@ -166,7 +176,14 @@ fn symbols_with_errors(input: TokenStream) -> (TokenStream, Vec<syn::Error>) {
     for symbol in input.symbols.iter() {
         let name = &symbol.name;
         let value = match &symbol.value {
-            Some(value) => value.value(),
+            Some(value) => match value {
+                Expr::Lit(ExprLit {
+                    lit: Lit::Str(value),
+                    ..
+                }) => value.value(),
+                // filter out impure expressions like `env!("CFG_RELEASE")`
+                _ => name.to_string(),
+            },
             None => name.to_string(),
         };
         check_dup(symbol.name.span(), &value, &mut errors);

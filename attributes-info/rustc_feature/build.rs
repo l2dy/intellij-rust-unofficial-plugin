@@ -1,5 +1,5 @@
-use std::{env, fs};
 use std::path::Path;
+use std::{env, fs};
 
 use reqwest::blocking::get;
 use reqwest::IntoUrl;
@@ -7,7 +7,7 @@ use reqwest::IntoUrl;
 fn main() {
     let commit = env::var("RUSTC_COMMIT").unwrap_or(String::from("master"));
 
-    download_file(format!("https://raw.githubusercontent.com/rust-lang/rust/{commit}/compiler/rustc_feature/src/active.rs"), "active.rs");
+    download_file(format!("https://raw.githubusercontent.com/rust-lang/rust/{commit}/compiler/rustc_feature/src/unstable.rs"), "unstable.rs");
     download_file(format!("https://raw.githubusercontent.com/rust-lang/rust/{commit}/compiler/rustc_feature/src/accepted.rs"), "accepted.rs");
     download_file(format!("https://raw.githubusercontent.com/rust-lang/rust/{commit}/compiler/rustc_feature/src/removed.rs"), "removed.rs");
     download_file(format!("https://raw.githubusercontent.com/rust-lang/rust/{commit}/compiler/rustc_feature/src/builtin_attrs.rs"), "builtin_attrs.rs");

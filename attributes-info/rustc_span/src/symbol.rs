@@ -38,7 +38,6 @@ impl Interner {
     }
 }
 
-
 impl fmt::Debug for Symbol {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Debug::fmt(&self.as_str(), f)
@@ -50,8 +49,6 @@ impl fmt::Display for Symbol {
         fmt::Display::fmt(&self.as_str(), f)
     }
 }
-
-
 
 // This module has a very short name because it's used a lot.
 /// This module contains all the defined keyword `Symbol`s.

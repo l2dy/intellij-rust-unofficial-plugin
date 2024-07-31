@@ -1,29 +1,26 @@
-#![feature(lazy_cell)]
-
 use std::fmt;
 use std::num::NonZeroU32;
 
 pub use accepted::ACCEPTED_FEATURES;
-pub use active::{ACTIVE_FEATURES, Features, INCOMPATIBLE_FEATURES};
-pub use builtin_attrs::{
-    AttributeGate, AttributeTemplate, AttributeType, BUILTIN_ATTRIBUTE_MAP, BUILTIN_ATTRIBUTES,
-    BuiltinAttribute, deprecated_attributes, find_gated_cfg, GatedCfg, is_builtin_attr_name,
-};
 pub use builtin_attrs::AttributeDuplicates;
-pub use removed::{REMOVED_FEATURES, STABLE_REMOVED_FEATURES};
-use rustc_span::{edition::Edition, Span, symbol::Symbol};
+pub use builtin_attrs::{
+    deprecated_attributes, find_gated_cfg, is_builtin_attr_name, AttributeGate, AttributeTemplate,
+    AttributeType, BuiltinAttribute, GatedCfg, BUILTIN_ATTRIBUTES, BUILTIN_ATTRIBUTE_MAP,
+};
+pub use removed::REMOVED_FEATURES;
+use rustc_span::symbol::Symbol;
+pub use unstable::{Features, INCOMPATIBLE_FEATURES, UNSTABLE_FEATURES};
 
 mod accepted;
-mod active;
 mod builtin_attrs;
 mod removed;
+mod unstable;
 
 #[derive(Clone, Copy)]
 pub enum State {
     Accepted,
-    Active { set: fn(&mut Features, Span) },
+    Active { set: fn(&mut Features) },
     Removed { reason: Option<&'static str> },
-    Stabilized { reason: Option<&'static str> },
 }
 
 impl fmt::Debug for State {
@@ -32,18 +29,27 @@ impl fmt::Debug for State {
             State::Accepted { .. } => write!(f, "accepted"),
             State::Active { .. } => write!(f, "active"),
             State::Removed { .. } => write!(f, "removed"),
-            State::Stabilized { .. } => write!(f, "stabilized"),
         }
     }
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Feature {
-    pub state: State,
     pub name: Symbol,
     pub since: &'static str,
     issue: Option<NonZeroU32>,
-    pub edition: Option<Edition>,
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct ActiveFeature {
+    pub feature: Feature,
+    pub set_enabled: fn(&mut Features),
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct RemovedFeature {
+    pub feature: Feature,
+    pub reason: Option<&'static str>,
 }
 
 #[derive(Copy, Clone, Debug)]
@@ -62,4 +68,3 @@ const fn to_nonzero(n: Option<u32>) -> Option<NonZeroU32> {
         Some(n) => NonZeroU32::new(n),
     }
 }
-

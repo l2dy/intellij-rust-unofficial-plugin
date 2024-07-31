@@ -4,12 +4,14 @@ use std::io::Write;
 use serde_json::ser::{Formatter, PrettyFormatter};
 
 pub(crate) struct MyFormatter {
-    pretty_formatter: PrettyFormatter<'static>
+    pretty_formatter: PrettyFormatter<'static>,
 }
 
 impl MyFormatter {
     pub(crate) fn new() -> Self {
-        MyFormatter { pretty_formatter: PrettyFormatter::new() }
+        MyFormatter {
+            pretty_formatter: PrettyFormatter::new(),
+        }
     }
 }
 
@@ -22,7 +24,11 @@ impl Formatter for MyFormatter {
         self.pretty_formatter.end_array(writer)
     }
 
-    fn begin_array_value<W: ?Sized + Write>(&mut self, writer: &mut W, first: bool) -> io::Result<()> {
+    fn begin_array_value<W: ?Sized + Write>(
+        &mut self,
+        writer: &mut W,
+        first: bool,
+    ) -> io::Result<()> {
         self.pretty_formatter.begin_array_value(writer, first)
     }
 

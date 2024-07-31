@@ -1,7 +1,7 @@
-use std::{env, fs};
-use std::path::Path;
 use quote::ToTokens;
 use reqwest::blocking::get;
+use std::path::Path;
+use std::{env, fs};
 use syn::{File, Item};
 
 fn main() {

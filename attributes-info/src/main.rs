@@ -1,6 +1,6 @@
-mod formatter;
-mod compiler_features;
 mod builtin_attributes;
+mod compiler_features;
+mod formatter;
 
 const COMPILER_FEATURES_PATH: &str = "src/main/resources/compiler-info/compiler-features.json";
 const BUILTIN_ATTRIBUTES_PATH: &str = "src/main/resources/compiler-info/builtin-attributes.json";
