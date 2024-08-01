@@ -19,6 +19,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.diagnostic.debug
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.util.Disposer
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.io.createDirectories
 import org.rust.cargo.toolchain.BacktraceMode
@@ -379,11 +380,15 @@ private class ProcMacroServerProcess private constructor(
         fun createAndRun(toolchain: RsToolchainBase, expanderExecutable: Path): ProcMacroServerProcess {
             MACRO_LOG.debug { "Starting proc macro expander process $expanderExecutable" }
 
-            val env = mapOf(
+            val env = listOfNotNull(
                 "INTELLIJ_RUST" to "1", // Let a proc macro know that it is run from intellij-rust
                 "RA_DONT_COPY_PROC_MACRO_DLL" to "1",
                 "RUST_ANALYZER_INTERNALS_DO_NOT_USE" to "this is unstable",
-            )
+                // Let expander find rustc_driver and std .dll files from bin/
+                if (SystemInfo.isWindows && toolchain !is RsWslToolchain)
+                    "PATH" to expanderExecutable.parent.parent.resolve("bin").toString()
+                else null,
+            ).toMap()
             val commandLine = toolchain.createGeneralCommandLine(
                 expanderExecutable,
                 workingDir,
