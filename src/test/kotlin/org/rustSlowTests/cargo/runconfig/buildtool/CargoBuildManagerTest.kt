@@ -24,6 +24,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -75,6 +76,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -134,6 +136,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -189,6 +192,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -291,6 +295,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -357,6 +362,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -412,6 +418,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -471,6 +478,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -538,6 +546,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -553,6 +562,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
 
                     [dependencies]
                     first = { path = "../first" }
@@ -628,6 +638,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -643,6 +654,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
 
                     [dependencies]
                     first = { path = "../first" }
@@ -720,6 +732,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -735,6 +748,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
 
                     [dependencies]
                     first = { path = "../first" }
@@ -794,6 +808,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -853,6 +868,7 @@ class CargoBuildManagerTest : CargoBuildTest() {
                 name = "project"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {

@@ -53,6 +53,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -80,6 +81,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "crate1"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -93,6 +95,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     name = "crate2"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -131,6 +134,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     name = "crate1"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -145,6 +149,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     name = "crate2"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -209,6 +214,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     name = "crate"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -245,6 +251,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -275,6 +282,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -310,6 +318,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -357,6 +366,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     [package]
                     name = "with-build-script"
                     version = "0.1.0"
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -374,6 +384,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                     [package]
                     name = "with-proc-macro"
                     version = "0.1.0"
+                    edition = "2015"
 
                     [lib]
                     proc-macro = true
@@ -422,6 +433,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {
@@ -450,6 +462,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
                 name = "hello"
                 version = "0.1.0"
                 authors = []
+                edition = "2015"
             """)
 
             dir("src") {

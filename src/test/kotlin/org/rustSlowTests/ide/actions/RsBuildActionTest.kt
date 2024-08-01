@@ -41,6 +41,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -56,6 +57,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -114,6 +116,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -129,6 +132,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -187,6 +191,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "first"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
                 """)
 
                 dir("src") {
@@ -202,6 +207,7 @@ class RsBuildActionTest : CargoBuildTest() {
                     name = "second"
                     version = "0.1.0"
                     authors = []
+                    edition = "2015"
 
                     [dependencies]
                     first = { path = "../first" }
