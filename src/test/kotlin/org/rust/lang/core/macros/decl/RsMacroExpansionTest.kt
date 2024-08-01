@@ -866,16 +866,17 @@ class RsMacroExpansionTest : RsMacroExpansionTestBase() {
         fn foo() -> i32 {}
     """)
 
+    @MinRustcVersion("1.82.0-nightly")
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
     fun `test standard 'vec!'`() {
         val rustcVersion = project.cargoProjects.singleProject().rustcInfo?.version?.semver!!
         // language=Rust
         val expansion = when {
             rustcVersion < RUST_1_63 -> "(<[_]>::into_vec(box [1, 2, 3]))"
-            else -> """(<[_]>::into_vec(
+            else -> """<[_]>::into_vec(
                 #[rustc_box]
                     IntellijRustDollarCrate::boxed::Box::new([1, 2, 3])
-            ))"""
+            )"""
         }
         checkSingleMacro("""
             fn main() {
