@@ -396,7 +396,7 @@ private FnParameter_with_recover ::= !(')' | '{' | ';') FnParameter (',' | &')')
 private FnParameter_recover ::= !(Pat_first | OuterAttr_first | '...' | ')' | '{' | ';')
 
 LambdaParameter ::= OuterAttr* SimplePat TypeAscription?
-AnonParameter ::= OuterAttr* [ RestrictedPat ':' ] TypeReference
+AnonParameter ::= OuterAttr* [ RestrictedPat ':' ] (VariadicUpper | TypeReference)
 PathParameter ::= OuterAttr* TypeReference !'='
 
 SelfParameter ::= OuterAttr* [ '&' Lifetime? ] mut? self TypeAscription? {
