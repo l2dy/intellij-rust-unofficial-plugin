@@ -1020,6 +1020,28 @@ class RsStdlibExpressionTypeInferenceTest : RsTypificationTestBase() {
         } //^ &CStr
     """)
 
+    fun `test String's From &str trait`() = stubOnlyTypeInfer("""
+    //- main.rs
+        fn main() {
+            let a: String = "foo".into();
+            a;
+        } //^ String
+    """)
+
+    fun `test &str's Into trait type confusion`() = stubOnlyTypeInfer("""
+    //- main.rs
+        struct S;
+        impl<'a> Into<S> for &'a str {
+            fn into(self) -> S {
+                unimplemented!()
+            }
+        }
+        fn main() {
+            let a: String = "foo".into();
+            a;
+        } //^ String
+    """)
+
     fun `test raw cstr`() = stubOnlyTypeInfer("""
     //- main.rs
         fn main() {
