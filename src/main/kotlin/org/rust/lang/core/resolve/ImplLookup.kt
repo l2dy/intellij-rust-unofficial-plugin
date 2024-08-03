@@ -620,6 +620,21 @@ class ImplLookup(
         }
     }
 
+    private fun isImplCompatibleTo(victim: RsImplItem, other: RsImplItem): Boolean {
+        val victimMembers = RsCachedImplItem.forImpl(victim).implAndTraitExpandedMembers.values.flatten().filterIsInstance<RsFunction>()
+        val otherMembers = RsCachedImplItem.forImpl(other).implAndTraitExpandedMembers.values.flatten().filterIsInstance<RsFunction>()
+        victimMembers ?: return true // victim has no functions
+        otherMembers ?: return false // victim has functions that other does not provide
+        val incompatibleFns = victimMembers.filter { victimFn ->
+            val compatibleFns = otherMembers
+                .filter { it.name == victimFn.name }
+                .filter { victimFn.type.retType.isEquivalentTo(it.type.retType) }
+
+            compatibleFns.isEmpty() // could not find a function with compatible retType in specialized (other) Impl
+        }
+        return incompatibleFns.isEmpty()
+    }
+
     // https://github.com/rust-lang/rust/blob/3a90bedb332d/compiler/rustc_trait_selection/src/traits/select/mod.rs#L1522
     private fun candidateShouldBeDroppedInFavorOf(
         selfTy: Ty,
@@ -690,7 +705,8 @@ class ImplLookup(
 
             // basic specialization
             victim is ImplCandidate.ExplicitImpl && victim.formalSelfTy is TyTypeParameter
-                && other is ImplCandidate.ExplicitImpl && other.formalSelfTy !is TyTypeParameter -> {
+                && other is ImplCandidate.ExplicitImpl && other.formalSelfTy !is TyTypeParameter
+                && isImplCompatibleTo(victim.impl, other.impl) -> {
                 TypeInferenceMarks.WinnowSpecialization.hit()
                 true
             }
