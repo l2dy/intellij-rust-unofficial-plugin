@@ -11,6 +11,7 @@ enum class ProMacroExpanderVersion {
     ENCODE_CLOSE_SPAN_VERSION,
     HAS_GLOBAL_SPANS,
     RUST_ANALYZER_SPAN_SUPPORT,
+    EXTENDED_LEAF_DATA,
     ;
 
     companion object {

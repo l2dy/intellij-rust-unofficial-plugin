@@ -126,13 +126,18 @@ private class TokenTreeParser(
     }
 
     private fun ident(text: String, startOffset: Int, rightTrivia: CharSequence = nextWhitespaceOrCommentText()): Leaf.Ident {
-        val leaf = Leaf.Ident(text, nextId())
+        val (name, isRaw) = if (text.startsWith("r#")) {
+            Pair(text.removePrefix("r#"), IdentIsRaw.Yes)
+        } else {
+            Pair(text, IdentIsRaw.No)
+        }
+        val leaf = Leaf.Ident(name, isRaw, nextId())
         writeMeta(startOffset, rightTrivia, leaf)
         return leaf
     }
 
     private fun lit(text: String, startOffset: Int, rightTrivia: CharSequence = nextWhitespaceOrCommentText()): Leaf.Literal {
-        val leaf = Leaf.Literal(text, nextId())
+        val leaf = Leaf.Literal(text, LitKind.Err, nextId())
         writeMeta(startOffset, rightTrivia, leaf)
         return leaf
     }
