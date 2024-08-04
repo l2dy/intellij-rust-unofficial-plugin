@@ -66,7 +66,7 @@ private class SubtreeTextBuilder(
     private fun TokenTree.Leaf.appendLeaf(nextTokenTree: TokenTree?, hasDelimiter: Boolean) {
         val (text, spacing) = when (this) {
             is TokenTree.Leaf.Literal -> text to Spacing.Alone
-            is TokenTree.Leaf.Ident -> text to Spacing.Alone
+            is TokenTree.Leaf.Ident -> (isRaw.toString() + text) to Spacing.Alone
             is TokenTree.Leaf.Punct -> char to spacing
         }
 

@@ -8,6 +8,7 @@ package org.rust.lang.core.macros.tt
 import it.unimi.dsi.fastutil.ints.IntArrayList
 import org.rust.lang.core.macros.proc.ProMacroExpanderVersion
 import org.rust.lang.core.psi.MacroBraces
+import org.rust.lang.utils.escapeRust
 import org.rust.stdext.dequeOf
 import java.util.*
 
@@ -24,6 +25,7 @@ class FlatTree(
 ) {
     fun toTokenTree(version: ProMacroExpanderVersion): TokenTree.Subtree {
         val encodeCloseSpan = version >= ProMacroExpanderVersion.ENCODE_CLOSE_SPAN_VERSION
+        val extendedLeafData = version >= ProMacroExpanderVersion.EXTENDED_LEAF_DATA
         val offset = if (encodeCloseSpan) 1 else 0
         val stepSize = if (encodeCloseSpan) 5 else 4
 
@@ -45,10 +47,17 @@ class FlatTree(
                 tokenTrees += when (tag) {
                     0b00 -> res[idx]!! // we iterate subtrees in reverse to guarantee that this subtree exists
                     0b01 -> {
-                        val index = idx * 2
+                        val size = if (extendedLeafData) 4 else 2
+                        val index = idx * size
                         val tokenId = literal.getInt(index)
                         val text = literal.getInt(index + 1)
-                        TokenTree.Leaf.Literal(this.text[text], tokenId)
+                        // TODO: pass kind to Literal and stringify parts (including suffix) later
+                        val quotedText = if (extendedLeafData && LitKind.fromInt(literal.getInt(index + 2)) == LitKind.Str) {
+                            "\"" + this.text[text].escapeRust() + "\""
+                        } else {
+                            this.text[text]
+                        }
+                        TokenTree.Leaf.Literal(quotedText, LitKind.Err, tokenId)
                     }
                     0b10 -> {
                         val index = idx * 3
@@ -62,10 +71,23 @@ class FlatTree(
                         TokenTree.Leaf.Punct(chr.toString(), spacing, tokenId)
                     }
                     0b11 -> {
-                        val index = idx * 2
+                        val size = if (extendedLeafData) 3 else 2
+                        val index = idx * size
                         val tokenId = ident.getInt(index)
                         val text = ident.getInt(index + 1)
-                        TokenTree.Leaf.Ident(this.text[text], tokenId)
+                        val textStr = this.text[text]
+                        val (name, isRaw) = if (extendedLeafData) {
+                            val isRaw = IdentIsRaw.fromBoolean(ident.getInt(index + 2) == 1)
+                            Pair(textStr, isRaw)
+                        } else {
+                            val (name, isRaw) = if (textStr.startsWith("r#")) {
+                                Pair(textStr.removePrefix("r#"), IdentIsRaw.Yes)
+                            } else {
+                                Pair(textStr, IdentIsRaw.No)
+                            }
+                            Pair(name, isRaw)
+                        }
+                        TokenTree.Leaf.Ident(name, isRaw, tokenId)
                     }
                     else -> error("bad tag $tag")
                 }
@@ -90,11 +112,17 @@ class FlatTree(
 
     companion object {
         fun fromSubtree(root: TokenTree.Subtree, version: ProMacroExpanderVersion): FlatTree =
-            FlatTreeBuilder(version >= ProMacroExpanderVersion.ENCODE_CLOSE_SPAN_VERSION).apply { write(root) }.toFlatTree()
+            FlatTreeBuilder(
+                version >= ProMacroExpanderVersion.ENCODE_CLOSE_SPAN_VERSION,
+                version >= ProMacroExpanderVersion.EXTENDED_LEAF_DATA,
+            ).apply { write(root) }.toFlatTree()
     }
 }
 
-private class FlatTreeBuilder(private val encodeCloseSpan: Boolean) {
+private class FlatTreeBuilder(
+    private val encodeCloseSpan: Boolean,
+    private val extendedLeafData: Boolean,
+) {
     private val work: Deque<Pair<Int, TokenTree.Subtree>> = dequeOf()
     private val stringTable: HashMap<String, Int> = hashMapOf()
 
@@ -136,10 +164,16 @@ private class FlatTreeBuilder(private val encodeCloseSpan: Boolean) {
                     idx.shl(2).or(0b00)
                 }
                 is TokenTree.Leaf.Literal -> {
-                    val idx = this.literal.size / 2
+                    val size = if (extendedLeafData) 4 else 2
+                    val idx = this.literal.size / size
                     val text = this.intern(child.text)
                     this.literal.add(child.id)
                     this.literal.add(text)
+                    if (extendedLeafData) {
+                        // TODO: actually encode kind and suffix
+                        this.literal.add(0)
+                        this.literal.add(-1)
+                    }
                     idx.shl(2).or(0b01)
                 }
                 is TokenTree.Leaf.Punct -> {
@@ -153,10 +187,18 @@ private class FlatTreeBuilder(private val encodeCloseSpan: Boolean) {
                     idx.shl(2).or(0b10)
                 }
                 is TokenTree.Leaf.Ident -> {
-                    val idx = this.ident.size / 2
-                    val text = this.intern(child.text)
+                    val size = if (extendedLeafData) 3 else 2
+                    val idx = this.ident.size / size
+                    val text = if (extendedLeafData) {
+                        this.intern(child.text)
+                    } else {
+                        this.intern(child.isRaw.toString() + child.text)
+                    }
                     this.ident.add(child.id)
                     this.ident.add(text)
+                    if (extendedLeafData) {
+                        this.ident.add(child.isRaw.toInt())
+                    }
                     idx.shl(2).or(0b11)
                 }
             }

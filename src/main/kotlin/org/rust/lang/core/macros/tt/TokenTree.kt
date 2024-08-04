@@ -20,6 +20,7 @@ sealed class TokenTree {
 
         data class Literal(
             val text: String,
+            val kind: LitKind,
             override val id: TokenId
         ): Leaf()
 
@@ -31,6 +32,7 @@ sealed class TokenTree {
 
         data class Ident(
             val text: String,
+            val isRaw: IdentIsRaw,
             override val id: TokenId
         ): Leaf()
     }
@@ -49,6 +51,65 @@ typealias TokenId = Int
  */
 enum class Spacing {
     Alone, Joint
+}
+
+enum class IdentIsRaw(val value: Boolean) {
+    No(false) {
+        override fun toString(): String {
+            return ""
+        }
+    },
+    Yes(true) {
+        override fun toString(): String {
+            return "r#"
+        }
+    };
+
+    fun toInt(): Int {
+        return when (this) {
+            Yes -> 1
+            No -> 0
+        }
+    }
+
+    companion object {
+        fun fromBoolean(b: Boolean): IdentIsRaw {
+            return if (b) Yes else No
+        }
+    }
+}
+
+enum class LitKind {
+    Byte,
+    Char,
+    Integer,
+    Float,
+    Str,
+    StrRaw,
+    ByteStr,
+    ByteStrRaw,
+    CStr,
+    CStrRaw,
+    Err;
+
+    companion object {
+        fun fromInt(i: Int): LitKind {
+            return when (i) {
+                0 -> Err
+                1 -> Byte
+                2 -> Char
+                3 -> Integer
+                4 -> Float
+                5 -> Str
+                6 -> StrRaw
+                7 -> ByteStr
+                8 -> ByteStrRaw
+                9 -> CStr
+                10 -> CStrRaw
+                else -> Err
+            }
+        }
+    }
 }
 
 data class Delimiter(
@@ -87,6 +148,6 @@ private fun TokenTree.Leaf.debugPrintLeaf(sb: StringBuilder) {
     when (this) {
         is TokenTree.Leaf.Literal -> sb.append("LITERAL $text $id")
         is TokenTree.Leaf.Punct -> sb.append("PUNCT   $char [${spacing.toString().lowercase()}] $id")
-        is TokenTree.Leaf.Ident -> sb.append("IDENT   $text $id")
+        is TokenTree.Leaf.Ident -> sb.append("IDENT   $isRaw$text $id")
     }
 }
