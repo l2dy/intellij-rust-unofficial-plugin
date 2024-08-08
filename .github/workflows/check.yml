@@ -20,9 +20,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    OLD_IDEA_VERSION: IU-2024.1.4
-    OLD_CLION_VERSION: CL-2024.1.4
-    OLD_NATIVE_DEBUG_PLUGIN: "com.intellij.nativeDebug:241.15989.65"
+    OLD_IDEA_VERSION: 2024.1.5
 
 jobs:
     get-rust-versions:
@@ -83,7 +81,7 @@ jobs:
                 # `matrix` is a string with list of stable and nightly versions.
                 # Make sequence from two outputs with version is not possible here.
                 rust-version: ${{ fromJSON(needs.get-rust-versions.outputs.matrix) }}
-                base-ide: [ idea ]
+                base-ide: [ IU ]
                 platform-version: [ 241 ]
                 # it's enough to verify plugin structure only once per platform version
                 verify-plugin: [ false ]
@@ -91,7 +89,7 @@ jobs:
                 include:
                     - os: ubuntu-latest
                       rust-version: ${{ needs.get-rust-versions.outputs.old }}
-                      base-ide: idea
+                      base-ide: IU
                       platform-version: 241
                       verify-plugin: true
                       default-edition-for-tests: 2021
@@ -174,7 +172,6 @@ jobs:
               # see https://help.github.com/en/actions/reference/workflow-commands-for-github-actions#setting-an-environment-variable
               run: |
                   echo "ORG_GRADLE_PROJECT_ideaVersion=${{ env.OLD_IDEA_VERSION }}" >> $GITHUB_ENV
-                  echo "ORG_GRADLE_PROJECT_nativeDebugPlugin=${{ env.OLD_NATIVE_DEBUG_PLUGIN }}" >> $GITHUB_ENV
 
             - name: Set up test env variables
               run: echo "RUST_SRC_WITH_SYMLINK=$HOME/.rust-src" >> $GITHUB_ENV

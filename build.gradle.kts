@@ -3,7 +3,9 @@ import org.gradle.api.JavaVersion.VERSION_17
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-import org.jetbrains.intellij.tasks.*
+import org.jetbrains.intellij.platform.gradle.Constants.Configurations
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+import org.jetbrains.intellij.platform.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -25,12 +27,11 @@ val ideaVersion = prop("ideaVersion")
 val baseVersion = versionForIde(baseIDE)
 val baseVersionForRun = versionForIde(ideToRun)
 
-val tomlPlugin = "org.toml.lang"
-val nativeDebugPlugin = if (baseIDE == "idea") prop("nativeDebugPlugin") else "com.intellij.nativeDebug"
-val graziePlugin = "tanvd.grazi"
+val tomlPlugin: String by project
+val nativeDebugPlugin: String by project
+val graziePlugin: String by project
 val psiViewerPlugin: String by project
-val intelliLangPlugin = "org.intellij.intelliLang"
-val copyrightPlugin = "com.intellij.copyright"
+val copyrightPlugin: String by project
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
@@ -45,7 +46,7 @@ val basePluginArchiveName = "intellij-rust"
 plugins {
     idea
     kotlin("jvm") version "2.0.10"
-    id("org.jetbrains.intellij") version "1.17.4"
+    id("org.jetbrains.intellij.platform") version "2.0.0"
     id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
     id("org.gradle.test-retry") version "1.5.10"
@@ -64,14 +65,15 @@ allprojects {
         plugin("idea")
         plugin("kotlin")
         plugin("org.jetbrains.grammarkit")
-        plugin("org.jetbrains.intellij")
+        plugin("org.jetbrains.intellij.platform")
         plugin("org.gradle.test-retry")
     }
 
     repositories {
         mavenCentral()
-        maven("https://cache-redirector.jetbrains.com/repo.maven.apache.org/maven2")
-        maven("https://cache-redirector.jetbrains.com/intellij-dependencies")
+        intellijPlatform {
+            defaultRepositories()
+        }
     }
 
     idea {
@@ -80,13 +82,20 @@ allprojects {
         }
     }
 
-    intellij {
-        version.set(baseVersion)
-        downloadSources.set(!isCI)
-        updateSinceUntilBuild.set(true)
-        instrumentCode.set(false)
-        ideaDependencyCachePath.set(dependencyCachePath)
-        sandboxDir.set(layout.buildDirectory.dir("$ideToRun-sandbox-$platformVersion").map { it.asFile.absolutePath })
+    intellijPlatform {
+        sandboxContainer.set(layout.buildDirectory.dir("$ideToRun-sandbox-$platformVersion"))
+        pluginConfiguration {
+            ideaVersion {
+                sinceBuild.set(prop("sinceBuild"))
+                untilBuild.set(prop("untilBuild"))
+            }
+        }
+
+        pluginVerification {
+            ides {
+                recommended()
+            }
+        }
     }
 
     configure<JavaPluginExtension> {
@@ -103,10 +112,6 @@ allprojects {
                 apiVersion.set(KotlinVersion.KOTLIN_1_8)
                 freeCompilerArgs.set(listOf("-Xjvm-default=all"))
             }
-        }
-        withType<PatchPluginXmlTask> {
-            sinceBuild.set(prop("sinceBuild"))
-            untilBuild.set(prop("untilBuild"))
         }
 
         // All these tasks don't make sense for non-root subprojects
@@ -187,7 +192,18 @@ allprojects {
     val testOutput = configurations.create("testOutput")
 
     dependencies {
+        intellijPlatform {
+            create(baseIDE, baseVersion)
+
+            pluginVerifier()
+            instrumentationTools()
+
+            // used in MacroExpansionManager.kt and ResolveCommonThreadPool.kt
+            testFramework(TestFrameworkType.Platform, configurationName = Configurations.INTELLIJ_PLATFORM_DEPENDENCIES)
+        }
+
         compileOnly(kotlin("stdlib-jdk8"))
+        implementation("junit:junit:4.13.2") // used in kotlin/org/rust/openapiext/Testmark.kt
         testOutput(sourceSets.getByName("test").output.classesDirs)
     }
 
@@ -263,68 +279,47 @@ project(":plugin") {
         pluginVersion
     }
 
-    intellij {
-        version.set(baseVersionForRun)
-        pluginName.set("intellij-rust")
-        val pluginList = mutableListOf(
-            tomlPlugin,
-            intelliLangPlugin,
-            graziePlugin,
-            psiViewerPlugin,
-            javaScriptPlugin,
-            mlCompletionPlugin
-        )
-        if (ideToRun == "idea") {
-            pluginList += listOf(
-                copyrightPlugin,
-                javaPlugin,
-                nativeDebugPlugin
-            )
+    intellijPlatform {
+        pluginConfiguration {
+            name.set("intellij-rust")
+            description.set(provider { file("description.html").readText() })
         }
-        plugins.set(pluginList)
     }
 
     dependencies {
-        implementation(project(":"))
-        implementation(project(":idea"))
-        implementation(project(":copyright"))
-        implementation(project(":coverage"))
-        implementation(project(":intelliLang"))
-        implementation(project(":duplicates"))
-        implementation(project(":grazie"))
-        implementation(project(":js"))
-        implementation(project(":ml-completion"))
-    }
-
-    // Collects all jars produced by compilation of project modules and merges them into singe one.
-    // We need to put all plugin manifest files into single jar to make new plugin model work
-    val mergePluginJarTask = task<Jar>("mergePluginJars") {
-        duplicatesStrategy = DuplicatesStrategy.FAIL
-        archiveBaseName.set(basePluginArchiveName)
-
-        exclude("META-INF/MANIFEST.MF")
-        exclude("**/classpath.index")
-
-        val pluginLibDir by lazy {
-            val sandboxTask = tasks.prepareSandbox.get()
-            sandboxTask.destinationDir.resolve("${sandboxTask.pluginName.get()}/lib")
-        }
-
-        val pluginJars by lazy {
-            pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
-        }
-
-        destinationDirectory.set(project.layout.dir(provider { pluginLibDir }))
-
-        doFirst {
-            for (file in pluginJars) {
-                from(zipTree(file))
+        intellijPlatform {
+            val pluginList = mutableListOf(
+                tomlPlugin,
+                graziePlugin,
+                psiViewerPlugin,
+            )
+            val bundledPluginList = mutableListOf(
+                javaScriptPlugin,
+                mlCompletionPlugin
+            )
+            if (ideToRun in setOf("IU", "IC")) {
+                pluginList += listOf(
+                    copyrightPlugin,
+                    nativeDebugPlugin
+                )
+                bundledPluginList += listOf(
+                    javaPlugin
+                )
             }
+            create(baseIDE, baseVersionForRun)
+            plugins(pluginList)
+            bundledPlugins(bundledPluginList)
+
+            pluginModule(implementation(project(":idea")))
+            pluginModule(implementation(project(":copyright")))
+            pluginModule(implementation(project(":coverage")))
+            pluginModule(implementation(project(":duplicates")))
+            pluginModule(implementation(project(":grazie")))
+            pluginModule(implementation(project(":js")))
+            pluginModule(implementation(project(":ml-completion")))
         }
 
-        doLast {
-            delete(pluginJars)
-        }
+        implementation(project(":"))
     }
 
     // Add plugin sources to the plugin ZIP.
@@ -355,17 +350,9 @@ project(":plugin") {
         }
         runIde { enabled = true }
         prepareSandbox {
-            finalizedBy(mergePluginJarTask)
             enabled = true
         }
-        withType<RunIdeBase> {
-            // Force `mergePluginJarTask` be executed before any task based on `RunIdeBase` (for example, `runIde` or `buildSearchableOptions`).
-            // Otherwise, these tasks fail because of implicit dependency.
-            // Should be dropped when jar merging is implemented in `gradle-intellij-plugin` itself
-            dependsOn(mergePluginJarTask)
-        }
         verifyPlugin {
-            dependsOn(mergePluginJarTask)
         }
         buildSearchableOptions {
             enabled = prop("enableBuildSearchableOptions").toBoolean()
@@ -375,7 +362,7 @@ project(":plugin") {
 
             // Copy native binaries
             from("${rootDir}/bin") {
-                into("${pluginName.get()}/bin")
+                into("${intellijPlatform.projectName.get()}/bin")
                 include("**")
             }
         }
@@ -395,10 +382,6 @@ project(":plugin") {
 
             // Uncomment to enable localization testing mode
             // jvmArgs("-Didea.l10n=true")
-        }
-
-        withType<PatchPluginXmlTask> {
-            pluginDescription.set(provider { file("description.html").readText() })
         }
 
         withType<PublishPluginTask> {
@@ -421,10 +404,6 @@ project(":plugin") {
 project(":$grammarKitFakePsiDeps")
 
 project(":") {
-    intellij {
-        plugins.set(listOf(tomlPlugin))
-    }
-
     sourceSets {
         main {
             if (channel == "nightly" || channel == "dev") {
@@ -438,6 +417,10 @@ project(":") {
     }
 
     dependencies {
+        intellijPlatform {
+            plugins(listOf(tomlPlugin))
+        }
+
         implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.17.2") {
             exclude(module = "jackson-core")
             exclude(module = "jackson-databind")
@@ -491,38 +474,38 @@ project(":") {
 }
 
 project(":idea") {
-    intellij {
-        version.set(ideaVersion)
-        plugins.set(listOf(
-            javaPlugin,
-            // this plugin registers `com.intellij.ide.projectView.impl.ProjectViewPane` for IDEA that we use in tests
-            javaIdePlugin
-        ))
-    }
     dependencies {
-        implementation(project(":"))
-        testImplementation(project(":", "testOutput"))
-    }
-}
+        intellijPlatform {
+            create(baseIDE, baseVersion)
 
-project(":intelliLang") {
-    intellij {
-        plugins.set(listOf(intelliLangPlugin))
-    }
-    dependencies {
+            bundledPlugins(listOf(
+                javaPlugin,
+                // this plugin registers `com.intellij.ide.projectView.impl.ProjectViewPane` for IDEA that we use in tests
+                javaIdePlugin
+            ))
+        }
+
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
     }
 }
 
 project(":copyright") {
-    intellij {
-        version.set(ideaVersion)
-        plugins.set(listOf(copyrightPlugin))
-    }
     dependencies {
+        intellijPlatform {
+            create(baseIDE, baseVersion)
+
+            plugins(listOf(copyrightPlugin))
+        }
+
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
+    }
+
+    tasks {
+        composedJar {
+            archiveBaseName.set("copyright-rust")
+        }
     }
 }
 
@@ -541,30 +524,39 @@ project(":coverage") {
 }
 
 project(":grazie") {
-    intellij {
-        plugins.set(listOf(graziePlugin))
-    }
     dependencies {
+        intellijPlatform {
+            plugins(listOf(graziePlugin))
+        }
+
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
+    }
+
+    tasks {
+        composedJar {
+            archiveBaseName.set("grazie-rust")
+        }
     }
 }
 
 project(":js") {
-    intellij {
-        plugins.set(listOf(javaScriptPlugin))
-    }
     dependencies {
+        intellijPlatform {
+            bundledPlugins(listOf(javaScriptPlugin))
+        }
+
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
     }
 }
 
 project(":ml-completion") {
-    intellij {
-        plugins.set(listOf(mlCompletionPlugin))
-    }
     dependencies {
+        intellijPlatform {
+            bundledPlugins(listOf(mlCompletionPlugin))
+        }
+
         implementation("org.jetbrains.intellij.deps.completion:completion-ranking-rust:0.4.1")
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
@@ -674,7 +666,7 @@ fun prop(name: String): String =
         ?: error("Property `$name` is not defined in gradle.properties")
 
 fun versionForIde(ideName: String): String = when (ideName) {
-    "idea" -> ideaVersion
+    "IU", "IC" -> ideaVersion
     else -> error("Unexpected IDE name: `$baseIDE`")
 }
 

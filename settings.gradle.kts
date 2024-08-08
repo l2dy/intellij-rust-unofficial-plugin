@@ -6,7 +6,6 @@ include(
     "idea",
     "copyright",
     "coverage",
-    "intelliLang",
     "duplicates",
     "grazie",
     "js",
