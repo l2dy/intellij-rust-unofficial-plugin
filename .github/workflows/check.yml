@@ -20,7 +20,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    OLD_IDEA_VERSION: 2024.1.5
+    OLD_IDEA_VERSION: 2024.2
 
 jobs:
     get-rust-versions:
