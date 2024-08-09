@@ -13,9 +13,11 @@ import java.util.function.Supplier
 const val BUNDLE = "messages.RsBundle"
 
 object RsBundle : DynamicBundle(BUNDLE) {
+    private val INSTANCE = DynamicBundle(RsBundle::class.java, BUNDLE)
+
     @Nls
-    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = getMessage(key, *params)
+    fun message(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): String = INSTANCE.getMessage(key, *params)
 
     fun messagePointer(@PropertyKey(resourceBundle = BUNDLE) key: String, vararg params: Any): Supplier<@Nls String> =
-        getLazyMessage(key, *params)
+        INSTANCE.getLazyMessage(key, *params)
 }

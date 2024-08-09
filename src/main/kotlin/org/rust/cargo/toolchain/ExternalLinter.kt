@@ -9,7 +9,7 @@ import org.jetbrains.annotations.PropertyKey
 import org.rust.BUNDLE
 import org.rust.RsBundle
 
-enum class ExternalLinter(@PropertyKey(resourceBundle = BUNDLE) val titleKey: String) {
+enum class ExternalLinter(private val titleKey: String) {
     CARGO_CHECK("rust.external.linter.cargo.check.item"),
     CLIPPY("rust.external.linter.clippy.item");
 

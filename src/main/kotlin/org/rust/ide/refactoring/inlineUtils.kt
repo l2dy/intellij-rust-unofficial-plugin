@@ -12,6 +12,7 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.inline.InlineOptionsDialog
 import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
+import org.rust.RsBundle
 import org.rust.lang.core.psi.ext.RsNameIdentifierOwner
 import org.rust.lang.core.resolve.ref.RsReference
 import org.rust.openapiext.isUnitTestMode
@@ -51,7 +52,7 @@ class RsInlineUsageViewDescriptor(
 
     @Suppress("InvalidBundleOrProperty")
     override fun getCodeReferencesText(usagesCount: Int, filesCount: Int) =
-        RefactoringBundle.message("invocations.to.be.inlined",
+        RsBundle.message("refactoring.invocations.to.be.inlined",
             UsageViewBundle.getReferencesString(usagesCount, filesCount))
 
     override fun getElements() = arrayOf(element)
