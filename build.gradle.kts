@@ -46,7 +46,7 @@ val basePluginArchiveName = "intellij-rust"
 plugins {
     idea
     kotlin("jvm") version "2.0.10"
-    id("org.jetbrains.intellij.platform") version "2.0.0"
+    id("org.jetbrains.intellij.platform") version "2.0.1"
     id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
     id("org.gradle.test-retry") version "1.5.10"
@@ -204,6 +204,8 @@ allprojects {
 
         compileOnly(kotlin("stdlib-jdk8"))
         implementation("junit:junit:4.13.2") // used in kotlin/org/rust/openapiext/Testmark.kt
+        // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#missing-opentest4j-dependency-in-test-framework
+        testImplementation("org.opentest4j:opentest4j:1.3.0")
         testOutput(sourceSets.getByName("test").output.classesDirs)
     }
 
