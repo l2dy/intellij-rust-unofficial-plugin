@@ -52,6 +52,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
@@ -154,6 +155,7 @@ fun checkIsBackgroundThread() {
 }
 
 fun checkIsSmartMode(project: Project) {
+    if (isUnitTestMode) IndexingTestUtil.waitUntilIndexesAreReady(project)
     if (DumbService.getInstance(project).isDumb) throw IndexNotReadyException.create()
 }
 
