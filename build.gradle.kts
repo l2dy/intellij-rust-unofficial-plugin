@@ -34,6 +34,7 @@ val psiViewerPlugin: String by project
 val copyrightPlugin: String by project
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
+val javaScriptPlugin = "JavaScript"
 val mlCompletionPlugin = "com.intellij.completion.ml.ranking"
 
 val compileNativeCodeTaskName = "compileNativeCode"
@@ -293,6 +294,7 @@ project(":plugin") {
                 psiViewerPlugin,
             )
             val bundledPluginList = mutableListOf(
+                javaScriptPlugin,
                 mlCompletionPlugin
             )
             if (ideToRun in setOf("IU", "IC")) {
@@ -313,6 +315,7 @@ project(":plugin") {
             pluginModule(implementation(project(":coverage")))
             pluginModule(implementation(project(":duplicates")))
             pluginModule(implementation(project(":grazie")))
+            pluginModule(implementation(project(":js")))
             pluginModule(implementation(project(":ml-completion")))
         }
 
@@ -534,6 +537,17 @@ project(":grazie") {
         composedJar {
             archiveBaseName.set("grazie-rust")
         }
+    }
+}
+
+project(":js") {
+    dependencies {
+        intellijPlatform {
+            bundledPlugins(listOf(javaScriptPlugin))
+        }
+
+        implementation(project(":"))
+        testImplementation(project(":", "testOutput"))
     }
 }
 

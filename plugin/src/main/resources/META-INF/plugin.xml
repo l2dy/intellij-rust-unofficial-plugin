@@ -25,6 +25,7 @@
         <module name="org.rust.duplicates"/>
         <module name="org.rust.coverage"/>
         <module name="org.rust.grazie"/>
+        <module name="org.rust.js"/>
         <module name="org.rust.mlCompletion"/>
     </content>
 </idea-plugin>
