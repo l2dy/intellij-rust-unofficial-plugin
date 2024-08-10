@@ -5,10 +5,10 @@
 
 package org.rust.ide.structure
 
-import com.intellij.ide.navbar.tests.contextNavBarPathStrings
 import com.intellij.openapi.editor.ex.EditorEx
 import org.intellij.lang.annotations.Language
 import org.rust.RsTestBase
+import org.rust.contextNavBarPathStringsCompat
 
 class RsNavBarTest : RsTestBase() {
     fun `test struct`() = doTest("""
@@ -140,7 +140,7 @@ class RsNavBarTest : RsTestBase() {
 
         val dataContext = (myFixture.editor as EditorEx).dataContext
 
-        val actualItems = contextNavBarPathStrings(dataContext)
+        val actualItems = contextNavBarPathStringsCompat(dataContext)
         val expected = listOf("src", "main.rs", *items)
         assertEquals(expected, actualItems)
     }
