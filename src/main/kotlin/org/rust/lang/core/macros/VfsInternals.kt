@@ -33,7 +33,7 @@ object VfsInternals {
     @Throws(IOException::class)
     fun reloadFileIfNeeded(file: VirtualFile) {
         if (isMarkedForContentReload(file)) {
-            file.contentsToByteArray(false)
+            file.contentsToByteArray(true)
         }
     }
 
