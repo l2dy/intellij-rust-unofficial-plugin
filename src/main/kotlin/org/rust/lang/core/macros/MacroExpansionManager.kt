@@ -29,6 +29,7 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.io.DataOutputStream
 import com.intellij.util.io.createDirectories
@@ -720,7 +721,10 @@ private class MacroExpansionServiceImplInner(
 
     private fun processMacros(taskType: RsTask.TaskType) {
         if (!isExpansionModeNew || !enabledInUnitTests) return
-        if (isUnitTestMode && DumbService.isDumb(project)) return
+        if (isUnitTestMode) {
+            IndexingTestUtil.waitUntilIndexesAreReady(project)
+            if (DumbService.isDumb(project)) return
+        }
 
         val task = MacroExpansionTask(
             project,
@@ -730,6 +734,7 @@ private class MacroExpansionServiceImplInner(
             taskType,
         )
         submitTask(task)
+        if (isUnitTestMode) IndexingTestUtil.waitUntilIndexesAreReady(project)
     }
 
     private fun isTemplateActiveInAnyEditor(): Boolean {

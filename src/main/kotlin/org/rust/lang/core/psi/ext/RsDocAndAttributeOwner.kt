@@ -185,7 +185,6 @@ fun RsDocAndAttributeOwner.getQueryAttributes(
     stub: RsAttributeOwnerStub? = attributeStub,
     outerAttrsOnly: Boolean = false
 ): QueryAttributes<RsMetaItem> {
-    testAssert { !DumbService.isDumb(project) }
     return if (stub != null) {
         QueryAttributes(stub.getQueryAttributes(explicitCrate, outerAttrsOnly).metaItems.map { it.psi })
     } else {

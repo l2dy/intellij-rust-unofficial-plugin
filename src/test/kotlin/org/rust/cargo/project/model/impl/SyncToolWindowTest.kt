@@ -9,6 +9,7 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BuildViewTestFixture
 import org.rust.*
@@ -495,6 +496,7 @@ class SyncToolWindowTest : RsWithToolchainTestBase() {
     }
 
     private fun attachCargoProject(cargoProjectRoot: VirtualFile) {
+        IndexingTestUtil.waitUntilIndexesAreReady(project)
         myFixture.launchAnAction("Cargo.AttachCargoProject", PlatformDataKeys.VIRTUAL_FILE to cargoProjectRoot)
     }
 
