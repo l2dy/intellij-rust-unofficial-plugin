@@ -12,6 +12,7 @@ import com.intellij.openapi.vcs.ex.ProjectLevelVcsManagerEx
 import com.intellij.openapi.vcs.impl.ProjectLevelVcsManagerImpl
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
+import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.testFramework.builders.ModuleFixtureBuilder
 import com.intellij.testFramework.common.runAll
 import com.intellij.testFramework.fixtures.CodeInsightFixtureTestCase
@@ -58,6 +59,7 @@ abstract class RsWithToolchainTestBase : CodeInsightFixtureTestCase<ModuleFixtur
 
     protected fun refreshWorkspace() {
         project.testCargoProjects.discoverAndRefreshSync()
+        IndexingTestUtil.waitUntilIndexesAreReady(project)
     }
 
     override fun runTestRunnable(testRunnable: ThrowableRunnable<Throwable>) {
