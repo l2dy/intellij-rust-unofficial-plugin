@@ -48,7 +48,7 @@ fun <T : PsiElement> findDescendantsWithMacrosOfAnyType(
             } else true
         }
     }
-    processElementsWithMacros(element, processor)
+    processElementsWithMacrosVisitOrAbort(element, processor)
     @Suppress("UNCHECKED_CAST")
     return processor.collection as Collection<T>
 }
@@ -60,7 +60,7 @@ enum class TreeStatus {
     VISIT_CHILDREN, SKIP_CHILDREN, ABORT
 }
 
-fun processElementsWithMacros(element: PsiElement, processor: PsiElementProcessor<PsiElement>): Boolean =
+private fun processElementsWithMacrosVisitOrAbort(element: PsiElement, processor: PsiElementProcessor<PsiElement>): Boolean =
     processElementsWithMacros(element) {
         if (processor.execute(it)) TreeStatus.VISIT_CHILDREN else TreeStatus.ABORT
     }
