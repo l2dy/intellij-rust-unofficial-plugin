@@ -60,5 +60,5 @@ jobs:
             - name: Save artifacts
               uses: actions/upload-artifact@v4
               with:
-                  name: intellij-rust
+                  name: intellij-rust-${{ matrix.platform-version }}
                   path: plugin/build/distributions/*.zip
