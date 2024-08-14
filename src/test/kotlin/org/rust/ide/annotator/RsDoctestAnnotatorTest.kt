@@ -6,6 +6,7 @@
 package org.rust.ide.annotator
 
 import org.rust.CheckTestmarkHit
+import org.rust.IgnoreInPlatform
 import org.rust.ProjectDescriptor
 import org.rust.WithDependencyRustProjectDescriptor
 import org.rust.ide.injected.DoctestInfo
@@ -157,10 +158,14 @@ class RsDoctestAnnotatorTest : RsAnnotatorTestBase(RsDoctestAnnotator::class) {
         |fn foo() {}
         |""")
 
+    // BACKCOMPAT: 2024.1
+    // Errors does not clear the <inject> tag since 2024.2.
+    // If future versions keep this new behavior, remove @IgnoreInPlatform when we drop 241 support.
+    @IgnoreInPlatform(241)
     fun `test incomplete code fence`() = doTest("""
         |/// ```
         |///<info>
-        |</info>///<info> <error>`</error></info>
+        |</info>///<info> <error><inject>`</inject></error></info>
         |fn foo() {}
         |""")
 

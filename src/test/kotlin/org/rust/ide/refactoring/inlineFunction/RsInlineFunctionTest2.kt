@@ -5,7 +5,9 @@
 
 package org.rust.ide.refactoring.inlineFunction
 
+import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import junit.framework.ComparisonFailure
+import org.rust.IgnoreInPlatform
 import org.rust.ProjectDescriptor
 import org.rust.WithStdlibRustProjectDescriptor
 import org.rust.ide.refactoring.RsInlineTestBase
@@ -514,7 +516,9 @@ class RsInlineFunctionTest2 : RsInlineTestBase() {
         }
     """)
 
-    fun `test substitute field access argument`() = expect<ComparisonFailure> {
+    // BACKCOMPAT: 2024.1 throws ComparisonFailure instead.
+    @IgnoreInPlatform(241)
+    fun `test substitute field access argument`() = expect<FileComparisonFailedError> {
     doTest("""
         fn main() {
             let s = Foo { field: 0 };

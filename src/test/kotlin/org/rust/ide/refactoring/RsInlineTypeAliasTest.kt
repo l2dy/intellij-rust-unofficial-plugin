@@ -5,7 +5,9 @@
 
 package org.rust.ide.refactoring
 
+import com.intellij.platform.testFramework.core.FileComparisonFailedError
 import junit.framework.ComparisonFailure
+import org.rust.IgnoreInPlatform
 
 class RsInlineTypeAliasTest : RsInlineTestBase() {
 
@@ -218,7 +220,9 @@ class RsInlineTypeAliasTest : RsInlineTestBase() {
         }
     """)
 
-    fun `test qualify path`() = expect<ComparisonFailure> {
+    // BACKCOMPAT: 2024.1 throws ComparisonFailure instead.
+    @IgnoreInPlatform(241)
+    fun `test qualify path`() = expect<FileComparisonFailedError> {
     doTest("""
         mod mod1 {
             pub struct Bar {}
