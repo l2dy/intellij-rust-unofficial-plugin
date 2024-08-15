@@ -220,7 +220,7 @@ allprojects {
         }
 
         tasks.withType<Test>().configureEach {
-            jvmArgs = listOf("-Xmx2g", "-XX:-OmitStackTraceInFastThrow")
+            jvmArgs = listOf("-Xmx3g", "-XX:-OmitStackTraceInFastThrow")
 
             // We need to prevent the platform-specific shared JNA library to loading from the system library paths,
             // because otherwise it can lead to compatibility issues.
