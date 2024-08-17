@@ -61,18 +61,11 @@ class RsHighlightingMutableAnnotator : AnnotatorBase() {
     }
 
     private fun addHighlightingAnnotation(holder: AnnotationHolder, target: PsiElement, key: RsColor) {
-        val annotationSeverity = if (isUnitTestMode) key.testSeverity else MUTABLE_HIGHLIGHTING
+        val annotationSeverity = if (isUnitTestMode) key.testSeverity else HighlightSeverity.INFORMATION
 
         holder.newSilentAnnotation(annotationSeverity)
             .range(target.textRange)
             .textAttributes(key.textAttributesKey).create()
-    }
-
-    companion object {
-        private val MUTABLE_HIGHLIGHTING = HighlightSeverity(
-            "MUTABLE_HIGHLIGHTING",
-            HighlightSeverity.INFORMATION.myVal + 1
-        )
     }
 }
 

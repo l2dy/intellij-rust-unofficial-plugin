@@ -12,6 +12,7 @@ import com.intellij.codeInsight.daemon.impl.*
 import com.intellij.lang.annotation.Annotation
 import com.intellij.lang.annotation.AnnotationSession
 import com.intellij.lang.annotation.Annotator
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
@@ -179,7 +180,7 @@ class RsMacroExpansionHighlightingPass(
 
         for (mappedRange in cfgDisabledMappedRanges) {
             val color = RsColor.CFG_DISABLED_CODE
-            val severity = if (isUnitTestMode) color.testSeverity else RsCfgDisabledCodeAnnotator.CONDITIONALLY_DISABLED_CODE_SEVERITY
+            val severity = if (isUnitTestMode) color.testSeverity else HighlightSeverity.INFORMATION
             results += HighlightInfo.newHighlightInfo(HighlightInfoType.INFORMATION)
                 .severity(severity)
                 .textAttributes(color.textAttributesKey)
