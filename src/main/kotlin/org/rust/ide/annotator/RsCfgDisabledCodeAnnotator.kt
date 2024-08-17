@@ -24,7 +24,7 @@ class RsCfgDisabledCodeAnnotator : AnnotatorBase() {
 
     private fun AnnotationHolder.createCondDisabledAnnotation() {
         val color = RsColor.CFG_DISABLED_CODE
-        val severity = if (isUnitTestMode) color.testSeverity else CONDITIONALLY_DISABLED_CODE_SEVERITY
+        val severity = if (isUnitTestMode) color.testSeverity else HighlightSeverity.INFORMATION
 
         newAnnotation(severity, RsBundle.message("text.conditionally.disabled.code"))
             .textAttributes(color.textAttributesKey)
@@ -43,10 +43,5 @@ class RsCfgDisabledCodeAnnotator : AnnotatorBase() {
                 && element.isDisabledCfgAttrAttribute(crate)
                 && element.owner?.isEnabledByCfgSelfOrInAttrProcMacroBody(crate) == true
         }
-
-        val CONDITIONALLY_DISABLED_CODE_SEVERITY = HighlightSeverity(
-            "CONDITIONALLY_DISABLED_CODE",
-            HighlightSeverity.INFORMATION.myVal + 1
-        )
     }
 }
