@@ -28,7 +28,6 @@ val baseVersion = versionForIde(baseIDE)
 val baseVersionForRun = versionForIde(ideToRun)
 
 val tomlPlugin: String by project
-val nativeDebugPlugin: String by project
 val graziePlugin: String by project
 val psiViewerPlugin: String by project
 val copyrightPlugin: String by project
@@ -301,8 +300,7 @@ project(":plugin") {
             )
             if (ideToRun in setOf("IU", "IC")) {
                 pluginList += listOf(
-                    copyrightPlugin,
-                    nativeDebugPlugin
+                    copyrightPlugin
                 )
                 bundledPluginList += listOf(
                     javaPlugin
