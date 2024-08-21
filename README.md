@@ -45,3 +45,6 @@ These features had been cut for now to make maintaining plugin up-to-date easier
 Refer to [ARCHITECTURE.md] for a structural advice, and to [CONTRIBUTING.md] for general good practices.
 
 If something is horribly wrong, feel free to open an issue.
+
+[CONTRIBUTING.md]: CONTRIBUTING.md
+[ARCHITECTURE.md]: ARCHITECTURE.md
