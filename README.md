@@ -1,104 +1,47 @@
-# Deprecation notice
+# IntelliJ Rust Community Plugin
+This project is a community fork of now deprecated OpenSource [Rust plugin for Jetbrains IDEs](https://plugins.jetbrains.com/plugin/8182--come-on-dont-kill-opensource-rust) (https://github.com/intellij-rust/intellij-rust)
+This repo is not relying on Jetbrains' "c-capable" or "rust-capable" plugins, which means that it potentially might be installed onto each Jetbrains IDE
 
-This project is officially deprecated. If you are using [RustRover](https://jetbrains.com/rust) or [new Rust plugin for IntelliJ IDEA Ultimate or CLion](https://plugins.jetbrains.com/plugin/22407-rust) please report your issue at the official tracker: https://youtrack.jetbrains.com/issues/RUST. See [our announcement](https://blog.jetbrains.com/rust/2023/09/13/introducing-rustrover-a-standalone-rust-ide-by-jetbrains/#existing-open-source-plugin) for more details.
+The original repo has become unsupported after the announcement of RustRover, but there is a lot of opensource in this repo that we can leverage to keep the community opensource plugin alive.
 
-# Rust plugin for the IntelliJ Platform
+For any additional information refer to [their announcement](https://blog.jetbrains.com/rust/2023/09/13/introducing-rustrover-a-standalone-rust-ide-by-jetbrains/#existing-open-source-plugin) at the original repo.
 
-[![official JetBrains project](https://jb.gg/badges/official.svg)](https://confluence.jetbrains.com/display/ALL/JetBrains+on+GitHub)
-[![JetBrains plugins][plugin-version-svg]][plugin-repo]
-[![JetBrains plugins][plugin-downloads-svg]][plugin-repo]
 
-| Build Status |                                                                              |
-|--------------|------------------------------------------------------------------------------|
-| Check        | [![Check Status][check-status-svg]][check-status]                            |
-| Stable       | [![Stable Build Status][stable-build-status-svg]][stable-build-status]       |
-| Beta         | [![Beta Build Status][beta-build-status-svg]][beta-build-status]             |
-| Nightly      | [![Nightly Build Status][nightly-build-status-svg]][nightly-build-status]    |
+##### Official Rust plugin for the IntelliJ Platform
+[There is an official proprietary Rust plugin from JetBrains IDEs](https://plugins.jetbrains.com/plugin/22407-rust).
+You may find it in the official marketplace and in RustRover.
 
 ## Installation & Usage
-
-For installation options, see the [Quick Start Guide](https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-quick-start.html#install-update).
-If you want to jump straight in, open `Settings > Plugins > Marketplace` in your IDE,
-search for _Rust_ and install the plugin. To open an existing project, use **File | Open** and point to the directory containing `Cargo.toml`. 
+Grab a zip archive from `Releases` and then add the archive as a "plugin from a filesystem" (File -> Settings -> Gear Icon on the top right -> Install plugin from disk)
+To open an existing project, use **File | Open** and point to the directory containing `Cargo.toml`.
 For creating projects, use the **Rust** template.
 
-All the plugin's features are described in [documentation](https://plugins.jetbrains.com/plugin/8182-rust/docs).
-New features are regularly announced in [changelogs](https://intellij-rust.github.io/thisweek/).
+
+[//]: #  "All the plugin's features are described in [documentation](https://plugins.jetbrains.com/plugin/8182-rust/docs)."
+[//]: #  "New features are regularly announced in [changelogs](https://intellij-rust.github.io/thisweek/)."
 
 
 ## Compatible IDEs
 
-The plugin is compatible with all IntelliJ-based IDEs starting from the version 2022.2, with the following differences in the sets of the available features:
+So far probably can be installed to the same IDE's as were supported by original plugin (https://github.com/intellij-rust/intellij-rust/?tab=readme-ov-file#compatible-ides)
+The plugin is compatible with all IntelliJ-based IDEs starting from the version 2024.1, install the original rust deprecated extension if you need an earlier one.
 
+This plugin has been proven to work with:
+* PyCharm 2024.2 Community as well as Professional
 
-|                        | Open-source and Educational IDEs<sup>*</sup> | [CLion] | [IntelliJ IDEA] Ultimate, [GoLand] | [PyCharm] Professional | [WebStorm], [PhpStorm], other commercial IDEs |
-|------------------------|----------------------------------------------|---------|------------------------------------|------------------------|-----------------------------------------------|
-| [Language support]     | +                                            | +       | +                                  | +                      | +                                             |
-| [Cargo support]        | +                                            | +       | +                                  | +                      | +                                             |
-| [Code coverage]        | +                                            | +       | +                                  | +                      | +                                             |
-| [Detecting duplicates] | -                                            | +       | +                                  | +                      | +                                             |
-| [Debugger]             | -                                            | +       | +**                                | +**                    | -                                             |
-| [Run targets]          | -                                            | +       | +                                  | -                      | -                                             |
-| [Profiler]             | -                                            | +       | -                                  | -                      | -                                             |
-| [Valgrind Memcheck]    | -                                            | +       | -                                  | -                      | -                                             |
+### Advanced features
+There were several features present in the original plugin besides the original language support:
 
+* debugging
+* profiler
+* valgrind
+* clion, appcode, etc extensions
 
-\* [IntelliJ IDEA] Community Edition, [PyCharm] Community Edition, [PyCharm Edu], [IntelliJ IDEA Edu], and third-party IntelliJ-based IDEs.
+These features had been cut for now to make maintaining plugin up-to-date easier.
 
-\** Requires the
-[Native Debugging Support](https://plugins.jetbrains.com/plugin/12775-native-debugging-support) plugin. 
-LLDB only
-
-## TOML
-
-If you are looking for the TOML plugin, see [toml] directory in [intellij-community](https://github.com/JetBrains/intellij-community) repository.
 
 ## Contributing
 
-You're encouraged to contribute to the plugin if you've found any
-issues or missing functionality that you would want to see. Check out
-[CONTRIBUTING.md] to learn how to set up the project and [ARCHITECTURE.md] to
-understand the high-level structure of the codebase. If you are not sure where to start, consider the issues tagged with [help wanted].
+Refer to [ARCHITECTURE.md] for a structural advice, and to [CONTRIBUTING.md] for general good practices.
 
-[intellij-rust.github.io]: https://intellij-rust.github.io/
-[website]: https://intellij-rust.github.io/docs/faq.html
-[help wanted]: https://github.com/intellij-rust/intellij-rust/labels/help%20wanted
-[CONTRIBUTING.md]: CONTRIBUTING.md
-[ARCHITECTURE.md]: ARCHITECTURE.md
-[toml]: https://github.com/JetBrains/intellij-community/tree/master/plugins/toml
-
-<!-- Badges -->
-
-[plugin-repo]: https://plugins.jetbrains.com/plugin/8182-rust
-[plugin-version-svg]: https://img.shields.io/jetbrains/plugin/v/8182-rust.svg
-[plugin-downloads-svg]: https://img.shields.io/jetbrains/plugin/d/8182-rust.svg
-
-[check-status]: https://github.com/intellij-rust/intellij-rust/actions?query=workflow%3Acheck+event%3Apush+branch%3Amaster
-[check-status-svg]: https://github.com/intellij-rust/intellij-rust/workflows/check/badge.svg?branch=master&event=push
-
-[stable-build-status]: https://github.com/intellij-rust/intellij-rust/actions?query=workflow%3A%22rust+release%22+event%3Aworkflow_dispatch
-[stable-build-status-svg]: https://github.com/intellij-rust/intellij-rust/workflows/rust%20release/badge.svg?event=workflow_dispatch
-
-[beta-build-status]: https://github.com/intellij-rust/intellij-rust/actions?query=workflow%3A%22rust+release%22+event%3Aschedule
-[beta-build-status-svg]: https://github.com/intellij-rust/intellij-rust/workflows/rust%20release/badge.svg?event=schedule
-
-[nightly-build-status]: https://github.com/intellij-rust/intellij-rust/actions?query=workflow%3A%22rust+nightly%22
-[nightly-build-status-svg]: https://github.com/intellij-rust/intellij-rust/workflows/rust%20nightly/badge.svg
-
-
-[IntelliJ IDEA]: https://www.jetbrains.com/idea/
-[CLion]: https://www.jetbrains.com/clion/
-[PyCharm]: https://www.jetbrains.com/pycharm/
-[GoLand]: https://www.jetbrains.com/go/
-[WebStorm]: https://www.jetbrains.com/webstorm/
-[PhpStorm]: https://www.jetbrains.com/phpstorm/
-[PyCharm Edu]: https://www.jetbrains.com/pycharm-edu/
-[IntelliJ IDEA Edu]: https://www.jetbrains.com/idea-edu/
-[Detecting duplicates]: https://www.jetbrains.com/help/idea/analyzing-duplicates.html
-[Language support]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-syntax-highlighting.html
-[Cargo support]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-new-cargo-projects.html
-[Code coverage]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-code-coverage.html
-[Debugger]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-debugging.html
-[Run targets]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-run-targets.html
-[Profiler]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-profiler.html
-[Valgrind Memcheck]: https://plugins.jetbrains.com/plugin/8182-rust/docs/rust-valgrind.html
+If something is horribly wrong, feel free to open an issue.
