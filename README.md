@@ -23,8 +23,10 @@ For creating projects, use the **Rust** template.
 
 ## Compatible IDEs
 
-So far probably can be installed to the same IDE's as were supported by original plugin (https://github.com/intellij-rust/intellij-rust/?tab=readme-ov-file#compatible-ides)
-The plugin is compatible with all IntelliJ-based IDEs starting from the version 2024.1, install the original rust deprecated extension if you need an earlier one.
+So far this plugin can probably be installed onto the same IDE list that was available the [original plugin](https://github.com/intellij-rust/intellij-rust/?tab=readme-ov-file#compatible-ides).
+
+As for now, plugin supports latest stable and the most previous stable version (although it can be changed in future).
+Consider using the original Rust plugin if you need to work with a version earlier than 2024.1; Consider contributing if this community plugin  does not enable support of the new IDEs fast enough.
 
 This plugin has been proven to work with:
 * PyCharm 2024.2 Community as well as Professional
