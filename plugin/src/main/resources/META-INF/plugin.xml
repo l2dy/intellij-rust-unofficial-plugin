@@ -21,6 +21,8 @@
 
     <content>
         <module name="org.rust.idea"/>
+        <module name="org.rust.debugger"/>
+        <module name="org.rust.nativeDebug"/>
         <module name="org.rust.copyright"/>
         <module name="org.rust.duplicates"/>
         <module name="org.rust.coverage"/>

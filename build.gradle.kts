@@ -31,6 +31,7 @@ val tomlPlugin: String by project
 val graziePlugin: String by project
 val psiViewerPlugin: String by project
 val copyrightPlugin: String by project
+val nativeDebugPlugin: String by project //if (baseIDE == "idea") prop("nativeDebugPlugin") else "com.intellij.nativeDebug"
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
@@ -311,6 +312,7 @@ project(":plugin") {
             bundledPlugins(bundledPluginList)
 
             pluginModule(implementation(project(":idea")))
+            pluginModule(implementation(project(":debugger")))
             pluginModule(implementation(project(":copyright")))
             pluginModule(implementation(project(":coverage")))
             pluginModule(implementation(project(":duplicates")))
@@ -322,11 +324,43 @@ project(":plugin") {
         implementation(project(":"))
     }
 
+    // Collects all jars produced by compilation of project modules and merges them into singe one.
+    // We need to put all plugin manifest files into single jar to make new plugin model work
+    val mergePluginJarTask = task<Jar>("mergePluginJars") {
+        duplicatesStrategy = DuplicatesStrategy.FAIL
+        archiveBaseName.set(basePluginArchiveName)
+
+        exclude("META-INF/MANIFEST.MF")
+        exclude("**/classpath.index")
+
+        val pluginLibDir by lazy {
+            val sandboxTask = tasks.prepareSandbox.get()
+            sandboxTask.destinationDir.resolve("${intellijPlatform.pluginConfiguration.name}/lib")
+        }
+
+        val pluginJars by lazy {
+            pluginLibDir.listFiles().orEmpty().filter { it.isPluginJar() }
+        }
+
+        destinationDirectory.set(project.layout.dir(provider { pluginLibDir }))
+
+        doFirst {
+            for (file in pluginJars) {
+                from(zipTree(file))
+            }
+        }
+
+        doLast {
+            delete(pluginJars)
+        }
+    }
+
     // Add plugin sources to the plugin ZIP.
     // gradle-intellij-plugin will use it as a plugin sources if the plugin is used as a dependency
     val createSourceJar = task<Jar>("createSourceJar") {
         dependsOn(":generateLexer")
         dependsOn(":generateParser")
+        dependsOn(":debugger:generateGrammarSource")
 
         for (prj in pluginProjects) {
             from(prj.kotlin.sourceSets.main.get().kotlin) {
@@ -487,6 +521,61 @@ project(":idea") {
 
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
+    }
+}
+
+
+project(":debugger") {
+    apply {
+        plugin("antlr")
+    }
+
+
+
+//    intellij {
+//        if (baseIDE == "idea") {
+//            plugins.set(listOf(nativeDebugPlugin))
+//        } else {
+//            version.set(clionVersion)
+//            plugins.set(clionPlugins)
+//        }
+//    }
+
+    // Kotlin Gradle support doesn't generate proper extensions if the plugin is not declared in `plugin` block.
+    // But if we do it, `antlr` plugin will be applied to root project as well that we want to avoid.
+    // So, let's define all necessary things manually
+    val antlr by configurations
+    val generateGrammarSource: AntlrTask by tasks
+    val generateTestGrammarSource: AntlrTask by tasks
+
+    dependencies {
+        intellijPlatform {
+            create(baseIDE, baseVersion)
+
+            plugins(listOf(nativeDebugPlugin))
+        }
+        implementation(project(":"))
+        antlr("org.antlr:antlr4:4.13.0")
+        implementation("org.antlr:antlr4-runtime:4.13.0")
+        testImplementation(project(":", "testOutput"))
+    }
+    tasks {
+        compileKotlin {
+            dependsOn(generateGrammarSource)
+        }
+        compileTestKotlin {
+            dependsOn(generateTestGrammarSource)
+        }
+
+        generateGrammarSource {
+            arguments.add("-no-listener")
+            arguments.add("-visitor")
+            outputDirectory = file("src/gen/org/rust/debugger/lang")
+        }
+    }
+    // Exclude antlr4 from transitive dependencies of `:debugger:api` configuration (https://github.com/gradle/gradle/issues/820)
+    configurations.api {
+        setExtendsFrom(extendsFrom.filter { it.name != "antlr" })
     }
 }
 
@@ -667,7 +756,7 @@ fun prop(name: String): String =
 
 fun versionForIde(ideName: String): String = when (ideName) {
     "IU", "IC" -> ideaVersion
-    else -> error("Unexpected IDE name: `$baseIDE`")
+    else -> ideaVersion//error("Unexpected IDE name: `$baseIDE`")
 }
 
 inline operator fun <T : Task> T.invoke(a: T.() -> Unit): T = apply(a)
