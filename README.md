@@ -1,6 +1,6 @@
 # IntelliJ Rust Community Plugin
 This project is a community fork of now deprecated OpenSource [Rust plugin for Jetbrains IDEs](https://plugins.jetbrains.com/plugin/8182--come-on-dont-kill-opensource-rust) (https://github.com/intellij-rust/intellij-rust)
-This repo is not relying on Jetbrains' "c-capable" or "rust-capable" plugins, which means that it potentially might be installed onto each Jetbrains IDE
+This repo is not relying on Jetbrains' "c-capable" or "rust-capable" plugins, which means that it potentially might be installed onto each and any Jetbrains IDE
 
 The original repo has become unsupported after the announcement of RustRover, but there is a lot of opensource in this repo that we can leverage to keep the community opensource plugin alive.
 
