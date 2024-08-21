@@ -99,7 +99,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Check with changes
               uses: gradle/gradle-build-action@v3
@@ -110,7 +110,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Checkout base version
               run: git checkout ${{ needs.prepare.outputs.base-commit }}
@@ -124,7 +124,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Checkout current version
               run: git checkout ${{ github.sha }}

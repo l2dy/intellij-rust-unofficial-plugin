@@ -195,7 +195,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Build
               uses: gradle/gradle-build-action@v3
@@ -204,7 +204,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Check
               uses: gradle/gradle-build-action@v3
@@ -213,7 +213,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
             - name: Collect fail reports
               if: failure()
@@ -234,7 +234,7 @@ jobs:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
                       caches/modules-2/files-2.1/idea
-                      caches/transforms-3
+                      caches/transforms-*
 
     check:
         needs: [ check-license, check-plugin ]
