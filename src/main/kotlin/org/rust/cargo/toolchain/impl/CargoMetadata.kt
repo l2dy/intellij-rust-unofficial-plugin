@@ -59,6 +59,11 @@ object CargoMetadata {
         val workspace_members: List<String>,
 
         /**
+         * Ids of packages that are default members of the cargo workspace
+         */
+        val workspace_default_members: List<String>?,
+
+        /**
          * Path to workspace root folder
          */
         val workspace_root: String
