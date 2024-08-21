@@ -585,6 +585,10 @@ task("updateCargoOptions") {
     }
 }
 
+tasks.wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
 
 fun Writer.writeCargoOptions(baseUrl: String) {
 
