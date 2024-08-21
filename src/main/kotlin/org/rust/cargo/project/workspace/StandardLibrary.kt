@@ -234,6 +234,7 @@ class StdlibDataFetcher private constructor(
             CargoMetadata.Resolve(allNodes),
             1,
             workspaceMembers,
+            workspaceMembers,
             srcDir.path
         )
         val stdlibWorkspaceData = CargoMetadata.clean(stdlibMetadataProject)
@@ -321,7 +322,10 @@ class StdlibDataFetcher private constructor(
             throw it
         }
 
-        val rootPackageId = metadataProject.workspace_members.first()
+        // BACKCOMPAT: Rust 1.82. The standard library became a workspace since Rust 1.82.
+        // BACKCOMPAT: Rust 1.71. `workspace_default_members` was added to `cargo metadata` in 1.71.
+        val rootPackageId =
+            metadataProject.workspace_default_members?.first() ?: metadataProject.workspace_members.first()
         metadataProject.walk(rootPackageId, true)
     }
 
