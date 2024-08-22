@@ -198,13 +198,13 @@ jobs:
                       caches/*/transforms
 
             - name: Download
-              run: ./gradlew :resolveDependencies -Pkotlin.incremental=false --no-daemon
+              run: ./gradlew :resolveDependencies "-Pkotlin.incremental=false" --no-daemon
 
             - name: Build
-              run: ./gradlew assemble testClasses -Pkotlin.incremental=false --no-daemon
+              run: ./gradlew assemble testClasses "-Pkotlin.incremental=false" --no-daemon
 
             - name: Check
-              run: ./gradlew check -PexcludeTests=org/rustPerformanceTests/** --continue -Pkotlin.incremental=false --no-daemon
+              run: ./gradlew check "-PexcludeTests=org/rustPerformanceTests/**" --continue "-Pkotlin.incremental=false" --no-daemon
 
             - name: Collect fail reports
               if: failure()
