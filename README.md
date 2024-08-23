@@ -11,6 +11,9 @@ For any additional information refer to [their announcement](https://blog.jetbra
 [There is an official proprietary Rust plugin from JetBrains IDEs](https://plugins.jetbrains.com/plugin/22407-rust).
 You may find it in the official marketplace and in RustRover.
 
+###### ⚠ Caution
+This plugin should not be installed simultaneously with Rust plugins from the marketplace. IDEs are acting weird because of the name collisions.
+
 ## Installation & Usage
 Grab a zip archive from `Releases` and then add the archive as a "plugin from a filesystem" (File -> Settings -> Gear Icon on the top right -> Install plugin from disk)
 To open an existing project, use **File | Open** and point to the directory containing `Cargo.toml`.
@@ -22,8 +25,6 @@ For creating projects, use the **Rust** template.
 
 
 ## Compatible IDEs
-⚠ this plugin should not be installed simultaneously with Rust plugins from marketplace. IDEs are acting weird because of the name collisions.
-
 So far this plugin can probably be installed onto the same IDE list that was available the [original plugin](https://github.com/intellij-rust/intellij-rust/?tab=readme-ov-file#compatible-ides).
 
 As for now, plugin supports latest stable and the most previous stable version (although it can be changed in future).
