@@ -1,5 +1,5 @@
 # IntelliJ Rust Community Plugin
-This project is a community fork of now deprecated OpenSource [Rust plugin for Jetbrains IDEs](https://plugins.jetbrains.com/plugin/8182--come-on-dont-kill-opensource-rust) (https://github.com/intellij-rust/intellij-rust)
+This project is a community fork of now deprecated OpenSource [Rust plugin for Jetbrains IDEs](https://plugins.jetbrains.com/plugin/8182--deprecated-rust) (https://github.com/intellij-rust/intellij-rust)
 This repo is not relying on Jetbrains' "c-capable" or "rust-capable" plugins, which means that it potentially might be installed onto each and any Jetbrains IDE
 
 The original repo has become unsupported after the announcement of RustRover, but there is a lot of opensource in this repo that we can leverage to keep the community opensource plugin alive.
@@ -22,11 +22,12 @@ For creating projects, use the **Rust** template.
 
 
 ## Compatible IDEs
+⚠ this plugin should not be installed simultaneously with Rust plugins from marketplace. IDEs are acting weird because of the name collisions.
 
 So far this plugin can probably be installed onto the same IDE list that was available the [original plugin](https://github.com/intellij-rust/intellij-rust/?tab=readme-ov-file#compatible-ides).
 
 As for now, plugin supports latest stable and the most previous stable version (although it can be changed in future).
-Consider using the original Rust plugin if you need to work with a version earlier than 2024.1; Consider contributing if this community plugin  does not enable support of the new IDEs fast enough.
+Consider using the original Rust plugin if you need to work with a version earlier than 2024.1; Consider contributing if this community plugin does not enable support of the new IDEs fast enough.
 
 This plugin has been proven to work with:
 * PyCharm 2024.2 Community as well as Professional
