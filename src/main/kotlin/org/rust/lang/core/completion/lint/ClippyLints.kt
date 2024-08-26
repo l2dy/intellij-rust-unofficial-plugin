@@ -638,6 +638,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("to_string_in_format_args", false),
     Lint("to_string_trait_impl", false),
     Lint("todo", false),
+    Lint("too_long_first_doc_paragraph", false),
     Lint("too_many_arguments", false),
     Lint("too_many_lines", false),
     Lint("toplevel_ref_arg", false),
