@@ -374,16 +374,20 @@ object CargoMetadata {
             ?: throw CargoMetadataException("`cargo metadata` reported a package which does not exist at `$manifest_path`")
 
         val features = features.toMutableMap()
+        val edition = edition.cleanEdition()
 
+        // Backcompat Cargo 1.82.0-nightly: Rust 2024 no longer adds implicit features for optional dependencies.
         // Backcompat Cargo 1.59.0: optional dependencies are features implicitly.
-        // Since 1.60.0 these implicit features are returned from cargo as usual
-        val allFeatureDependencies = features.values.flatten().toSet()
-        for (dependency in dependencies) {
-            val featureName = dependency.rename ?: dependency.name
-            if (dependency.optional && featureName !in features) {
-                val depFeatureName = "dep:$featureName"
-                if (depFeatureName !in allFeatureDependencies) {
-                    features[featureName] = listOf(depFeatureName)
+        // Since 1.60.0 and before Rust 2024, these implicit features are returned from cargo as usual.
+        if (edition < Edition.EDITION_2024) {
+            val allFeatureDependencies = features.values.flatten().toSet()
+            for (dependency in dependencies) {
+                val featureName = dependency.rename ?: dependency.name
+                if (dependency.optional && featureName !in features) {
+                    val depFeatureName = "dep:$featureName"
+                    if (depFeatureName !in allFeatureDependencies) {
+                        features[featureName] = listOf(depFeatureName)
+                    }
                 }
             }
         }
@@ -429,7 +433,7 @@ object CargoMetadata {
             targets.mapNotNull { it.clean(root, isWorkspaceMember) },
             source,
             origin = if (isWorkspaceMember) PackageOrigin.WORKSPACE else PackageOrigin.DEPENDENCY,
-            edition = edition.cleanEdition(),
+            edition = edition,
             features = features,
             enabledFeatures = enabledFeatures,
             cfgOptions = cfgOptions,
@@ -543,6 +547,7 @@ object CargoMetadata {
         Edition.EDITION_2015.presentation -> Edition.EDITION_2015
         Edition.EDITION_2018.presentation -> Edition.EDITION_2018
         Edition.EDITION_2021.presentation -> Edition.EDITION_2021
+        Edition.EDITION_2024.presentation -> Edition.EDITION_2024
         else -> Edition.EDITION_2015
     }
 

@@ -217,7 +217,8 @@ interface CargoWorkspace {
     enum class Edition(val presentation: String) {
         EDITION_2015("2015"),
         EDITION_2018("2018"),
-        EDITION_2021("2021");
+        EDITION_2021("2021"),
+        EDITION_2024("2024");
 
         companion object {
             val DEFAULT: Edition = EDITION_2018
