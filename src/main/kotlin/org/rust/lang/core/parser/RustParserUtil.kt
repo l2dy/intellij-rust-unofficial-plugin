@@ -665,6 +665,7 @@ object RustParserUtil : GeneratedParserUtilBase() {
     private val DEFAULT_NEXT_ELEMENTS: TokenSet = tokenSetOf(EXCL)
     private val ASYNC_NEXT_ELEMENTS: TokenSet = tokenSetOf(LBRACE, MOVE, OR)
     private val TRY_NEXT_ELEMENTS: TokenSet = tokenSetOf(LBRACE)
+    private val GEN_NEXT_ELEMENTS: TokenSet = tokenSetOf(LBRACE)
 
     @JvmStatic
     fun defaultKeyword(b: PsiBuilder, level: Int): Boolean = contextualKeyword(b, "default", DEFAULT)
@@ -689,6 +690,10 @@ object RustParserUtil : GeneratedParserUtilBase() {
     @JvmStatic
     fun tryKeyword(b: PsiBuilder, level: Int): Boolean =
         contextualKeyword(b, "try", TRY) { it in TRY_NEXT_ELEMENTS }
+
+    @JvmStatic
+    fun genKeyword(b: PsiBuilder, level: Int): Boolean =
+        contextualKeyword(b, "gen", GEN) { it in GEN_NEXT_ELEMENTS }
 
     @JvmStatic
     fun rawKeyword(b: PsiBuilder, level: Int): Boolean = contextualKeywordWithRollback(b, "raw", RAW)

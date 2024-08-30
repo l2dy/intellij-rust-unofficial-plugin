@@ -82,6 +82,7 @@
         DYN       = 'dyn_kw'
         ASYNC     = 'async_kw'
         TRY       = 'try_kw'
+        GEN       = 'gen_kw'
         RAW       = 'raw_kw'
 
         MACRO_KW  = 'macro'
@@ -314,6 +315,7 @@ private dyn ::= <<dynKeyword>>
 private async ::= <<asyncKeyword>>
 private asyncBlock ::= <<asyncBlockKeyword>>
 private try ::= <<tryKeyword>>
+private gen ::= <<genKeyword>>
 private raw ::= <<rawKeyword>>
 
 private AttrsAndVis ::= OuterAttr* Vis?
@@ -1133,7 +1135,7 @@ Expr ::= RetExpr
 
 private Expr_first ::= return | '|' | Path_first | '{' | '[' | '(' | '..' | '...' | '..=' | true | false | box | QUOTE_IDENTIFIER
   | '+' | '-' | '*' | '!' | '&' | static | move | AnyLitToken_first | while | if | for | continue | break  | loop | match | unsafe
-  | yield | "async" | "try" | '_'
+  | yield | "async" | "try" | "gen" | '_'
 
 // https://github.com/rust-lang/rfcs/blob/master/text/0092-struct-grammar.md
 NoStructLitExpr ::= <<exprMode 'StructLiteralsMode.OFF' 'StmtMode.OFF' Expr>> {
@@ -1151,7 +1153,7 @@ StmtModeExpr ::= <<exprMode 'StructLiteralsMode.ON' 'StmtMode.ON' Expr>> {
 
 private RestrictedConstExpr ::= <<withRestrictedConstExprMode 'RestrictedConstExprMode.ON' AnyExpr>> | never AnyExpr
 
-BlockExpr ::= OuterAttr* [ (unsafe | asyncBlock move? | try | const) &'{' ] LabelDecl? SimpleBlock {
+BlockExpr ::= OuterAttr* [ (unsafe | asyncBlock move? | try | gen | const) &'{' ] LabelDecl? SimpleBlock {
   implements = [ "org.rust.lang.core.psi.ext.RsLabeledExpression"
                  "org.rust.lang.core.psi.ext.RsOuterAttributeOwner" ]
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
