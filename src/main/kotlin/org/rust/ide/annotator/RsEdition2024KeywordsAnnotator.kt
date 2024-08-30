@@ -18,20 +18,20 @@ import org.rust.lang.core.psi.RsElementTypes.IDENTIFIER
 import org.rust.lang.core.psi.ext.*
 import org.rust.openapiext.isUnitTestMode
 
-class RsEdition2018KeywordsAnnotator : AnnotatorBase() {
+class RsEdition2024KeywordsAnnotator : AnnotatorBase() {
     override fun annotateInternal(element: PsiElement, holder: AnnotationHolder) {
         if (element.edition == null) return
 
-        if (!isEdition2018Keyword(element)) return
+        if (!isEdition2024Keyword(element)) return
 
-        val isAtLeastEdition2018 = element.isAtLeastEdition2018
+        val isAtLeastEdition2024 = element.isAtLeastEdition2024
         val isIdentifier = element.elementType == IDENTIFIER
         val isEnabledByCfg = element.isEnabledByCfg
         when {
-            isAtLeastEdition2018 && isIdentifier && isNameIdentifier(element) ->
-                holder.newAnnotation(HighlightSeverity.ERROR, RsBundle.message("inspection.message.reserved.keyword.in.edition", element.text, "2018")).create()
+            isAtLeastEdition2024 && isIdentifier && isNameIdentifier(element) ->
+                holder.newAnnotation(HighlightSeverity.ERROR, RsBundle.message("inspection.message.reserved.keyword.in.edition", element.text, "2024")).create()
 
-            isAtLeastEdition2018 && !isIdentifier && isEnabledByCfg -> {
+            isAtLeastEdition2024 && !isIdentifier && isEnabledByCfg -> {
                 if (!holder.isBatchMode) {
                     val severity = if (isUnitTestMode) RsColor.KEYWORD.testSeverity else HighlightSeverity.INFORMATION
                     holder.newSilentAnnotation(severity)
@@ -39,7 +39,7 @@ class RsEdition2018KeywordsAnnotator : AnnotatorBase() {
                 }
             }
 
-            isAtLeastEdition2018 && !isIdentifier && !isEnabledByCfg -> {
+            isAtLeastEdition2024 && !isIdentifier && !isEnabledByCfg -> {
                 if (!holder.isBatchMode) {
                     val colorScheme = EditorColorsManager.getInstance().globalScheme
                     val keywordTextAttributes = colorScheme.getAttributes(RsColor.KEYWORD.textAttributesKey)
@@ -51,19 +51,19 @@ class RsEdition2018KeywordsAnnotator : AnnotatorBase() {
                 }
             }
 
-            !isAtLeastEdition2018 && !isIdentifier ->
-                holder.newAnnotation(HighlightSeverity.ERROR, RsBundle.message("inspection.message.this.feature.only.available.in.edition", "2018")).create()
+            !isAtLeastEdition2024 && !isIdentifier ->
+                holder.newAnnotation(HighlightSeverity.ERROR, RsBundle.message("inspection.message.this.feature.only.available.in.edition", "2024")).create()
         }
     }
 
     companion object {
-        private val EDITION_2018_RESERVED_NAMES: Set<String> = hashSetOf("async", "await", "try")
+        private val EDITION_2024_RESERVED_NAMES: Set<String> = hashSetOf("gen")
 
-        fun isEdition2018Keyword(element: PsiElement): Boolean =
-            (element.elementType == IDENTIFIER && element.text in EDITION_2018_RESERVED_NAMES &&
+        fun isEdition2024Keyword(element: PsiElement): Boolean =
+            (element.elementType == IDENTIFIER && element.text in EDITION_2024_RESERVED_NAMES &&
                 element.parent !is RsMacro && element.parent?.parent !is RsMacroCall &&
                 element.parent !is RsFieldLookup ||
-                element.elementType in RS_EDITION_2018_KEYWORDS) &&
+                element.elementType in RS_EDITION_2024_KEYWORDS) &&
                 PsiTreeUtil.getParentOfType(element, RsUseItem::class.java, RsMetaItemArgs::class.java) == null
 
         fun isNameIdentifier(element: PsiElement): Boolean {

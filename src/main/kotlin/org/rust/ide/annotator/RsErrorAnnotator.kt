@@ -1907,7 +1907,13 @@ private fun String?.isIllegalLifetimeName(edition: Edition?): Boolean {
 private fun String.isInvalidLabelName(edition: Edition?): Boolean = removePrefix("'") in keywords(edition)
 
 private fun keywords(edition: Edition?): Set<String> =
-    if (edition == null || edition > Edition.EDITION_2015) KEYWORDS_EDITION_2018 else KEYWORDS_EDITION_2015
+    when {
+        edition == null -> KEYWORDS_EDITION_2015
+
+        edition >= Edition.EDITION_2024 -> KEYWORDS_EDITION_2024
+        edition >= Edition.EDITION_2018 -> KEYWORDS_EDITION_2018
+        else -> KEYWORDS_EDITION_2015
+    }
 
 private val KEYWORDS_EDITION_2015: Set<String> = hashSetOf(
     "abstract", "become", "box", "do", "final", "macro", "override", "priv", "typeof", "unsized", "virtual", "yield",
@@ -1917,3 +1923,5 @@ private val KEYWORDS_EDITION_2015: Set<String> = hashSetOf(
 )
 
 private val KEYWORDS_EDITION_2018: Set<String> = KEYWORDS_EDITION_2015 + hashSetOf("async", "await", "dyn", "try")
+
+private val KEYWORDS_EDITION_2024: Set<String> = KEYWORDS_EDITION_2018 + hashSetOf("gen")

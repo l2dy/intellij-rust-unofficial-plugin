@@ -82,6 +82,9 @@ val PsiElement.isAtLeastEdition2018: Boolean
 val PsiElement.isAtLeastEdition2021: Boolean
     get() = isAtLeastEdition(Edition.EDITION_2021)
 
+val PsiElement.isAtLeastEdition2024: Boolean
+    get() = isAtLeastEdition(Edition.EDITION_2024)
+
 fun PsiElement.isAtLeastEdition(ed: Edition) = (edition ?: Edition.DEFAULT) >= ed
 
 /**
