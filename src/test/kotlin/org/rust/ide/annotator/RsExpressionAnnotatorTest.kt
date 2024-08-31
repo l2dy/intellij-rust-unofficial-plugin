@@ -64,6 +64,11 @@ class RsExpressionAnnotatorTest : RsAnnotatorTestBase(RsExpressionAnnotator::cla
 
         struct Empty {}
 
+        struct Dup {
+            foo: i32,
+            bar: i32,
+        }
+
         enum E {
             V {
                 foo: i32
@@ -132,6 +137,13 @@ class RsExpressionAnnotatorTest : RsAnnotatorTestBase(RsExpressionAnnotator::cla
             };
 
             let _ = Empty { };
+
+            let _ = Dup {
+                #[cfg(test)] foo: 0,
+                #[cfg(not(test))] foo: 1,
+                #[cfg(intellij_rust)] bar: 0,
+                #[cfg(not(intellij_rust))] bar: 1,
+            };
 
             let _ = <error descr="Some fields are missing">E::V</error> {
                 <error descr="No such field">bar</error>: 92
