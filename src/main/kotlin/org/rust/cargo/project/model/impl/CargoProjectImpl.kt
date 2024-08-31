@@ -181,6 +181,9 @@ open class CargoProjectsServiceImpl(
     // Guarded by the platform RWLock
     override var initialized: Boolean = false
 
+    @Volatile
+    override var isRefreshing: Boolean = false
+
     private var isLegacyRustNotificationShowed: Boolean = false
 
     private fun registerProjectAware(project: Project, disposable: Disposable) {
@@ -360,6 +363,7 @@ open class CargoProjectsServiceImpl(
         val refreshStatusPublisher = project.messageBus.syncPublisher(CargoProjectsService.CARGO_PROJECTS_REFRESH_TOPIC)
 
         val wrappedUpdater = { projects: List<CargoProjectImpl> ->
+            isRefreshing = true
             refreshStatusPublisher.onRefreshStarted()
             updater(projects)
         }
@@ -395,6 +399,7 @@ open class CargoProjectsServiceImpl(
                 projects
             }.handle { projects, err ->
                 val status = err?.toRefreshStatus() ?: CargoRefreshStatus.SUCCESS
+                isRefreshing = false
                 refreshStatusPublisher.onRefreshFinished(status)
                 projects
             }

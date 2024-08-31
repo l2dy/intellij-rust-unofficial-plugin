@@ -46,6 +46,7 @@ interface CargoProjectsService {
     val allProjects: Collection<CargoProject>
     val hasAtLeastOneValidProject: Boolean
     val initialized: Boolean
+    val isRefreshing: Boolean
 
     fun findProjectForFile(file: VirtualFile): CargoProject?
     fun findPackageForFile(file: VirtualFile): CargoWorkspace.Package?

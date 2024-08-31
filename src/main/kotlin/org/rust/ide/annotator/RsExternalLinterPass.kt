@@ -31,6 +31,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiFile
 import com.intellij.util.ui.update.MergingUpdateQueue
 import com.intellij.util.ui.update.Update
+import org.rust.cargo.project.model.CargoProjectsService
+import org.rust.cargo.project.model.cargoProjects
 import org.rust.cargo.project.settings.externalLinterSettings
 import org.rust.cargo.project.settings.toolchain
 import org.rust.cargo.project.workspace.PackageOrigin
@@ -65,14 +67,30 @@ class RsExternalLinterPass(
         disposable = myProject.messageBus.createDisposableOnAnyPsiChange()
             .also { Disposer.register(moduleOrProject, it) }
 
-        val args = CargoCheckArgs.forTarget(myProject, cargoTarget)
-        annotationInfo = RsExternalLinterUtils.checkLazily(
-            myProject.toolchain ?: return,
-            myProject,
-            disposable,
-            cargoTarget.pkg.workspace.contentRoot,
-            args
+        myProject.messageBus.connect(disposable).subscribe(
+            CargoProjectsService.CARGO_PROJECTS_REFRESH_TOPIC,
+            object : CargoProjectsService.CargoProjectsRefreshListener {
+                override fun onRefreshStarted() {
+                    Disposer.dispose(disposable)
+                }
+
+                override fun onRefreshFinished(status: CargoProjectsService.CargoRefreshStatus) {
+                }
+            }
         )
+
+        if (myProject.cargoProjects.isRefreshing) {
+            Disposer.dispose(disposable)
+        } else {
+            val args = CargoCheckArgs.forTarget(myProject, cargoTarget)
+            annotationInfo = RsExternalLinterUtils.checkLazily(
+                myProject.toolchain ?: return,
+                myProject,
+                disposable,
+                cargoTarget.pkg.workspace.contentRoot,
+                args
+            )
+        }
     }
 
     override fun doApplyInformationToEditor() {
