@@ -359,7 +359,7 @@ val RsExpr.hasSideEffects: Boolean
         is RsCastExpr -> expr.hasSideEffects
         is RsDotExpr -> expr.hasSideEffects || methodCall != null
         is RsTupleExpr -> exprList.any { it.hasSideEffects }
-        is RsStructLiteral -> structLiteralBody.structLiteralFieldList.any { it.expr?.hasSideEffects ?: false }
+        is RsStructLiteral -> structLiteralBody.expandedFields.any { it.expr?.hasSideEffects ?: false }
         is RsBinaryExpr -> exprList.any { it.hasSideEffects }
         is RsUnaryExpr -> expr?.hasSideEffects ?: false
         else -> true

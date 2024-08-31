@@ -597,7 +597,7 @@ private class RegionResolutionVisitor {
         when (expr) {
             is RsArrayExpr -> expr.exprList.forEach(::visitExpr)
             is RsStructLiteral -> {
-                expr.structLiteralBody.structLiteralFieldList.mapNotNull { it.expr }.forEach(::visitExpr)
+                expr.structLiteralBody.expandedFields.mapNotNull { it.expr }.forEach(::visitExpr)
                 expr.structLiteralBody.expr?.let(::visitExpr)
             }
 
@@ -820,7 +820,7 @@ private class RegionResolutionVisitor {
             }
 
             is RsStructLiteral -> {
-                for (field in expr.structLiteralBody.structLiteralFieldList) {
+                for (field in expr.structLiteralBody.expandedFields) {
                     recordRvalueScopeIfBorrowExpr(field.expr ?: continue, lifetime)
                 }
             }

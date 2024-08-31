@@ -326,12 +326,12 @@ class MirrorContext(contextOwner: RsInferenceContextOwner) {
                 val base = body.expr?.let { TODO() }
                 when (val item = ty.item) {
                     is RsStructItem -> {
-                        val fields = fieldRefs(body.structLiteralFieldList, item.namedFields)
+                        val fields = fieldRefs(body.expandedFields, item.namedFields)
                         ThirExpr.Adt(item, variantIndex = 0, fields, base, ty, span)
                     }
                     is RsEnumItem -> {
                         val variant = expr.path.reference?.resolve() as? RsEnumVariant ?: error("Unexpected resolve result")
-                        val fields = fieldRefs(body.structLiteralFieldList, variant.namedFields)
+                        val fields = fieldRefs(body.expandedFields, variant.namedFields)
                         val variantIndex = item.indexOfVariant(variant) ?: error("Can't find enum variant")
                         ThirExpr.Adt(item, variantIndex, fields, base, ty, span)
                     }

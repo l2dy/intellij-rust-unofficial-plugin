@@ -7,6 +7,7 @@ package org.rust.ide.utils
 
 import org.rust.lang.core.psi.*
 import org.rust.lang.core.psi.ext.LogicOp
+import org.rust.lang.core.psi.ext.expandedFields
 import org.rust.lang.core.psi.ext.operatorType
 import org.rust.lang.core.psi.ext.unwrapParenExprs
 
@@ -41,7 +42,7 @@ fun RsExpr.isPure(): Boolean? {
             // size is a compile-time constant, so it is always pure
         }
         is RsStructLiteral -> when (structLiteralBody.dotdot) {
-            null -> structLiteralBody.structLiteralFieldList
+            null -> structLiteralBody.expandedFields
                 .map { it.expr }
                 .allMaybe { it?.isPure() } // TODO: Why `it` can be null?
             else -> null // TODO: handle update case (`Point{ y: 0, z: 10, .. base}`)

@@ -554,7 +554,7 @@ class RsTypeInferenceWalker(
         val boundElement = expr.path.reference?.advancedDeepResolve()
 
         if (boundElement == null) {
-            for (field in expr.structLiteralBody.structLiteralFieldList) {
+            for (field in expr.structLiteralBody.expandedFields) {
                 field.expr?.inferType()
             }
             // Handle struct update syntax { ..expression }
@@ -585,10 +585,10 @@ class RsTypeInferenceWalker(
         inferStructTypeArguments(expr, typeParameters)
 
         if (element is RsStructItem && element.kind == RsStructKind.UNION
-            && expr.structLiteralBody.structLiteralFieldList.size != 1
+            && expr.structLiteralBody.expandedFields.size != 1
         ) {
             val fixes = mutableListOf<LocalQuickFix>()
-            for (e in expr.structLiteralBody.structLiteralFieldList) {
+            for (e in expr.structLiteralBody.expandedFields) {
                 fixes.add(RemoveStructLiteralFieldFix(e))
             }
             ctx.addDiagnostic(RsDiagnostic.UnionExprWithWrongFieldCount(expr, fixes))
@@ -601,7 +601,7 @@ class RsTypeInferenceWalker(
     }
 
     private fun inferStructTypeArguments(literal: RsStructLiteral, typeParameters: Substitution) {
-        literal.structLiteralBody.structLiteralFieldList.filterNotNull().forEach { field ->
+        literal.structLiteralBody.expandedFields.forEach { field ->
             val fieldTy = field.type.substitute(typeParameters)
             val expr = field.expr
 

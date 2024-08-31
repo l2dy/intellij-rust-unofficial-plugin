@@ -47,7 +47,7 @@ class RsStructLiteralParameterInfoHandler : RsAsyncParameterInfoHandler<RsStruct
         val description = context.objectsToView.singleOrNull() as? Description ?: return
         val declaredFields = description.fields.map { it.name }
 
-        val fields = parameterOwner.structLiteralFieldList.mapNotNullToSet { it.referenceName }
+        val fields = parameterOwner.expandedFields.mapNotNullToSet { it.referenceName }
         val currentField = findCurrentFieldName(parameterOwner, context.offset)
 
         val index = when {

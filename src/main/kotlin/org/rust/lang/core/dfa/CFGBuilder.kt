@@ -580,7 +580,7 @@ class CFGBuilder(
 
     override fun visitStructLiteral(structLiteral: RsStructLiteral) {
         val structLiteralBody = structLiteral.structLiteralBody
-        val fields = structLiteralBody.structLiteralFieldList
+        val fields = structLiteralBody.expandedFields
         val fieldsExit = fields.fold(pred) { acc, subExpr -> process(subExpr, acc) }
         val exprExit = process(structLiteralBody.expr, fieldsExit)
         finishWithAstNode(structLiteral, exprExit)

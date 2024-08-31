@@ -221,7 +221,7 @@ class ExprUseWalker(private val delegate: Delegate, private val mc: MemoryCatego
             }
 
             is RsStructLiteral -> {
-                walkStructExpr(expr.structLiteralBody.structLiteralFieldList, expr.structLiteralBody.expr)
+                walkStructExpr(expr.structLiteralBody.expandedFields, expr.structLiteralBody.expr)
             }
 
             is RsTupleExpr -> {

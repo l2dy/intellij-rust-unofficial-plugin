@@ -38,7 +38,7 @@ class RsExpressionAnnotator : AnnotatorBase() {
         literal: RsStructLiteral
     ) {
         val body = literal.structLiteralBody
-        body.structLiteralFieldList
+        body.expandedFields
             .filter { field ->
                 field.reference.multiResolve().none { it is RsFieldDecl }
             }
@@ -50,7 +50,7 @@ class RsExpressionAnnotator : AnnotatorBase() {
                 annotationBuilder.highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL).create()
             }
 
-        for (field in body.structLiteralFieldList.findDuplicateFields()) {
+        for (field in body.expandedFields.findDuplicateFields()) {
             holder.createErrorAnnotation(field.referenceNameElement, RsBundle.message("inspection.message.duplicate.field"))
         }
 
@@ -131,6 +131,6 @@ private fun Collection<RsStructLiteralField>.findDuplicateFields(): Collection<R
 }
 
 fun calculateMissingFields(expr: RsStructLiteralBody, decl: RsFieldsOwner): List<RsFieldDecl> {
-    val declaredFields = expr.structLiteralFieldList.map { it.referenceName }.toSet()
+    val declaredFields = expr.expandedFields.map { it.referenceName }.toSet()
     return decl.fields.filter { it.name !in declaredFields }
 }
