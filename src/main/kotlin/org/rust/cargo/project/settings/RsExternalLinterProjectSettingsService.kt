@@ -13,6 +13,7 @@ import com.intellij.openapi.project.Project
 import org.rust.cargo.project.settings.RsExternalLinterProjectSettingsService.RsExternalLinterProjectSettings
 import org.rust.cargo.toolchain.ExternalLinter
 import org.rust.cargo.toolchain.RustChannel
+import org.rust.openapiext.isUnitTestMode
 
 val Project.externalLinterSettings: RsExternalLinterProjectSettingsService
     get() = service<RsExternalLinterProjectSettingsService>()
@@ -41,7 +42,9 @@ class RsExternalLinterProjectSettingsService(
         @AffectsHighlighting
         var envs by map<String, String>()
         @AffectsHighlighting
-        var runOnTheFly by property(false)
+        var runOnTheFly
+        // `true` by default, except in tests
+            by property(!isUnitTestMode)
 
         override fun copy(): RsExternalLinterProjectSettings {
             val state = RsExternalLinterProjectSettings()
