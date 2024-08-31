@@ -50,7 +50,7 @@ class RsExpressionAnnotator : AnnotatorBase() {
                 annotationBuilder.highlightType(ProblemHighlightType.LIKE_UNKNOWN_SYMBOL).create()
             }
 
-        for (field in body.structLiteralFieldList.findDuplicateReferences()) {
+        for (field in body.structLiteralFieldList.findDuplicateFields()) {
             holder.createErrorAnnotation(field.referenceNameElement, RsBundle.message("inspection.message.duplicate.field"))
         }
 
@@ -115,15 +115,17 @@ private class RedundantParenthesisVisitor(private val holder: RsAnnotationHolder
     }
 }
 
-private fun <T : RsMandatoryReferenceElement> Collection<T>.findDuplicateReferences(): Collection<T> {
+private fun Collection<RsStructLiteralField>.findDuplicateFields(): Collection<RsStructLiteralField> {
     val names = HashSet<String>(size)
-    val result = SmartList<T>()
+    val result = SmartList<RsStructLiteralField>()
     for (item in this) {
-        val name = item.referenceName
-        if (name in names) {
-            result += item
+        if (!item.isCfgUnknownSelf) {
+            val name = item.referenceName
+            if (name in names) {
+                result += item
+            }
+            names += name
         }
-        names += name
     }
     return result
 }
