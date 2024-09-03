@@ -304,6 +304,36 @@ class RsTypeResolvingTest : RsTypificationTestBase() {
         }                         //^ <S as A>::Item
     """)
 
+    fun `test inherited associated types from 1 bound`() = testType("""
+        trait Parent {
+            type Item;
+        }
+
+        trait Child1: Parent {}
+
+        trait Child2: Parent {}
+
+        trait Tr1 {}
+
+        fn f<T>(t: T) where T: Child1, T::Item: Tr1 {}
+                                        //^ <T as Parent>::Item
+    """)
+
+    fun `test inherited associated types from 2 bounds`() = testType("""
+        trait Parent {
+            type Item;
+        }
+
+        trait Child1: Parent {}
+
+        trait Child2: Parent {}
+
+        trait Tr1 {}
+
+        fn f<T>(t: T) where T: Child1 + Child2, T::Item: Tr1 {}
+                                                 //^ <T as Parent>::Item
+    """)
+
     fun `test generic trait object`() = testType("""
         trait Trait<A> {}
         fn foo(_: &Trait<u8>) { unimplemented!() }
