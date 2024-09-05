@@ -61,6 +61,7 @@ val RUSTC_LINTS: List<Lint> = listOf(
     Lint("edition_2024_expr_fragment_specifier", false),
     Lint("elided_lifetimes_in_associated_constant", false),
     Lint("elided_lifetimes_in_paths", false),
+    Lint("elided_named_lifetimes", false),
     Lint("ellipsis_inclusive_range_patterns", false),
     Lint("enum_intrinsics_non_enums", false),
     Lint("explicit_builtin_cfgs_in_flags", false),
@@ -165,6 +166,7 @@ val RUSTC_LINTS: List<Lint> = listOf(
     Lint("stable_features", false),
     Lint("static_mut_refs", false),
     Lint("suspicious_double_ref_op", false),
+    Lint("tail_expr_drop_order", false),
     Lint("temporary_cstring_as_ptr", false),
     Lint("test_unstable_lint", false),
     Lint("text_direction_codepoint_in_comment", false),
@@ -228,6 +230,5 @@ val RUSTC_LINTS: List<Lint> = listOf(
     Lint("variant_size_differences", false),
     Lint("warnings", false),
     Lint("wasm_c_abi", false),
-    Lint("while_true", false),
-    Lint("writes_through_immutable_pointer", false)
+    Lint("while_true", false)
 )
