@@ -248,6 +248,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("invalid_null_ptr_usage", false),
     Lint("invalid_regex", false),
     Lint("invalid_upcast_comparisons", false),
+    Lint("inverted_saturating_sub", false),
     Lint("invisible_characters", false),
     Lint("is_digit_ascii_radix", false),
     Lint("items_after_statements", false),
@@ -492,6 +493,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("pathbuf_init_then_push", false),
     Lint("pattern_type_mismatch", false),
     Lint("permissions_set_readonly_false", false),
+    Lint("pointers_in_nomem_asm_block", false),
     Lint("possible_missing_comma", false),
     Lint("precedence", false),
     Lint("print_in_format_impl", false),
@@ -638,6 +640,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("to_string_in_format_args", false),
     Lint("to_string_trait_impl", false),
     Lint("todo", false),
+    Lint("too_long_first_doc_paragraph", false),
     Lint("too_many_arguments", false),
     Lint("too_many_lines", false),
     Lint("toplevel_ref_arg", false),
@@ -732,6 +735,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("use_debug", false),
     Lint("use_self", false),
     Lint("used_underscore_binding", false),
+    Lint("used_underscore_items", false),
     Lint("useless_asref", false),
     Lint("useless_attribute", false),
     Lint("useless_conversion", false),
@@ -764,5 +768,6 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("zero_ptr", false),
     Lint("zero_repeat_side_effects", false),
     Lint("zero_sized_map_values", false),
+    Lint("zombie_processes", false),
     Lint("zst_offset", false)
 )
