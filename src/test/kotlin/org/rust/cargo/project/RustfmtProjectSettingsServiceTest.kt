@@ -21,7 +21,6 @@ class RustfmtProjectSettingsServiceTest : RsProjectSettingsServiceTestBase() {
                 </map>
               </option>
               <option name="runRustfmtOnSave" value="true" />
-              <option name="useRustfmt" value="true" />
             </RustfmtProjectSettings>
         """)
         assertEquals("--unstable-features", service.additionalArguments)
