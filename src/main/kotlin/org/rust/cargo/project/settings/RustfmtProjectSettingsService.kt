@@ -32,7 +32,7 @@ class RustfmtProjectSettingsService(
         var additionalArguments by property("") { it.isEmpty() }
         var channel by enum(RustChannel.DEFAULT)
         var envs by map<String, String>()
-        var useRustfmt by property(false)
+        var useRustfmt by property(true)
         var runRustfmtOnSave by property(false)
 
         override fun copy(): RustfmtProjectSettings {
