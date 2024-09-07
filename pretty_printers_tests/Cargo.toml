@@ -1,0 +1,19 @@
+[package]
+name = "pretty_printers_test"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# BACKCOMPAT: Rust 1.59
+toml = "0.5.11"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+rustc_version_runtime = "0.2.1"
+
+[lib]
+name = "test_runner"
+path = "src/test_runner.rs"
+
+[[bin]]
+name = "pretty_printers_test"
+path = "src/main.rs"

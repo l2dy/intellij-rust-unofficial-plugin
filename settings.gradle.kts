@@ -4,6 +4,7 @@ include("plugin")
 include(
     "grammar-kit-fake-psi-deps",
     "idea",
+    "debugger",
     "copyright",
     "coverage",
     "duplicates",
