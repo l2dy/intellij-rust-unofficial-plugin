@@ -24,12 +24,14 @@ class RsSmartEnterProcessor : SmartEnterProcessorWithFixers() {
     init {
         addFixers(
             MethodCallFixer(),
+            MissingSimpleBlockFixer(),
             SemicolonFixer(),
             CommaFixer(),
             FunctionOrStructFixer()
         )
 
         addEnterProcessors(
+            AfterSimpleBlockParentEnterProcessor(),
             AfterSemicolonEnterProcessor(),
             AfterFunctionOrStructEnterProcessor(),
             PlainEnterProcessor()

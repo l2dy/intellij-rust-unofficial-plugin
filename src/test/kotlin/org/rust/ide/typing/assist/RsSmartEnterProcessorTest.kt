@@ -353,6 +353,38 @@ class RsSmartEnterProcessorTest : RsTestBase() {
         }
     """)
 
+    fun `test fix if`() = doTest("""
+        fn main() {
+            if a/*caret*/
+        }
+    """, """
+        fn main() {
+            if a {
+                /*caret*/
+            }
+        }
+    """)
+
+    fun `test fix else if`() = doTest("""
+        fn main() {
+            if a {
+                1
+            } else if b {
+                2
+            } else if c/*caret*/
+        }
+    """, """
+        fn main() {
+            if a {
+                1
+            } else if b {
+                2
+            } else if c {
+                /*caret*/
+            }
+        }
+    """)
+
     fun `test block`() = doTest("""
         fn main() {
             {
