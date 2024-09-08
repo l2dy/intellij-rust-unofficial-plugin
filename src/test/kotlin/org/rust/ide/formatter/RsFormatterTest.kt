@@ -765,6 +765,16 @@ class RsFormatterTest : RsFormatterTestBase() {
         fn main() {}
     """)
 
+    fun `test outer attr let declaration indent`() = checkNotChanged("""
+        fn main() {
+            #[cfg(test)]
+            let foo = 0;
+            #[cfg(not(test))]
+            let foo
+                = 1;
+        }
+    """)
+
     private fun common() = getSettings(RsLanguage)
     private fun custom() = settings.rust
 }
