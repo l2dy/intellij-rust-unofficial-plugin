@@ -353,6 +353,35 @@ class RsSmartEnterProcessorTest : RsTestBase() {
         }
     """)
 
+    fun `test block`() = doTest("""
+        fn main() {
+            {
+                1
+            }/*caret*/
+        }
+    """, """
+        fn main() {
+            {
+                1
+            }
+            /*caret*/
+        }
+    """)
+
+    fun `test let loop block`() = doTest("""
+        fn main() {
+            let i = loop {
+                break 1;
+            }/*caret*/
+        }
+    """, """
+        fn main() {
+            let i = loop {
+                break 1;
+            };/*caret*/
+        }
+    """)
+
     fun `test empty line`() = doTest("""
         fn main() {
             let a = 123;

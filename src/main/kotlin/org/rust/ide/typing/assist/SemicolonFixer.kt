@@ -21,6 +21,7 @@ class SemicolonFixer : SmartEnterProcessorWithFixers.Fixer<RsSmartEnterProcessor
     override fun apply(editor: Editor, processor: RsSmartEnterProcessor, element: PsiElement) {
         val parent = element.parent
         if (parent !is RsBlock && parent !is RsMod && parent !is RsMembers) return
+        if (element.isLastChildBlockExpr()) return
         if (element.node.findChildByType(SEMICOLON) != null) return
         editor.document.insertString(element.endOffset, ";")
     }
