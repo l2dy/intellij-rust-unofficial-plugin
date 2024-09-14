@@ -5,22 +5,18 @@
 
 package org.rust
 
-import com.intellij.execution.process.ProcessOutputType
 import com.intellij.ide.util.treeView.smartTree.Sorter
 import com.intellij.openapi.actionSystem.DataContext
-import com.intellij.openapi.util.Key
 import com.intellij.platform.navbar.NavBarItemPresentationData
 import com.intellij.platform.navbar.backend.NavBarItem
 import com.intellij.platform.navbar.backend.impl.pathToItem
 import com.intellij.util.concurrency.annotations.RequiresReadLock
 import org.jetbrains.annotations.TestOnly
 
-// BACKCOMPAT 2023.2: move to the RsAnsiEscapeDecoderTest companion
-val Key<*>.escapeSequence: String
-    get() = (this as? ProcessOutputType)?.escapeSequence ?: toString()
-
+// BACKCOMPAT 2024.1: use directly in RsCombinedVisibilityAlphaSorterTest
 val alphaSorterId = Sorter.getAlphaSorterId()
 
+// BACKCOMPAT 2024.1: move to RsNavBarTest
 @Suppress("UnstableApiUsage")
 @TestOnly
 @RequiresReadLock
@@ -40,6 +36,7 @@ fun contextNavBarPathStrings(ctx: DataContext): List<String> {
     }
 }
 
+// BACKCOMPAT 2024.1: unwrap to contextNavBarPathStrings
 fun contextNavBarPathStringsCompat(ctx: DataContext): List<String> {
     return contextNavBarPathStrings(ctx)
 }

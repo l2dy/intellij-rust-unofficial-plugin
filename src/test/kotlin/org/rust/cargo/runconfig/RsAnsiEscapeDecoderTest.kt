@@ -6,6 +6,7 @@
 package org.rust.cargo.runconfig
 
 import com.intellij.execution.process.AnsiEscapeDecoder
+import com.intellij.execution.process.ProcessOutputType
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.SystemInfo
@@ -13,7 +14,6 @@ import com.intellij.testFramework.HeavyPlatformTestCase
 import org.rust.cargo.runconfig.RsAnsiEscapeDecoder.Companion.ANSI_24_BIT_COLOR_FORMAT
 import org.rust.cargo.runconfig.RsAnsiEscapeDecoder.Companion.ANSI_8_BIT_COLOR_FORMAT
 import org.rust.cargo.runconfig.RsAnsiEscapeDecoder.Companion.CSI
-import org.rust.escapeSequence
 
 class RsAnsiEscapeDecoderTest : HeavyPlatformTestCase() {
 
@@ -285,6 +285,9 @@ class RsAnsiEscapeDecoderTest : HeavyPlatformTestCase() {
             expectedColoredChunks.addAll(text.expectedColoredChunks)
             assertEquals(expectedColoredChunks, actualColoredChunks)
         }
+
+        private val Key<*>.escapeSequence: String
+            get() = (this as? ProcessOutputType)?.escapeSequence ?: toString()
 
         private fun make24BitColorCtrlSeq(r: Int, g: Int, b: Int, isForeground: Boolean): String =
             "${CSI}0;${if (isForeground) "38;" else "48;"}$ANSI_24_BIT_COLOR_FORMAT;$r;$g;${b}m"
