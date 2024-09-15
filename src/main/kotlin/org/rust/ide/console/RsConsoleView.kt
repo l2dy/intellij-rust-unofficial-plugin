@@ -39,7 +39,7 @@ class RsConsoleView(project: Project) : LanguageConsoleImpl(project, VIRTUAL_FIL
         virtualFile.putUserData(RUST_CONSOLE_KEY, true)
         // Mark editor as console one, to prevent autopopup completion
         historyViewer.putUserData(ConsoleViewUtil.EDITOR_IS_CONSOLE_HISTORY_VIEW, true)
-        super.setPrompt(PROMPT)
+        prompt = PROMPT
         consolePromptDecorator.indentPrompt = INDENT_PROMPT
         setUpdateFoldingsEnabled(false)
     }

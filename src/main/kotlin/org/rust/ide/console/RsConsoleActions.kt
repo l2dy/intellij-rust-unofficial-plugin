@@ -56,7 +56,7 @@ class SoftWrapAction(private val consoleView: RsConsoleView) :
     override fun isSelected(e: AnActionEvent): Boolean = isSelected
 
     private fun updateEditors() {
-        consoleView.editor.settings.isUseSoftWraps = isSelected
+        consoleView.editor!!.settings.isUseSoftWraps = isSelected
         consoleView.consoleEditor.settings.isUseSoftWraps = isSelected
     }
 

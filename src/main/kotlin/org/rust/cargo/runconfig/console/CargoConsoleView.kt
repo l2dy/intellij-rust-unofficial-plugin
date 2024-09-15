@@ -19,8 +19,8 @@ class CargoConsoleView(project: Project, searchScope: GlobalSearchScope, viewer:
     private var hasErrors = false
 
     override fun doCreateConsoleEditor(): EditorEx {
-        val editor = super.doCreateConsoleEditor()
-        editor.document.addDocumentListener(object : DocumentListener {
+        val editorEx = super.doCreateConsoleEditor()
+        editorEx.document.addDocumentListener(object : DocumentListener {
             override fun documentChanged(e: DocumentEvent) {
                 if ("error" !in e.newFragment) return
 
@@ -37,14 +37,14 @@ class CargoConsoleView(project: Project, searchScope: GlobalSearchScope, viewer:
             private fun processLine(lineNumber: Int, line: CharSequence) {
                 if (ERROR_RE.matches(line)) {
                     if (!hasErrors) {
-                        getEditor().caretModel.moveToLogicalPosition(LogicalPosition(lineNumber - 1, 0))
-                        getEditor().scrollingModel.scrollToCaret(ScrollType.CENTER)
+                        editor!!.caretModel.moveToLogicalPosition(LogicalPosition(lineNumber - 1, 0))
+                        editor!!.scrollingModel.scrollToCaret(ScrollType.CENTER)
                     }
                     hasErrors = true
                 }
             }
         })
-        return editor
+        return editorEx
     }
 
     override fun scrollToEnd() {

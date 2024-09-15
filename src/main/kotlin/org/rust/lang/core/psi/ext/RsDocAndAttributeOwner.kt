@@ -130,7 +130,7 @@ object RsInnerAttributeOwnerRegistry {
         return filterOuterAttrs(stub.childrenStubs).mapToMetaItems()
     }
 
-    private fun filterOuterAttrs(childrenStubs: List<StubElement<PsiElement>>): Sequence<StubElement<PsiElement>> =
+    private fun filterOuterAttrs(childrenStubs: List<StubElement<*>>): Sequence<StubElement<*>> =
         childrenStubs.asSequence().filter { it.stubType == RsElementTypes.OUTER_ATTR }
 
     private fun Sequence<StubElement<*>>.mapToMetaItems(): Sequence<RsMetaItemStub> =

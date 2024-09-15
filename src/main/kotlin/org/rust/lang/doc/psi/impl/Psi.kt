@@ -34,7 +34,7 @@ abstract class RsDocElementImpl(type: IElementType) : CompositePsiElement(type),
     override fun toString(): String = "${javaClass.simpleName}($elementType)"
 }
 
-class RsDocGapImpl(type: IElementType, val text: CharSequence) : LeafPsiElement(type, text), RsDocGap {
+class RsDocGapImpl(type: IElementType, text: CharSequence) : LeafPsiElement(type, text), RsDocGap {
     override fun getTokenType(): IElementType = elementType
 }
 

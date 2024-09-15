@@ -58,7 +58,7 @@ class RsPathsExcludeTable(project: Project) : ListTableWithButtons<Item>() {
         setValues(getSettingsItems())
     }
 
-    override fun createListModel(): ListTableModel<*> = ListTableModel<Item>(PATH_COLUMN, TYPE_COLUMN, SCOPE_COLUMN)
+    override fun createListModel(): ListTableModel<Item> = ListTableModel<Item>(PATH_COLUMN, TYPE_COLUMN, SCOPE_COLUMN)
 
     override fun createElement(): Item = Item("", ExclusionType.ItemsAndMethods, ExclusionScope.IDE)
 
