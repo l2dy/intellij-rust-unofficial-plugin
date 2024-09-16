@@ -30,7 +30,7 @@ val baseVersionForRun = versionForIde(ideToRun)
 val tomlPlugin: String by project
 val graziePlugin: String by project
 val psiViewerPlugin: String by project
-val copyrightPlugin: String by project
+val copyrightPlugin = "com.intellij.copyright"
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
@@ -299,11 +299,9 @@ project(":plugin") {
                 mlCompletionPlugin
             )
             if (ideToRun in setOf("IU", "IC")) {
-                pluginList += listOf(
-                    copyrightPlugin
-                )
                 bundledPluginList += listOf(
-                    javaPlugin
+                    copyrightPlugin,
+                    javaPlugin,
                 )
             }
             create(baseIDE, baseVersionForRun)
@@ -495,7 +493,7 @@ project(":copyright") {
         intellijPlatform {
             create(baseIDE, baseVersion)
 
-            plugins(listOf(copyrightPlugin))
+            bundledPlugins(listOf(copyrightPlugin))
         }
 
         implementation(project(":"))
