@@ -145,8 +145,8 @@ jobs:
                       ${{ runner.os }}-cache-cargo-binaries-${{ matrix.rust-version }}-
 
             - name: Install evcxr
-              # BACKCOMPAT: Evcxr 0.17 requires at least stable-1.74
-              if: matrix.os != 'windows-latest' && matrix.rust-version >= '1.74.0'
+              # BACKCOMPAT: Evcxr 0.18 requires at least stable-1.80
+              if: matrix.os != 'windows-latest' && matrix.rust-version >= '1.80.0'
               uses: actions-rs/cargo@v1
               with:
                   command: install
