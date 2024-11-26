@@ -33,16 +33,16 @@ class CargoWithToolchainCommandCompletionProviderTest : RsWithToolchainTestBase(
             completions,
             // Tier 1
             "aarch64-unknown-linux-gnu",
+            "aarch64-apple-darwin",
             "i686-pc-windows-gnu",
             "i686-pc-windows-msvc",
-            "i686-pc-windows-msvc",
+            "i686-unknown-linux-gnu",
             "x86_64-apple-darwin",
             "x86_64-pc-windows-gnu",
             "x86_64-pc-windows-msvc",
-            "x86_64-pc-windows-gnu",
+            "x86_64-unknown-linux-gnu",
             // Other popular
-            "wasm32-unknown-unknown",
-            "wasm32-wasi"
+            "wasm32-unknown-unknown"
         )
     }
 }
