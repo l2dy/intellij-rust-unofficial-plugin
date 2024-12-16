@@ -26,6 +26,7 @@ val ideToRun = prop("ideToRun").ifEmpty { baseIDE }
 val ideaVersion = prop("ideaVersion")
 val baseVersion = versionForIde(baseIDE)
 val baseVersionForRun = versionForIde(ideToRun)
+val useInstaller = !baseVersion.contains("-EAP-")
 
 val tomlPlugin: String by project
 val graziePlugin: String by project
@@ -34,6 +35,7 @@ val copyrightPlugin = "com.intellij.copyright"
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
+val jsonPlugin = "com.intellij.modules.json"
 val mlCompletionPlugin = "com.intellij.completion.ml.ranking"
 
 val compileNativeCodeTaskName = "compileNativeCode"
@@ -72,6 +74,9 @@ allprojects {
         mavenCentral()
         intellijPlatform {
             defaultRepositories()
+            if (!useInstaller) {
+                jetbrainsRuntime()
+            }
         }
     }
 
@@ -192,10 +197,18 @@ allprojects {
 
     dependencies {
         intellijPlatform {
-            create(baseIDE, baseVersion)
+            create(baseIDE, baseVersion, useInstaller)
+            if (!useInstaller) {
+                jetbrainsRuntime()
+            }
 
             pluginVerifier()
             instrumentationTools()
+            // BACKCOMPAT: 2024.2. Always include jsonPlugin.
+            // Also move rust-toml.xml with explicit dependency on JSON plugin back to src.
+            if (baseVersion.startsWith("243.") || baseVersion.startsWith("2024.3")) {
+                bundledPlugin(jsonPlugin)
+            }
 
             // used in MacroExpansionManager.kt and ResolveCommonThreadPool.kt
             testFramework(TestFrameworkType.Platform, configurationName = Configurations.INTELLIJ_PLATFORM_DEPENDENCIES)
@@ -304,7 +317,10 @@ project(":plugin") {
                     javaPlugin,
                 )
             }
-            create(baseIDE, baseVersionForRun)
+            create(baseIDE, baseVersionForRun, useInstaller)
+            if (!useInstaller) {
+                jetbrainsRuntime()
+            }
             plugins(pluginList)
             bundledPlugins(bundledPluginList)
 
@@ -474,7 +490,10 @@ project(":") {
 project(":idea") {
     dependencies {
         intellijPlatform {
-            create(baseIDE, baseVersion)
+            create(baseIDE, baseVersion, useInstaller)
+            if (!useInstaller) {
+                jetbrainsRuntime()
+            }
 
             bundledPlugins(listOf(
                 javaPlugin,
@@ -491,7 +510,10 @@ project(":idea") {
 project(":copyright") {
     dependencies {
         intellijPlatform {
-            create(baseIDE, baseVersion)
+            create(baseIDE, baseVersion, useInstaller)
+            if (!useInstaller) {
+                jetbrainsRuntime()
+            }
 
             bundledPlugins(listOf(copyrightPlugin))
         }

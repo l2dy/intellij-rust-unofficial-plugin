@@ -121,7 +121,7 @@ class CargoTomlWatcherTest : RsTestBase() {
     private fun newCreateEvent(name: String, requestor: Any? = null): Pair<VirtualFile, VFileCreateEvent> {
         val vFile = myFixture.tempDirFixture.createFile("proj/$name")
         @Suppress("UnstableApiUsage")
-        return vFile to VFileCreateEvent(requestor, vFile.parent, vFile.name, false, null, null, true, null)
+        return vFile to VFileCreateEvent(requestor, vFile.parent, vFile.name, false, null, null, null)
     }
 
     private fun newChangeEvent(vFile: VirtualFile, requestor: Any? = null): VFileContentChangeEvent =

@@ -5,7 +5,6 @@
 
 package org.rust.ide.module
 
-import com.intellij.ide.NewProjectWizardLegacy
 import com.intellij.ide.util.projectWizard.ModuleBuilder
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
@@ -32,9 +31,9 @@ class RsModuleBuilder : ModuleBuilder() {
 
     override fun getModuleType(): ModuleType<*> = RsModuleType.INSTANCE
 
-    override fun isSuitableSdkType(sdkType: SdkTypeId?): Boolean = true
+    override fun isSuitableSdkType(sdkType: SdkTypeId): Boolean = true
 
-    override fun isAvailable(): Boolean = NewProjectWizardLegacy.isAvailable()
+    override fun isAvailable(): Boolean = false
 
     override fun getCustomOptionsStep(context: WizardContext, parentDisposable: Disposable): ModuleWizardStep =
         CargoConfigurationWizardStep(context).apply {
