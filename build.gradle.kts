@@ -47,7 +47,7 @@ plugins {
     id("org.jetbrains.intellij.platform") version "2.8.0"
     id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
-    id("org.gradle.test-retry") version "1.5.10"
+    id("org.gradle.test-retry") version "1.6.2"
 }
 
 idea {
