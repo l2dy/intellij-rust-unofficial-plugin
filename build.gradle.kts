@@ -419,7 +419,7 @@ project(":") {
             plugins(listOf(tomlPlugin))
         }
 
-        implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.18.2") {
+        implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.18.3") {
             exclude(module = "jackson-core")
             exclude(module = "jackson-databind")
             exclude(module = "jackson-annotations")
