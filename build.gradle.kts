@@ -1,5 +1,5 @@
 import groovy.xml.XmlParser
-import org.gradle.api.JavaVersion.VERSION_17
+import org.gradle.api.JavaVersion.VERSION_21
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
@@ -98,14 +98,14 @@ allprojects {
     }
 
     configure<JavaPluginExtension> {
-        sourceCompatibility = VERSION_17
-        targetCompatibility = VERSION_17
+        sourceCompatibility = VERSION_21
+        targetCompatibility = VERSION_21
     }
 
     tasks {
         withType<KotlinCompile> {
             compilerOptions {
-                jvmTarget.set(JvmTarget.JVM_17)
+                jvmTarget.set(JvmTarget.JVM_21)
                 languageVersion.set(KotlinVersion.DEFAULT)
                 // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
                 apiVersion.set(KotlinVersion.KOTLIN_1_8)
