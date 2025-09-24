@@ -220,8 +220,6 @@ class RsInlineTypeAliasTest : RsInlineTestBase() {
         }
     """)
 
-    // BACKCOMPAT: 2024.1 throws ComparisonFailure instead.
-    @IgnoreInPlatform(241)
     fun `test qualify path`() = expect<FileComparisonFailedError> {
     doTest("""
         mod mod1 {

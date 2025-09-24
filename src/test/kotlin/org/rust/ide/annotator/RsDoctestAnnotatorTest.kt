@@ -158,10 +158,6 @@ class RsDoctestAnnotatorTest : RsAnnotatorTestBase(RsDoctestAnnotator::class) {
         |fn foo() {}
         |""")
 
-    // BACKCOMPAT: 2024.1
-    // Errors does not clear the <inject> tag since 2024.2.
-    // If future versions keep this new behavior, remove @IgnoreInPlatform when we drop 241 support.
-    @IgnoreInPlatform(241)
     fun `test incomplete code fence`() = doTest("""
         |/// ```
         |///<info>

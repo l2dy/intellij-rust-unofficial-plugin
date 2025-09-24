@@ -516,8 +516,6 @@ class RsInlineFunctionTest2 : RsInlineTestBase() {
         }
     """)
 
-    // BACKCOMPAT: 2024.1 throws ComparisonFailure instead.
-    @IgnoreInPlatform(241)
     fun `test substitute field access argument`() = expect<FileComparisonFailedError> {
     doTest("""
         fn main() {
