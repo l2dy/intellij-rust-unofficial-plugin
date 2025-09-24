@@ -44,12 +44,6 @@ abstract class AutoImportFixTestBase : RsInspectionsTestBase(RsUnresolvedReferen
         @Language("Rust") before: String,
         @Language("Rust") after: String,
     ) = doTest {
-        if (ApplicationInfo.getInstance().build.baselineVersion == 241) {
-            // BACKCOMPAT: 2023.2; in 241 a diagnostics was added for EA-752756, breaking the tests,
-            // and it was removed later in 242.
-            Testmarks.DoctestInjectionImport.hit()
-            return // Pass
-        }
         checkFixByFileTreeWithoutHighlighting(AutoImportFix.NAME, before, after, preview = null)
     }
 

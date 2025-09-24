@@ -7,7 +7,6 @@ package org.rust.ide.structure
 
 import com.intellij.ide.util.treeView.smartTree.Sorter
 import org.intellij.lang.annotations.Language
-import org.rust.alphaSorterId
 
 class RsVisibilitySorterTest : RsStructureViewToggleableActionTest(){
     override val actionId: String = RsVisibilitySorter.ID
@@ -500,6 +499,6 @@ class RsCombinedVisibilityAlphaSorterTest: RsStructureViewTestBase() {
         | Zar visibility=private
     """) {
         setActionActive(RsVisibilitySorter.ID, true)
-        setActionActive(alphaSorterId, true)
+        setActionActive(Sorter.ALPHA_SORTER.name, true)
     }
 }

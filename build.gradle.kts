@@ -262,23 +262,7 @@ val pluginProjects: List<Project>
 
 // Special module with run, build, and publish tasks
 project(":plugin") {
-    val pluginVersion = System.getenv("BUILD_NUMBER") ?: "${platformVersion}.${prop("buildNumber")}"
-    version = if (pluginVersion.contains(".")) {
-        val split = pluginVersion.split(".").toMutableList()
-        split[0] = platformVersion.toString()
-        // From 232 branch, plugin version `232.9921` and `233.9921` were published
-        // These versions were based on IJ platform `232.9921` build
-        //
-        // From 233 branch, plugin versions are `233.8264` and `232.8264`, which are based on IJ platform `233.8264` build
-        // Since we publish versions for 2 platform versions from a single branch, plugin versions has to be hacked this way,
-        // Otherwise newly published `233.8264` version would be considered lower than `233.9921` published earlier
-        //
-        // TODO: For `241`, come up with new plugin versioning to avoid this problem
-        split[1] = (split[1].toIntOrNull()?.plus(10000))?.toString() ?: split[1]
-        split.joinToString(".")
-    } else {
-        pluginVersion
-    }
+    version = System.getenv("BUILD_NUMBER") ?: "${platformVersion}.${prop("buildNumber")}"
 
     intellijPlatform {
         pluginConfiguration {
@@ -392,10 +376,10 @@ project(":plugin") {
     task<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
         args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
-        // BACKCOMPAT: 2024.1. Update value to 242 and this comment
+        // BACKCOMPAT: 2024.2. Update value to 242 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "241")
+        environment("IDEA_BUILD_NUMBER", "242")
     }
 }
 
