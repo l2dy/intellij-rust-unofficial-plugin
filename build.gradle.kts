@@ -25,7 +25,6 @@ val baseIDE = prop("baseIDE")
 val ideToRun = prop("ideToRun").ifEmpty { baseIDE }
 val ideaVersion = prop("ideaVersion")
 val baseVersion = versionForIde(baseIDE)
-val baseVersionForRun = versionForIde(ideToRun)
 
 val tomlPlugin: String by project
 val graziePlugin: String by project
@@ -45,7 +44,7 @@ val basePluginArchiveName = "intellij-rust"
 plugins {
     idea
     kotlin("jvm") version "2.1.0"
-    id("org.jetbrains.intellij.platform") version "2.0.1"
+    id("org.jetbrains.intellij.platform") version "2.9.0"
     id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
     id("org.gradle.test-retry") version "1.5.10"
@@ -195,10 +194,15 @@ allprojects {
             create(baseIDE, baseVersion)
 
             pluginVerifier()
-            instrumentationTools()
 
             // used in MacroExpansionManager.kt and ResolveCommonThreadPool.kt
             testFramework(TestFrameworkType.Platform, configurationName = Configurations.INTELLIJ_PLATFORM_DEPENDENCIES)
+
+            bundledModule("intellij.platform.coverage")
+            bundledModule("intellij.platform.coverage.agent")
+            bundledModule("intellij.platform.navbar")
+            bundledModule("intellij.platform.navbar.backend")
+            bundledModule("intellij.platform.vcs.impl")
         }
 
         compileOnly(kotlin("stdlib-jdk8"))
@@ -288,7 +292,6 @@ project(":plugin") {
                     javaPlugin,
                 )
             }
-            create(baseIDE, baseVersionForRun)
             plugins(pluginList)
             bundledPlugins(bundledPluginList)
 
@@ -458,8 +461,6 @@ project(":") {
 project(":idea") {
     dependencies {
         intellijPlatform {
-            create(baseIDE, baseVersion)
-
             bundledPlugins(listOf(
                 javaPlugin,
                 // this plugin registers `com.intellij.ide.projectView.impl.ProjectViewPane` for IDEA that we use in tests
@@ -475,8 +476,6 @@ project(":idea") {
 project(":copyright") {
     dependencies {
         intellijPlatform {
-            create(baseIDE, baseVersion)
-
             bundledPlugins(listOf(copyrightPlugin))
         }
 
