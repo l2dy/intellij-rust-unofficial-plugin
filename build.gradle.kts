@@ -375,7 +375,7 @@ project(":plugin") {
     // Generates event scheme for Rust plugin FUS events to `plugin/build/eventScheme.json`
     task<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
-        args("buildEventsScheme", "--outputFile=${buildDir.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
+        args("buildEventsScheme", "--outputFile=${layout.buildDirectory.get().asFile.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
         // BACKCOMPAT: 2024.2. Update value to 242 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
@@ -615,7 +615,7 @@ fun Writer.writeCargoOptions(baseUrl: String) {
     }
 
     fun writeEnumVariant(command: CargoCommand, isLast: Boolean) {
-        val variantName = command.name.toUpperCase().replace('-', '_')
+        val variantName = command.name.uppercase().replace('-', '_')
         val renderedOptions = command.options.joinToString(
             separator = ",\n            ",
             prefix = "\n            ",
@@ -636,7 +636,7 @@ fun Writer.writeCargoOptions(baseUrl: String) {
     for ((index, command) in commands.withIndex()) {
         writeEnumVariant(command, isLast = index == commands.size - 1)
     }
-    writeln("    val presentableName: String get() = name.toLowerCase().replace('_', '-')")
+    writeln("    val presentableName: String get() = name.lowercase().replace('_', '-')")
     writeln("}")
 }
 
