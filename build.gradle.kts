@@ -43,7 +43,7 @@ val basePluginArchiveName = "intellij-rust"
 
 plugins {
     idea
-    kotlin("jvm") version "2.1.0"
+    kotlin("jvm") version "2.2.20"
     id("org.jetbrains.intellij.platform") version "2.8.0"
     id("org.jetbrains.grammarkit") version "2022.3.2.2"
     id("net.saliman.properties") version "1.5.2"
@@ -107,7 +107,7 @@ allprojects {
                 jvmTarget.set(JvmTarget.JVM_21)
                 languageVersion.set(KotlinVersion.DEFAULT)
                 // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-                apiVersion.set(KotlinVersion.KOTLIN_1_8)
+                apiVersion.set(KotlinVersion.KOTLIN_1_9)
                 freeCompilerArgs.set(listOf("-Xjvm-default=all"))
             }
         }
