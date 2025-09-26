@@ -11,6 +11,9 @@ on:
                 type: boolean
 
 jobs:
+    get-rust-versions:
+        uses: ./.github/workflows/get-rust-versions.yml
+
     prepare:
         runs-on: ubuntu-latest
         outputs:
@@ -54,7 +57,7 @@ jobs:
                 echo "projects-matrix=$projects" >> $GITHUB_OUTPUT
 
     check:
-        needs: [ prepare ]
+        needs: [ prepare, get-rust-versions ]
         name: ${{ matrix.batch.name }}
         runs-on: ubuntu-latest
         strategy:
@@ -80,7 +83,7 @@ jobs:
               uses: actions-rs/toolchain@v1
               with:
                   profile: minimal
-                  toolchain: stable
+                  toolchain: ${{ needs.get-rust-versions.outputs.stable }}
                   components: rust-src
                   default: true
 
