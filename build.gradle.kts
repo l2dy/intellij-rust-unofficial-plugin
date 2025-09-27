@@ -200,9 +200,10 @@ allprojects {
 
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")
-            bundledModule("intellij.platform.navbar")
-            bundledModule("intellij.platform.navbar.backend")
             bundledModule("intellij.platform.vcs.impl")
+
+            testBundledModule("intellij.platform.navbar")
+            testBundledModule("intellij.platform.navbar.backend")
         }
 
         compileOnly(kotlin("stdlib-jdk8"))
