@@ -28,7 +28,7 @@ abstract class RsBuildTaskProvider<T : RsBuildTaskProvider.BuildTask<T>> : Befor
 
         val result = CompletableFuture<Boolean>()
         ProjectTaskManager.getInstance(environment.project).build(buildableElement).onProcessed {
-            result.complete(!it.hasErrors() && !it.isAborted)
+            result.complete(it?.hasErrors() == false && !it.isAborted)
         }
         return result.get()
     }

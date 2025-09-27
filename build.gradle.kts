@@ -33,6 +33,7 @@ val copyrightPlugin = "com.intellij.copyright"
 val javaPlugin = "com.intellij.java"
 val javaIdePlugin = "com.intellij.java.ide"
 val javaScriptPlugin = "JavaScript"
+val jsonPlugin = "com.intellij.modules.json"
 val mlCompletionPlugin = "com.intellij.completion.ml.ranking"
 
 val compileNativeCodeTaskName = "compileNativeCode"
@@ -107,7 +108,7 @@ allprojects {
                 jvmTarget.set(JvmTarget.JVM_21)
                 languageVersion.set(KotlinVersion.DEFAULT)
                 // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-                apiVersion.set(KotlinVersion.KOTLIN_1_9)
+                apiVersion.set(KotlinVersion.KOTLIN_2_0)
                 freeCompilerArgs.set(listOf("-Xjvm-default=all"))
             }
         }
@@ -200,9 +201,10 @@ allprojects {
 
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")
-            bundledModule("intellij.platform.navbar")
-            bundledModule("intellij.platform.navbar.backend")
             bundledModule("intellij.platform.vcs.impl")
+
+            testBundledModule("intellij.platform.navbar")
+            testBundledModule("intellij.platform.navbar.backend")
         }
 
         compileOnly(kotlin("stdlib-jdk8"))
@@ -404,6 +406,7 @@ project(":") {
     dependencies {
         intellijPlatform {
             plugins(listOf(tomlPlugin))
+            bundledPlugin(jsonPlugin)
         }
 
         implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-toml:2.18.2") {
