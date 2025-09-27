@@ -15,6 +15,10 @@ import com.intellij.testFramework.ReadOnlyLightVirtualFile
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import org.rust.lang.RsLanguage
 import org.rust.lang.core.macros.decl.DeclMacroExpander
 import org.rust.lang.core.macros.decl.MACRO_DOLLAR_CRATE_IDENTIFIER
@@ -52,6 +56,7 @@ import kotlin.io.path.exists
 @Suppress("UnstableApiUsage")
 @Service
 class MacroExpansionSharedCache : Disposable {
+    private val serviceScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val globalSerMgr: SerializationManagerEx = SerializationManagerEx.getInstanceEx()
     private val stubExternalizer: StubForwardIndexExternalizer<*> =
         StubForwardIndexExternalizer.createFileLocalExternalizer()
@@ -59,12 +64,14 @@ class MacroExpansionSharedCache : Disposable {
     private val data: AtomicReference<PersistentCacheData?> =
         AtomicReference(tryCreateData())
 
-    private fun tryCreateData() = PersistentCacheData.tryCreate(getBaseMacroDir().resolve("cache"), stubExternalizer)
+    private fun tryCreateData() =
+        PersistentCacheData.tryCreate(getBaseMacroDir().resolve("cache"), stubExternalizer, serviceScope)
 
     val isEnabled: Boolean
         get() = data.get() != null
 
     override fun dispose() {
+        serviceScope.cancel()
         do {
             val lastData = data.get()
             lastData?.close()
@@ -241,7 +248,11 @@ private class PersistentCacheData(
 
     companion object {
         @JvmStatic
-        fun tryCreate(baseDir: Path, stubExternalizer: StubForwardIndexExternalizer<*>): PersistentCacheData? {
+        fun tryCreate(
+            baseDir: Path,
+            stubExternalizer: StubForwardIndexExternalizer<*>,
+            scope: CoroutineScope
+        ): PersistentCacheData? {
             MacroExpansionManager.checkInvalidatedStorage()
 
             val cleaners = mutableListOf<() -> Unit>()
@@ -252,7 +263,7 @@ private class PersistentCacheData(
 
                 val namesFileExists = namesFile.exists()
 
-                val localSerMgr = SerializationManagerImpl(namesFile, false)
+                val localSerMgr = SerializationManagerImpl(namesFile, false, scope)
                 cleaners.add { Disposer.dispose(localSerMgr) }
 
                 if (!namesFileExists || localSerMgr.isNameStorageCorrupted) {

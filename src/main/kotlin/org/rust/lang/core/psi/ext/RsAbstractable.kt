@@ -15,7 +15,7 @@ import org.rust.lang.core.types.infer.type
 import org.rust.lang.core.types.rawType
 import org.rust.lang.core.types.ty.Ty
 import org.rust.lang.core.types.ty.TyTypeParameter
-import org.rust.openapiext.filterQuery
+import org.rust.openapiext.filterIsInstanceQuery
 import org.rust.openapiext.mapQuery
 import javax.swing.Icon
 
@@ -74,13 +74,13 @@ fun RsAbstractable.searchForImplementations(): Query<RsAbstractable> {
     val traitItem = ancestorStrict<RsTraitItem>() ?: return EmptyQuery()
     val traitImpls = traitItem.searchForImplementations()
 
-    val query: Query<RsAbstractable> = when (this) {
+    val query: Query<RsAbstractable?> = when (this) {
         is RsConstant -> traitImpls.mapQuery { impl -> impl.expandedMembers.constants.find { it.name == this.name } }
         is RsFunction -> traitImpls.mapQuery { impl -> impl.expandedMembers.functions.find { it.name == this.name } }
         is RsTypeAlias -> traitImpls.mapQuery { impl -> impl.expandedMembers.types.find { it.name == this.name } }
         else -> EmptyQuery()
     }
-    return query.filterQuery { it != null }
+    return query.filterIsInstanceQuery()
 }
 
 /**

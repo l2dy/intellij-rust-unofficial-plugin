@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.wsl.WslPath
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -16,7 +17,6 @@ import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.ui.JBColor
-import com.intellij.ui.components.Link
 import com.intellij.ui.dsl.builder.Panel
 import org.rust.RsBundle
 import org.rust.cargo.project.RsToolchainPathChoosingComboBox
@@ -56,9 +56,11 @@ class RustProjectSettingsPanel(
 
     private var fetchedSysroot: String? = null
 
-    private val downloadStdlibLink = Link(RsBundle.message("settings.rust.toolchain.download.rustup.link")) {
-        val homePath = pathToToolchainComboBox.selectedPath ?: return@Link
-        val rustup = RsToolchainProvider.getToolchain(homePath)?.rustup ?: return@Link
+    private var isDownloadStdlibLinkVisible = AtomicBooleanProperty(false)
+
+    private fun downloadStdlibAction() {
+        val homePath = pathToToolchainComboBox.selectedPath ?: return
+        val rustup = RsToolchainProvider.getToolchain(homePath)?.rustup ?: return
         object : Task.Modal(null, RsBundle.message("settings.rust.toolchain.download.rustup.dialog.title"), true) {
             override fun onSuccess() = update()
 
@@ -73,7 +75,7 @@ class RustProjectSettingsPanel(
                 })
             }
         }.queue()
-    }.apply { isVisible = false }
+    }
 
     private val toolchainVersion = JLabel()
 
@@ -116,7 +118,9 @@ class RustProjectSettingsPanel(
             fullWidthCell(pathToStdlibField)
         }
         row {
-            cell(downloadStdlibLink)
+            link(RsBundle.message("settings.rust.toolchain.download.rustup.link")) {
+                downloadStdlibAction()
+            }.visibleIf(isDownloadStdlibLinkVisible)
         }
 
         pathToToolchainComboBox.addToolchainsAsync {
@@ -144,7 +148,7 @@ class RustProjectSettingsPanel(
                 Triple(rustcVersion, stdlibLocation, rustup != null)
             },
             onUiThread = { (rustcVersion, stdlibLocation, hasRustup) ->
-                downloadStdlibLink.isVisible = hasRustup && stdlibLocation == null
+                isDownloadStdlibLinkVisible.set(hasRustup && stdlibLocation == null)
 
                 pathToStdlibField.isEditable = !hasRustup
                 pathToStdlibField.setButtonEnabled(!hasRustup)
