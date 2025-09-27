@@ -42,7 +42,7 @@ abstract class RsConsoleFoldingTestBase : RsTestBase() {
         console.print(input, ConsoleViewContentType.NORMAL_OUTPUT)
         console.flushDeferredText()
 
-        val editor = console.editor
+        val editor = console.editor!!
         val regions = editor.foldingModel.allFoldRegions
 
         val expectedText = renderTextWithFolds(input, expectedFolds)

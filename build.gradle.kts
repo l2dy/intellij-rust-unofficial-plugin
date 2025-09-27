@@ -26,6 +26,11 @@ val ideToRun = prop("ideToRun").ifEmpty { baseIDE }
 val ideaVersion = prop("ideaVersion")
 val baseVersion = versionForIde(baseIDE)
 
+// Bundled plugins extracted from IntelliJ Platform
+//
+// https://plugins.jetbrains.com/docs/intellij/api-changes-list-2024.html#json-plugin-new-20243
+val jsonPlugin = "com.intellij.modules.json"
+
 val tomlPlugin: String by project
 val graziePlugin: String by project
 val psiViewerPlugin: String by project
@@ -107,7 +112,7 @@ allprojects {
                 jvmTarget.set(JvmTarget.JVM_21)
                 languageVersion.set(KotlinVersion.DEFAULT)
                 // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-                apiVersion.set(KotlinVersion.KOTLIN_1_9)
+                apiVersion.set(KotlinVersion.KOTLIN_2_0)
                 freeCompilerArgs.set(listOf("-Xjvm-default=all"))
             }
         }
@@ -197,6 +202,8 @@ allprojects {
 
             // used in MacroExpansionManager.kt and ResolveCommonThreadPool.kt
             testFramework(TestFrameworkType.Platform, configurationName = Configurations.INTELLIJ_PLATFORM_DEPENDENCIES)
+
+            bundledPlugins(listOf(jsonPlugin))
 
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")

@@ -2,6 +2,7 @@
     <resource-bundle>messages.RsBundle</resource-bundle>
 
     <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.json</depends>
 
     <xi:include href="/META-INF/experiments.xml" xpointer="xpointer(/idea-plugin/*)"/>
     <xi:include href="/META-INF/rust-toml.xml" xpointer="xpointer(/idea-plugin/*)"/>
