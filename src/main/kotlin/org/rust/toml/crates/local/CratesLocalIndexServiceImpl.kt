@@ -605,7 +605,8 @@ private class CratesLocalIndexUpdateTask(
 
                 val path = treeWalk.pathString
                 // Ignore paths starting with dot (e.g. .github/) and config.json
-                if (path.startsWith(".") || path == "config.json") continue
+                // and README.md since https://github.com/rust-lang/crates.io-index/pull/25
+                if (path.startsWith(".") || path in listOf("config.json", "README.md")) continue
 
                 indicator.checkCanceled()
 
