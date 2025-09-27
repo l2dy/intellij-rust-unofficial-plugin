@@ -20,7 +20,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
-import icons.JavaScriptPsiIcons
+import icons.JavaScriptCoreIcons
 import org.rust.RsBundle
 import org.rust.lang.core.psi.*
 import org.rust.lang.core.psi.ext.*
@@ -32,7 +32,7 @@ import javax.swing.Icon
 class RsWasmBindgenLineMarkerProvider : RelatedItemLineMarkerProvider() {
 
     override fun getName(): String = RsBundle.message("gutter.rust.generated.typescript.declarations.name")
-    override fun getIcon(): Icon = JavaScriptPsiIcons.FileTypes.TypeScriptFile
+    override fun getIcon(): Icon = JavaScriptCoreIcons.FileTypes.TypeScriptFile
 
     override fun getLineMarkerInfo(element: PsiElement): RelatedItemLineMarkerInfo<*>? {
         val element = element as? RsOuterAttributeOwner ?: return null

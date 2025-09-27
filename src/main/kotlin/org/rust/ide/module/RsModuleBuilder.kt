@@ -32,7 +32,7 @@ class RsModuleBuilder : ModuleBuilder() {
 
     override fun getModuleType(): ModuleType<*> = RsModuleType.INSTANCE
 
-    override fun isSuitableSdkType(sdkType: SdkTypeId?): Boolean = true
+    override fun isSuitableSdkType(sdkType: SdkTypeId): Boolean = true
 
     override fun isAvailable(): Boolean = NewProjectWizardLegacy.isAvailable()
 

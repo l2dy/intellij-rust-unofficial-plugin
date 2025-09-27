@@ -5,13 +5,13 @@
 
 package org.rust.ide.security
 
-import com.intellij.ide.impl.TrustStateListener
+import com.intellij.ide.trustedProjects.TrustedProjectsListener
 import com.intellij.openapi.application.runInEdt
 import com.intellij.openapi.project.Project
 import org.rust.cargo.project.model.cargoProjects
 
 @Suppress("UnstableApiUsage")
-class RsTrustStateListener : TrustStateListener {
+class RsTrustedProjectsListener : TrustedProjectsListener {
 
     override fun onProjectTrusted(project: Project) {
         // Since 2023.1, this callback can be called in the background thread which EDT waits for.
