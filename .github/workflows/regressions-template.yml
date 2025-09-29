@@ -20,7 +20,7 @@ jobs:
             base-commit: ${{ steps.base-commit.outputs.base-commit }}
             projects-matrix: ${{ steps.projects-matrix.outputs.projects-matrix }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
               with:
                   fetch-depth: 0
 
@@ -69,7 +69,7 @@ jobs:
             PROJECTS: ${{ toJSON(matrix.batch.projects) }}
             ANALYZE_DEPENDENCIES: ${{ inputs.analyze-dependencies }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
               with:
                   fetch-depth: 0
 

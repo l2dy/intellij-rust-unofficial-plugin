@@ -33,7 +33,7 @@ jobs:
             is_master_branch: ${{ steps.calculate-git-info.outputs.is_master_branch }}
             checked: ${{ steps.calculate-git-info.outputs.checked }}
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
               with:
                   fetch-depth: 0
 
@@ -53,7 +53,7 @@ jobs:
     check-license:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: Check license
               run: python scripts/check_license.py
@@ -105,7 +105,7 @@ jobs:
             CARGO_GENERATE_VERSION: 0.21.3
 
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v5
 
             - name: Set up JDK 21
               uses: actions/setup-java@v4
