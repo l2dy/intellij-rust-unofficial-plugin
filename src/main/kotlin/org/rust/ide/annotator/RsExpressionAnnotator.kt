@@ -63,10 +63,20 @@ class RsExpressionAnnotator : AnnotatorBase() {
 
             val structNameRange = literal.descendantOfTypeStrict<RsPath>()?.textRange
             if (structNameRange != null) {
+                val availabilityRange = literal.textRange
+                val addMissingFieldsFix = AddStructFieldsFix(literal)
+                val addMissingFieldsRecursiveFix = AddStructFieldsFix(literal, recursive = true)
+
                 holder.holder.newAnnotation(HighlightSeverity.ERROR, RsBundle.message("inspection.message.some.fields.are.missing"))
                     .range(structNameRange)
-                    .newFix(AddStructFieldsFix(literal)).range(body.parent.textRange).registerFix()
-                    .newFix(AddStructFieldsFix(literal, recursive = true)).range(body.parent.textRange).registerFix()
+                    .newFix(addMissingFieldsFix).range(availabilityRange).registerFix()
+                    .newFix(addMissingFieldsRecursiveFix).range(availabilityRange).registerFix()
+                    .create()
+
+                holder.holder.newSilentAnnotation(HighlightSeverity.INFORMATION)
+                    .range(availabilityRange)
+                    .newFix(addMissingFieldsFix).range(availabilityRange).registerFix()
+                    .newFix(addMissingFieldsRecursiveFix).range(availabilityRange).registerFix()
                     .create()
             }
         }
