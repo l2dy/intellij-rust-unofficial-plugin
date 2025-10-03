@@ -81,7 +81,7 @@ class KnownItems(
     val Cell: RsStructOrEnumItemElement? get() = findItem("core::cell::Cell")
     val RefCell: RsStructOrEnumItemElement? get() = findItem("core::cell::RefCell")
     val UnsafeCell: RsStructOrEnumItemElement? get() = findItem("core::cell::UnsafeCell")
-    val Mutex: RsStructOrEnumItemElement? get() = findItem("std::sync::mutex::Mutex")
+    val Mutex: RsStructOrEnumItemElement? get() = findItem("std::sync::mutex::Mutex") ?: findItem("std::sync::poison::mutex::Mutex")
     val Path: RsStructOrEnumItemElement? get() = findItem("std::path::Path")
     val PathBuf: RsStructOrEnumItemElement? get() = findItem("std::path::PathBuf")
     val CStr: RsStructOrEnumItemElement? get() = findItem("std::ffi::CStr")
