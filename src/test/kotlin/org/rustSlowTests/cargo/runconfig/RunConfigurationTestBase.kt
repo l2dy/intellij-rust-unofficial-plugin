@@ -112,7 +112,7 @@ abstract class RunConfigurationTestBase : RsWithToolchainTestBase() {
 
     protected fun buildProject(command: String = "build"): CargoBuildResult {
         val buildConfiguration = createBuildConfiguration(command)
-        return CargoBuildManager.build(buildConfiguration).get()
+        return CargoBuildManager.build(buildConfiguration).waitForResult()
     }
 
     private fun createBuildConfiguration(command: String): CargoBuildConfiguration {
