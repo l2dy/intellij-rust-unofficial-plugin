@@ -17,7 +17,10 @@ import com.intellij.openapi.util.Key
 import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.ConcurrencyUtil
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.ExecutionException
+import java.util.concurrent.Future
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 @Throws(InterruptedException::class)
 fun CountDownLatch.waitFinished(timeoutMs: Long): Boolean {
@@ -26,6 +29,29 @@ fun CountDownLatch.waitFinished(timeoutMs: Long): Boolean {
         if (await(ConcurrencyUtil.DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)) return true
     }
     return false
+}
+
+fun <T> Future<T>.waitForResult(timeoutMs: Long = 60_000): T {
+    val deadline = System.currentTimeMillis() + timeoutMs
+    for (i in 1..timeoutMs / ConcurrencyUtil.DEFAULT_TIMEOUT_MS) {
+        PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+        try {
+            return get(ConcurrencyUtil.DEFAULT_TIMEOUT_MS, TimeUnit.MILLISECONDS)
+        } catch (_: TimeoutException) {
+            if (System.currentTimeMillis() >= deadline) {
+                break
+            }
+        } catch (e: InterruptedException) {
+            Thread.currentThread().interrupt()
+            throw AssertionError("Interrupted while waiting for cargo build", e)
+        } catch (e: ExecutionException) {
+            val cause = e.cause ?: e
+            throw cause as? RuntimeException ?: AssertionError("Cargo build failed", cause)
+        }
+    }
+
+    cancel(true)
+    throw AssertionError("Cargo build did not finish within $timeoutMs ms")
 }
 
 /**
