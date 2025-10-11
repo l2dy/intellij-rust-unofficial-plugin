@@ -208,6 +208,7 @@ allprojects {
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")
             bundledModule("intellij.platform.vcs.impl")
+            bundledModule("intellij.spellchecker")
 
             testBundledModule("intellij.platform.navbar")
             testBundledModule("intellij.platform.navbar.backend")
@@ -218,6 +219,8 @@ allprojects {
         implementation("junit:junit:4.13.2") // used in kotlin/org/rust/openapiext/Testmark.kt
         // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#missing-opentest4j-dependency-in-test-framework
         testImplementation("org.opentest4j:opentest4j:1.3.0")
+        // Workaround for NoClassDefFoundError in com.intellij.testFramework.fixtures.BuildViewTestFixture.assertSyncViewTreeEquals
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
         testOutput(sourceSets.getByName("test").output.classesDirs)
     }
 
@@ -388,10 +391,10 @@ project(":plugin") {
     task<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
         args("buildEventsScheme", "--outputFile=${layout.buildDirectory.get().asFile.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
-        // BACKCOMPAT: 2024.2. Update value to 242 and this comment
+        // BACKCOMPAT: 2025.2. Update value to 252 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "242")
+        environment("IDEA_BUILD_NUMBER", "252")
     }
 }
 

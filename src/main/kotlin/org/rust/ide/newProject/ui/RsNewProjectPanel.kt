@@ -9,6 +9,7 @@ import com.intellij.execution.process.ProcessAdapter
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionToolbarPosition
+import com.intellij.openapi.observable.properties.AtomicBooleanProperty
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.progress.Task
@@ -19,7 +20,6 @@ import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
-import com.intellij.ui.components.Link
 import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.Panel
 import com.intellij.util.ui.JBUI
@@ -113,9 +113,11 @@ class RsNewProjectPanel(
 
     private var needInstallCargoGenerate = false
 
+    private var isDownloadCargoGenerateLinkVisible = AtomicBooleanProperty(false)
+
     @Suppress("DialogTitleCapitalization")
-    private val downloadCargoGenerateLink = Link(RsBundle.message("label.install.cargo.generate.using.cargo")) {
-        val cargo = cargo ?: return@Link
+    private fun downloadCargoGenerateAction() {
+        val cargo = cargo ?: return
 
         object : Task.Modal(null, RsBundle.message("dialog.title.installing.cargo.generate"), true) {
             var exitCode: Int = Int.MIN_VALUE
@@ -142,7 +144,7 @@ class RsNewProjectPanel(
                 }).unwrapOrThrow()
             }
         }.queue()
-    }.apply { isVisible = false }
+    }
 
     private val updateDebouncer = UiDebouncer(this)
 
@@ -159,7 +161,9 @@ class RsNewProjectPanel(
                         .align(AlignY.FILL)
                 }
                 row {
-                    cell(downloadCargoGenerateLink)
+                    link(RsBundle.message("label.install.cargo.generate.using.cargo")) {
+                        downloadCargoGenerateAction()
+                    }.visibleIf(isDownloadCargoGenerateLinkVisible)
                 }
             }
         }
@@ -176,7 +180,7 @@ class RsNewProjectPanel(
                 }
             },
             onUiThread = { needInstall ->
-                downloadCargoGenerateLink.isVisible = needInstall
+                isDownloadCargoGenerateLinkVisible.set(needInstall)
                 needInstallCargoGenerate = needInstall
                 updateListener?.invoke()
             }

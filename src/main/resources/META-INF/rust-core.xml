@@ -1471,8 +1471,8 @@
     </extensionPoints>
 
     <applicationListeners>
-        <listener class="org.rust.ide.security.RsTrustStateListener"
-                  topic="com.intellij.ide.impl.TrustStateListener"/>
+        <listener class="org.rust.ide.security.RsTrustedProjectsListener"
+                  topic="com.intellij.ide.trustedProjects.TrustedProjectsListener"/>
         <listener class="org.rust.ide.navigation.goto.RsGoToDeclarationRunningService$Listener"
                   topic="com.intellij.openapi.actionSystem.ex.AnActionListener" />
         <listener class="org.rust.ide.dynamic.RsDynamicPluginListener"
