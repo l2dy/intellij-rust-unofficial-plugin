@@ -226,7 +226,8 @@ class RsGotoImplementationsTest : RsTestBase() {
                 data.targets
                     .map { GotoTargetHandler.computePresentation(it, data.hasDifferentNames()) }
                     // Copied from `com.intellij.codeInsight.navigation.GotoTargetHandler.GotoData.getComparingObject`
-                    .map { listOfNotNull(it.presentableText, it.containerText, it.locationText).joinToString(" ") }
+                    // but excluding locationText, which varies across platform versions for test fixtures
+                    .map { listOfNotNull(it.presentableText, it.containerText).joinToString(" ") }
             }
         })
         return ProgressIndicatorUtils.awaitWithCheckCanceled(future)
