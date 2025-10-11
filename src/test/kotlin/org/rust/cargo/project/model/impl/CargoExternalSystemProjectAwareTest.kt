@@ -476,8 +476,32 @@ class CargoExternalSystemProjectAwareTest : RsWithToolchainTestBase() {
             parent = VfsUtil.createDirectoryIfMissing(root, parentPath) ?: error("Failed to create $parentPath directory")
         }
         val file = parent.createChildData(parent.fileSystem, name)
-        VfsUtil.saveText(file, text)
+        val adjustedText = if (text.isNotEmpty()) text else defaultContentFor(path)
+        VfsUtil.saveText(file, adjustedText)
         return file
+    }
+
+    /**
+     * Provides default non-empty content for test files.
+     * Required for platform 251+, which ignores settings files with CRC=0 (empty files).
+     * See: https://github.com/JetBrains/intellij-community/commit/f10347c4116baef362264d104085af86c05c0d00
+     */
+    private fun defaultContentFor(path: String): String {
+        return when {
+            path.endsWith("rust-toolchain") || path.endsWith("rust-toolchain.toml") -> """
+                [toolchain]
+                channel = "nightly"
+            """.trimIndent()
+            path.endsWith(".cargo/config") || path.endsWith(".cargo/config.toml") -> """
+                [build]
+                target-dir = "target"
+            """.trimIndent()
+            path.endsWith("lib.rs") -> "pub fn placeholder() {}\n"
+            path.endsWith(".rs") -> "fn main() {}\n"
+            path.endsWith(".toml") -> "# placeholder\n"
+            path.endsWith("Cargo.lock") -> "# auto-generated\n"
+            else -> "\n"
+        }
     }
 
     private fun FileTreeBuilder.allTargets() {
@@ -487,12 +511,16 @@ class CargoExternalSystemProjectAwareTest : RsWithToolchainTestBase() {
                     fn main() {}
                 """)
             }
-            rust("lib.rs", "")
+            rust("lib.rs", """
+                pub fn lib_fn() {}
+            """)
             rust("main.rs", """
                 mod foo;
                 fn main() {}
             """)
-            rust("foo.rs", "")
+            rust("foo.rs", """
+                pub fn foo() {}
+            """)
         }
         dir("examples") {
             rust("example.rs", """
@@ -500,12 +528,19 @@ class CargoExternalSystemProjectAwareTest : RsWithToolchainTestBase() {
             """)
         }
         dir("benches") {
-            rust("bench.rs", "")
+            rust("bench.rs", """
+                fn bench_main() {}
+            """)
         }
         dir("tests") {
-            rust("test.rs", "")
+            rust("test.rs", """
+                #[test]
+                fn test_main() {}
+            """)
             dir("this-is-a-dir.rs") {
-                rust("not-a-test.rs", "")
+                rust("not-a-test.rs", """
+                    fn helper() {}
+                """)
             }
         }
         rust("build.rs", """
@@ -517,8 +552,14 @@ class CargoExternalSystemProjectAwareTest : RsWithToolchainTestBase() {
         dir(".cargo") {
             // Note, cargo reads only `config` file if both `config` and `config.toml` exist in `.config` dir.
             // But it's OK for tests to have both of them
-            toml("config", "")
-            toml("config.toml", "")
+            toml("config", """
+                [build]
+                target-dir = "target"
+            """)
+            toml("config.toml", """
+                [build]
+                target-dir = "target"
+            """)
         }
         // Note, cargo reads only `rust-toolchain` file if both `rust-toolchain` and `rust-toolchain.toml` exist.
         // But it's OK for tests to have both of them
