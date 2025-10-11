@@ -45,9 +45,6 @@ object RsExperiments {
 /**
  * Experimental feature should be annotated with `@EnabledInStable` if it is enabled in stable releases,
  * i.e. it is included in `resources-stable/META-INF/experiments.xml` with `percentOfUsers="100"`.
- *
- * Enabled experimental features without `@EnabledInStable` annotation are intended to be collected in
- * [org.rust.ide.actions.diagnostic.CreateNewGithubIssue]
  */
 @Target(AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
