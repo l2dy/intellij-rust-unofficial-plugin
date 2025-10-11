@@ -141,7 +141,7 @@ class AttachCargoProjectActionTest : RsWithToolchainTestBase() {
         }
         val testEvent = createActionEvent(context, place)
         val action = ActionManager.getInstance().getAction("Cargo.AttachCargoProject")
-        action.beforeActionPerformedUpdate(testEvent)
+        action.update(testEvent)
         assertEquals(shouldBeEnabled, testEvent.presentation.isEnabledAndVisible)
         if (shouldBeEnabled) {
             val latch = CountDownLatch(1)
