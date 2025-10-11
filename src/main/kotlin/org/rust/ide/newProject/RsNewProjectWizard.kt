@@ -5,36 +5,41 @@
 
 package org.rust.ide.newProject
 
+import com.intellij.ide.projectWizard.NewProjectWizardConstants
 import com.intellij.ide.wizard.AbstractNewProjectWizardStep
 import com.intellij.ide.wizard.GitNewProjectWizardData.Companion.gitData
-import com.intellij.ide.wizard.LanguageNewProjectWizard
-import com.intellij.ide.wizard.NewProjectWizardLanguageStep
+import com.intellij.ide.wizard.NewProjectWizardBaseData.Companion.baseData
 import com.intellij.ide.wizard.NewProjectWizardStep
+import com.intellij.ide.wizard.language.LanguageGeneratorNewProjectWizard
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Panel
+import org.rust.ide.icons.RsIcons
 import org.rust.ide.module.RsModuleBuilder
 import org.rust.stdext.toPathOrNull
 import java.nio.file.Path
 import java.nio.file.Paths
+import javax.swing.Icon
 
-class RsNewProjectWizard : LanguageNewProjectWizard {
-    override val name: String = "Rust" // TODO: replace with `NewProjectWizardConstants.Language.RUST`
+class RsNewProjectWizard : LanguageGeneratorNewProjectWizard {
+    @Suppress("UnstableApiUsage")
+    override val name: String = NewProjectWizardConstants.Language.RUST
+    override val icon: Icon get() = RsIcons.RUST
 
     override val ordinal: Int = 900
 
-    override fun createStep(parent: NewProjectWizardLanguageStep): NewProjectWizardStep = Step(parent)
+    override fun createStep(parent: NewProjectWizardStep): NewProjectWizardStep = Step(parent)
 
-    private class Step(parent: NewProjectWizardLanguageStep) : AbstractNewProjectWizardStep(parent) {
-        private val peer: RsProjectGeneratorPeer = RsProjectGeneratorPeer(parent.path.toPathOrNull() ?: Paths.get("."))
+    private class Step(parent: NewProjectWizardStep) : AbstractNewProjectWizardStep(parent) {
+        private val peer: RsProjectGeneratorPeer = RsProjectGeneratorPeer(parent.baseData?.path?.toPathOrNull() ?: Paths.get("."))
 
         override fun setupUI(builder: Panel) {
             with(builder) {
                 row {
-                    cell(peer.component)
+                    cell(peer.wizardComponent)
                         .align(AlignX.FILL)
                         .validationRequestor { peer.checkValid = Runnable(it) }
                         .validationInfo { peer.validate() }

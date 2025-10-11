@@ -27,9 +27,10 @@ class RsProjectGeneratorPeer(cargoProjectDir: Path = Paths.get(".")) : Generator
         return super.getComponent(myLocationField, checkValid)
     }
 
-    override fun getComponent(): JComponent = panel {
-        newProjectPanel.attachTo(this)
-    }
+    val wizardComponent: JComponent
+        get() = panel {
+            newProjectPanel.attachTo(this)
+        }
 
     override fun validate(): ValidationInfo? = try {
         newProjectPanel.validateSettings()
