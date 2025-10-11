@@ -11,10 +11,10 @@ import com.intellij.openapi.options.Configurable
 import com.intellij.openapi.options.ex.Settings
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.bindSelected
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import org.rust.RsBundle
 import org.rust.cargo.project.model.isNewProjectModelImportEnabled
 import org.rust.cargo.project.settings.rustSettings
@@ -85,7 +85,7 @@ class CargoConfigurable(
             row {
                 link(RsBundle.message("settings.rust.cargo.moved.label")) { callback() }
                     .resizableColumn()
-                    .horizontalAlign(HorizontalAlign.CENTER)
+                    .align(AlignX.CENTER)
             }.resizableRow()
         }
 

@@ -20,9 +20,9 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.NlsContexts.DialogTitle
 import com.intellij.ui.DocumentAdapter
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignX
 import com.intellij.ui.dsl.builder.Cell
 import com.intellij.ui.dsl.builder.Row
-import com.intellij.ui.dsl.gridLayout.HorizontalAlign
 import com.intellij.util.Alarm
 import org.rust.ide.intentions.util.macros.RsIntentionInsideMacroExpansionEditor
 import org.rust.lang.RsFileType
@@ -123,7 +123,7 @@ fun selectElement(element: RsElement, editor: Editor) {
 
 fun <T : JComponent> Row.fullWidthCell(component: T): Cell<T> {
     return cell(component)
-        .horizontalAlign(HorizontalAlign.FILL)
+        .align(AlignX.FILL)
 }
 
 val JBTextField.trimmedText: String

@@ -18,7 +18,7 @@ import org.toml.lang.psi.TomlLiteral
 class CargoTomlUsageTypeProvider : UsageTypeProviderEx {
     override fun getUsageType(element: PsiElement): UsageType? = getUsageType(element, UsageTarget.EMPTY_ARRAY)
 
-    override fun getUsageType(element: PsiElement?, targets: Array<out UsageTarget>): UsageType? {
+    override fun getUsageType(element: PsiElement, targets: Array<out UsageTarget>): UsageType? {
         if (!tomlPluginIsAbiCompatible()) return null
         return when (element) {
             is TomlLiteral -> if (onFeatureDependencyLiteral.accepts(element)) FEATURE_DEPENDENCY else DEPENDENCY_FEATURE

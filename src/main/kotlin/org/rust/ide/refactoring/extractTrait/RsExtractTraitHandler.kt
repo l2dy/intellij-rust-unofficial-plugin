@@ -19,9 +19,9 @@ import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.ui.RefactoringDialog
 import com.intellij.refactoring.util.CommonRefactoringUtil
 import com.intellij.ui.components.JBTextField
+import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.BottomGap
 import com.intellij.ui.dsl.builder.panel
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBUI
 import org.jetbrains.annotations.TestOnly
 import org.rust.RsBundle
@@ -106,7 +106,7 @@ class RsExtractTraitDialog(
             members.minimumSize = JBUI.size(0, 200)
             members.table.addMemberInfoChangeListener { validateButtons() }
             fullWidthCell(members)
-                .verticalAlign(VerticalAlign.FILL)
+                .align(AlignY.FILL)
         }
     }
 

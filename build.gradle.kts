@@ -112,7 +112,7 @@ allprojects {
                 jvmTarget.set(JvmTarget.JVM_21)
                 languageVersion.set(KotlinVersion.DEFAULT)
                 // see https://plugins.jetbrains.com/docs/intellij/using-kotlin.html#kotlin-standard-library
-                apiVersion.set(KotlinVersion.KOTLIN_2_0)
+                apiVersion.set(KotlinVersion.KOTLIN_2_1)
                 freeCompilerArgs.set(listOf("-Xjvm-default=all"))
             }
         }
@@ -211,6 +211,7 @@ allprojects {
 
             testBundledModule("intellij.platform.navbar")
             testBundledModule("intellij.platform.navbar.backend")
+            testBundledModule("intellij.platform.vcs.impl.lang")
         }
 
         compileOnly(kotlin("stdlib-jdk8"))

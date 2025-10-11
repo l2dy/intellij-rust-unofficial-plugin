@@ -20,8 +20,8 @@ import com.intellij.ui.SimpleTextAttributes
 import com.intellij.ui.ToolbarDecorator
 import com.intellij.ui.components.JBList
 import com.intellij.ui.components.Link
+import com.intellij.ui.dsl.builder.AlignY
 import com.intellij.ui.dsl.builder.Panel
-import com.intellij.ui.dsl.gridLayout.VerticalAlign
 import com.intellij.util.ui.JBUI
 import org.rust.RsBundle
 import org.rust.cargo.project.settings.ui.RustProjectSettingsPanel
@@ -156,7 +156,7 @@ class RsNewProjectPanel(
                 row {
                     resizableRow()
                     fullWidthCell(templateToolbar.createPanel())
-                        .verticalAlign(VerticalAlign.FILL)
+                        .align(AlignY.FILL)
                 }
                 row {
                     cell(downloadCargoGenerateLink)
