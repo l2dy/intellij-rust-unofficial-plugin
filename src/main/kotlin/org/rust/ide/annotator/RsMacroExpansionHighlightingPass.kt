@@ -148,7 +148,20 @@ class RsMacroExpansionHighlightingPass(
 
     private fun mapAndCollectAnnotation(macro: MacroCallPreparedForHighlighting, ann: Annotation) {
         val originRange = TextRange(ann.startOffset, ann.endOffset)
-        val originInfo = HighlightInfo.fromAnnotation(ann)
+        val originInfo = try {
+            HighlightInfo.fromAnnotation(ann)
+        } catch (e: IllegalArgumentException) {
+            // Creating highlight info can fail if document offsets are invalid.
+            // This can happen during test execution with macro expansions. Skip this annotation.
+            if (isUnitTestMode) {
+                // Fail fast in test mode so the message is visible in test output
+                throw AssertionError(
+                    "Skipping annotation due to invalid offsets: ann=${ann.message}, range=$originRange, expansionLength=${macro.expansion.file.textLength}, file=${macro.expansion.file.virtualFile?.path}",
+                    e
+                )
+            }
+            throw e
+        }
         val mappedRanges = mapRangeFromExpansionToCallBody(macro.expansion, macro.macroCall, originRange)
         for (mappedRange in mappedRanges) {
             val newInfo = originInfo.copyWithRange(mappedRange)
