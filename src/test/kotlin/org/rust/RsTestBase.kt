@@ -23,6 +23,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileFilter
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.psi.PsiElement
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.*
@@ -77,6 +78,11 @@ abstract class RsTestBase : BasePlatformTestCase(), RsTestCase {
 
     override fun setUp() {
         super.setUp()
+
+        // Allow VFS access to test resources directory for platform 251+
+        // Required on Windows where path handling is stricter
+        val testResourcesPath = java.nio.file.Paths.get(TestCase.testResourcesPath).toAbsolutePath().toString()
+        VfsRootAccess.allowRootAccess(testRootDisposable, testResourcesPath)
 
         invokeAndWaitIfNeeded { setupRustProject() }
         setupMockRustcVersion()
