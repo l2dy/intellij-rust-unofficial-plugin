@@ -5,6 +5,7 @@
 
 package org.rustSlowTests
 
+import com.intellij.util.CachedValueBase
 import com.intellij.util.ref.GCUtil
 import org.rust.RsTestBase
 import org.rust.lang.core.crate.crateGraph
@@ -70,7 +71,14 @@ class RsGcSoftlyReachableObjectsCacheTest : RsTestBase() {
 
         val macroCall = myFixture.file.descendantsOfType<RsMacroCall>().single()
         val path = macroCall.expansionResult.ok()!!.file.descendantsOfType<RsPath>().single()
-        val cachedValue = macroCall.getUserData(RS_MACRO_CALL_EXPANSION_RESULT)!!
+
+        // Platform 251 internal implementation quirk: CachedValuesManager.getCachedValue() accepts Key<CachedValue<T>>
+        // but internally stores ParameterizedCachedValue implementations.
+        // When accessing via getUserData() directly, we must cast to the common base class CachedValueBase.
+        //
+        // See: https://github.com/JetBrains/intellij-community/commit/4c067d610dfa79b67ec14ff82938a3ca47894700
+        val cachedValue = macroCall.getUserData(RS_MACRO_CALL_EXPANSION_RESULT) as? CachedValueBase<*>
+            ?: error("Expected CachedValueBase but got null")
 
         assertNotNull(path.reference!!.resolve())
         GCUtil.tryGcSoftlyReachableObjects { !cachedValue.hasUpToDateValue() }
