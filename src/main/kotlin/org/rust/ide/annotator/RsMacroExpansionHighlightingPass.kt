@@ -148,7 +148,7 @@ class RsMacroExpansionHighlightingPass(
 
     private fun mapAndCollectAnnotation(macro: MacroCallPreparedForHighlighting, ann: Annotation) {
         val originRange = TextRange(ann.startOffset, ann.endOffset)
-        val originInfo = HighlightInfo.fromAnnotation(ann)
+        val originInfo = HighlightInfo.fromAnnotation(ann, document)
         val mappedRanges = mapRangeFromExpansionToCallBody(macro.expansion, macro.macroCall, originRange)
         for (mappedRange in mappedRanges) {
             val newInfo = originInfo.copyWithRange(mappedRange)
