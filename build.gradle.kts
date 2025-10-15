@@ -220,7 +220,7 @@ allprojects {
         // https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-faq.html#missing-opentest4j-dependency-in-test-framework
         testImplementation("org.opentest4j:opentest4j:1.3.0")
         // Workaround for NoClassDefFoundError in com.intellij.testFramework.fixtures.BuildViewTestFixture.assertSyncViewTreeEquals
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0")
         testOutput(sourceSets.getByName("test").output.classesDirs)
     }
 
