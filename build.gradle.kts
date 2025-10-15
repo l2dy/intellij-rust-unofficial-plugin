@@ -59,7 +59,7 @@ idea {
     module {
         // https://github.com/gradle/kotlin-dsl/issues/537/
         excludeDirs = excludeDirs + file("testData") + file("deps") + file("bin") +
-            file("$grammarKitFakePsiDeps/src/main/kotlin")
+            file(".intellijPlatform") + file("$grammarKitFakePsiDeps/src/main/kotlin")
     }
 }
 
