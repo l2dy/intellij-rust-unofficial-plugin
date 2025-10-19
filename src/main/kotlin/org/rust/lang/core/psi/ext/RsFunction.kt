@@ -185,6 +185,9 @@ val RsFunction.isActuallyUnsafe: Boolean
 val RsFunction.isIntrinsic: Boolean
     get() {
         val context = context
+        if (queryAttributes.hasAttribute("rustc_intrinsic")) {
+            return true
+        }
         return context is RsForeignModItem && context.effectiveAbi == "rust-intrinsic"
     }
 
