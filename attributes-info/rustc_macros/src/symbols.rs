@@ -24,7 +24,9 @@
 
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
+use std::cmp::Ordering;
 use std::collections::HashMap;
+use std::iter::Peekable;
 use syn::parse::{Parse, ParseStream, Result};
 use syn::{braced, punctuated::Punctuated, Expr, ExprLit, Ident, Lit, LitStr, Token};
 
@@ -97,6 +99,59 @@ impl Errors {
     }
 }
 
+fn consume_numeric_prefix<I: Iterator<Item = char>>(it: &mut Peekable<I>) -> String {
+    let mut result = String::new();
+    while let Some(&c) = it.peek() {
+        if !c.is_ascii_digit() {
+            break;
+        }
+        result.push(c);
+        it.next();
+    }
+    result
+}
+
+// Mirrors tidy’s alphabetical check: case-sensitive order with digit runs
+// compared numerically (so `sym::AtomicI8` < `sym::AtomicI16`, etc.).
+fn version_sort(a: &str, b: &str) -> Ordering {
+    let mut it1 = a.chars().peekable();
+    let mut it2 = b.chars().peekable();
+
+    loop {
+        let Some(x) = it1.peek().copied() else {
+            return it2.peek().map_or(Ordering::Equal, |_| Ordering::Less);
+        };
+        let Some(y) = it2.peek().copied() else {
+            return Ordering::Greater;
+        };
+
+        if x.is_ascii_digit() && y.is_ascii_digit() {
+            let num1 = consume_numeric_prefix(it1.by_ref());
+            let num2 = consume_numeric_prefix(it2.by_ref());
+
+            let int1: u64 = num1.parse().unwrap();
+            let int2: u64 = num2.parse().unwrap();
+
+            let ord = int1.cmp(&int2).then_with(|| num1.cmp(&num2));
+            if ord != Ordering::Equal {
+                return ord;
+            }
+            continue;
+        }
+
+        if x.is_ascii_digit() || y.is_ascii_digit() {
+            return x.cmp(&y);
+        }
+
+        if x != y {
+            return x.cmp(&y);
+        }
+
+        it1.next();
+        it2.next();
+    }
+}
+
 pub fn symbols(input: TokenStream) -> TokenStream {
     let (mut output, errors) = symbols_with_errors(input);
 
@@ -143,7 +198,7 @@ fn symbols_with_errors(input: TokenStream) -> (TokenStream, Vec<syn::Error>) {
 
     let mut check_order = |span: Span, str: &str, errors: &mut Errors| {
         if let Some((prev_span, ref prev_str)) = prev_key {
-            if str < prev_str {
+            if version_sort(str, prev_str).is_lt() {
                 errors.error(
                     span,
                     format!("Symbol `{}` must precede `{}`", str, prev_str),
