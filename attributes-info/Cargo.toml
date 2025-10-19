@@ -14,5 +14,6 @@ members = [
     "rustc_feature",
     "rustc_span",
     "rustc_data_structures",
-    "rustc_macros"
+    "rustc_macros",
+    "rustc_attr_data_structures"
 ]

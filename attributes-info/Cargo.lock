@@ -613,6 +613,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08d43f7aa6b08d49f382cde6a7982047c3426db949b1424bc4b7ec9ae12c6ce2"
 
 [[package]]
+name = "rustc_attr_data_structures"
+version = "0.1.0"
+
+[[package]]
 name = "rustc_data_structures"
 version = "0.1.0"
 dependencies = [
@@ -624,6 +628,7 @@ name = "rustc_feature"
 version = "0.1.0"
 dependencies = [
  "reqwest",
+ "rustc_attr_data_structures",
  "rustc_data_structures",
  "rustc_span",
  "serde",
