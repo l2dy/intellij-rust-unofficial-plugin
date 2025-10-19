@@ -55,7 +55,7 @@ pub(crate) fn generate_builtin_attributes_json(builtin_attributes_json_path: &st
                 name_value_str: attr.template.name_value_str,
             },
             duplicates: duplicates_to_str(attr.duplicates),
-            gated: matches!(attr.gate, AttributeGate::Gated(..)),
+            gated: matches!(attr.gate, AttributeGate::Gated { .. }),
         };
         seq.serialize_element(&attr_info).unwrap();
     }
