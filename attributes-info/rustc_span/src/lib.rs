@@ -4,5 +4,5 @@ extern crate rustc_macros;
 pub mod edition;
 pub mod symbol;
 
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Span;
