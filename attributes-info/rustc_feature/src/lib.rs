@@ -1,3 +1,5 @@
+#![allow(macro_expanded_macro_exports_accessed_by_absolute_paths)]
+
 use std::fmt;
 use std::num::NonZero;
 

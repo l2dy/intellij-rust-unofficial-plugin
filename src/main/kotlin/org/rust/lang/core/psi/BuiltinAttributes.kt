@@ -13,7 +13,7 @@ import java.io.IOException
 
 // Bump each time `RS_BUILTIN_ATTRIBUTES` content is modified
 // (that is, `builtin-attributes.json` content is modified)
-const val RS_BUILTIN_ATTRIBUTES_VERSION: Int = 1
+const val RS_BUILTIN_ATTRIBUTES_VERSION: Int = 2
 
 val RS_BUILTIN_ATTRIBUTES: Map<String, AttributeInfo> = BuiltinAttributeInfoLoader.loadAttributes()
 
@@ -40,6 +40,7 @@ enum class AttributeType {
 data class AttributeTemplate(
     val word: Boolean,
     val list: String?,
+    val oneOf: List<String>? = null,
     val nameValueStr: String?,
 )
 
