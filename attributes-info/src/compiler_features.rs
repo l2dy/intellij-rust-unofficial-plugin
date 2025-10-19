@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize, Serializer};
 use version_check::Version;
 
 use rustc_feature::{
-    Feature, Features, State, ACCEPTED_FEATURES, REMOVED_FEATURES, UNSTABLE_FEATURES,
+    Feature, Features, State, ACCEPTED_LANG_FEATURES, REMOVED_LANG_FEATURES, UNSTABLE_LANG_FEATURES,
 };
 
 use crate::formatter::MyFormatter;
@@ -43,15 +43,15 @@ pub(crate) fn update_compiler_features_json(compiler_features_json_path: &str) {
 
     let mut seq = serializer.serialize_seq(None).unwrap();
     [
-        ACCEPTED_FEATURES
+        ACCEPTED_LANG_FEATURES
             .iter()
             .map(|f| (f, State::Accepted))
             .collect(),
-        UNSTABLE_FEATURES
+        UNSTABLE_LANG_FEATURES
             .iter()
             .map(|f| (f, State::Active))
             .collect(),
-        REMOVED_FEATURES
+        REMOVED_LANG_FEATURES
             .iter()
             .map(|f| (&f.feature, State::Removed { reason: f.reason }))
             .collect(),

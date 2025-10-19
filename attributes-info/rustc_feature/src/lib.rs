@@ -1,15 +1,15 @@
 use std::fmt;
 use std::num::NonZeroU32;
 
-pub use accepted::ACCEPTED_FEATURES;
+pub use accepted::ACCEPTED_LANG_FEATURES;
 pub use builtin_attrs::AttributeDuplicates;
 pub use builtin_attrs::{
     deprecated_attributes, find_gated_cfg, is_builtin_attr_name, AttributeGate, AttributeTemplate,
     AttributeType, BuiltinAttribute, GatedCfg, BUILTIN_ATTRIBUTES, BUILTIN_ATTRIBUTE_MAP,
 };
-pub use removed::REMOVED_FEATURES;
+pub use removed::REMOVED_LANG_FEATURES;
 use rustc_span::symbol::Symbol;
-pub use unstable::{Features, INCOMPATIBLE_FEATURES, UNSTABLE_FEATURES};
+pub use unstable::{Features, INCOMPATIBLE_FEATURES, UNSTABLE_LANG_FEATURES};
 
 mod accepted;
 mod builtin_attrs;
