@@ -1,11 +1,10 @@
 use std::fmt;
-use std::num::NonZeroU32;
+use std::num::NonZero;
 
 pub use accepted::ACCEPTED_LANG_FEATURES;
-pub use builtin_attrs::AttributeDuplicates;
 pub use builtin_attrs::{
-    deprecated_attributes, find_gated_cfg, is_builtin_attr_name, AttributeGate, AttributeTemplate,
-    AttributeType, BuiltinAttribute, GatedCfg, BUILTIN_ATTRIBUTES, BUILTIN_ATTRIBUTE_MAP,
+    AttributeDuplicates, AttributeGate, AttributeTemplate, AttributeType, BuiltinAttribute,
+    GatedCfg, BUILTIN_ATTRIBUTES, BUILTIN_ATTRIBUTE_MAP, find_gated_cfg, is_builtin_attr_name,
 };
 pub use removed::REMOVED_LANG_FEATURES;
 use rustc_span::symbol::Symbol;
@@ -37,7 +36,7 @@ impl fmt::Debug for State {
 pub struct Feature {
     pub name: Symbol,
     pub since: &'static str,
-    issue: Option<NonZeroU32>,
+    issue: Option<NonZero<u32>>,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -46,19 +45,11 @@ pub struct RemovedFeature {
     pub reason: Option<&'static str>,
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum Stability {
-    Unstable,
-    // First argument is tracking issue link; second argument is an optional
-    // help message, which defaults to "remove this attribute".
-    Deprecated(&'static str, Option<&'static str>),
-}
-
-const fn to_nonzero(n: Option<u32>) -> Option<NonZeroU32> {
-    // Can be replaced with `n.and_then(NonZeroU32::new)` if that is ever usable
+const fn to_nonzero(n: Option<u32>) -> Option<NonZero<u32>> {
+    // Can be replaced with `n.and_then(NonZero::new)` if that is ever usable
     // in const context. Requires https://github.com/rust-lang/rfcs/pull/2632.
     match n {
         None => None,
-        Some(n) => NonZeroU32::new(n),
+        Some(n) => NonZero::new(n),
     }
 }
