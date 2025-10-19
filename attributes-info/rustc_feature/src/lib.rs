@@ -19,7 +19,7 @@ mod unstable;
 #[derive(Clone, Copy)]
 pub enum State {
     Accepted,
-    Active { set: fn(&mut Features) },
+    Active,
     Removed { reason: Option<&'static str> },
 }
 
@@ -27,7 +27,7 @@ impl fmt::Debug for State {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             State::Accepted { .. } => write!(f, "accepted"),
-            State::Active { .. } => write!(f, "active"),
+            State::Active => write!(f, "active"),
             State::Removed { .. } => write!(f, "removed"),
         }
     }
@@ -38,12 +38,6 @@ pub struct Feature {
     pub name: Symbol,
     pub since: &'static str,
     issue: Option<NonZeroU32>,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct ActiveFeature {
-    pub feature: Feature,
-    pub set_enabled: fn(&mut Features),
 }
 
 #[derive(Debug, Clone, Copy)]

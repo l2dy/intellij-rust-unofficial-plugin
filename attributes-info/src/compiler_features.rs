@@ -49,7 +49,7 @@ pub(crate) fn update_compiler_features_json(compiler_features_json_path: &str) {
             .collect(),
         UNSTABLE_FEATURES
             .iter()
-            .map(|f| (&f.feature, State::Active { set: f.set_enabled }))
+            .map(|f| (&f.feature, State::Active))
             .collect(),
         REMOVED_FEATURES
             .iter()
@@ -106,7 +106,7 @@ fn replace_version_placeholder(
 fn state_str(feature: &Feature, state: &State) -> String {
     match state {
         State::Accepted => "accepted",
-        State::Active { .. } => {
+        State::Active => {
             if Features::default().incomplete(feature.name) {
                 "incomplete"
             } else {
