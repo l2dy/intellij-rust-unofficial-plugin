@@ -49,7 +49,7 @@ pub(crate) fn update_compiler_features_json(compiler_features_json_path: &str) {
             .collect(),
         UNSTABLE_FEATURES
             .iter()
-            .map(|f| (&f.feature, State::Active))
+            .map(|f| (f, State::Active))
             .collect(),
         REMOVED_FEATURES
             .iter()
