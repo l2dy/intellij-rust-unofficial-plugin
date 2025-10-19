@@ -28,7 +28,7 @@ pub struct MyAttributeTemplate {
     /// If `true`, the attribute is allowed to be a bare word like `#[test]`.
     pub word: bool,
     /// If `Some`, the attribute is allowed to take a list of items like `#[allow(..)]`.
-    pub list: Option<&'static str>,
+    pub list: Option<String>,
     /// If not empty, the attribute accepts a list containing exactly one of the listed words.
     #[serde(rename = "oneOf")]
     #[serde(skip_serializing_if = "Vec::is_empty")]
@@ -36,7 +36,7 @@ pub struct MyAttributeTemplate {
     /// If `Some`, the attribute is allowed to be a name/value pair where the
     /// value is a string, like `#[must_use = "reason"]`.
     #[serde(rename = "nameValueStr")]
-    pub name_value_str: Option<&'static str>,
+    pub name_value_str: Option<String>,
 }
 
 pub(crate) fn generate_builtin_attributes_json(builtin_attributes_json_path: &str) {
@@ -55,9 +55,14 @@ pub(crate) fn generate_builtin_attributes_json(builtin_attributes_json_path: &st
             },
             template: MyAttributeTemplate {
                 word: attr.template.word,
-                list: attr.template.list,
-                one_of: attr.template.one_of.iter().map(|sym| sym.to_string()).collect(),
-                name_value_str: attr.template.name_value_str,
+                list: attr.template.list.map(|list| list.join("|")),
+                one_of: attr
+                    .template
+                    .one_of
+                    .iter()
+                    .map(|sym| sym.to_string())
+                    .collect(),
+                name_value_str: attr.template.name_value_str.map(|values| values.join("|")),
             },
             duplicates: duplicates_to_str(attr.duplicates),
             gated: matches!(attr.gate, AttributeGate::Gated { .. }),
