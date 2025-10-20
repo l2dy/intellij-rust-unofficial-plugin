@@ -2698,94 +2698,6 @@ class RsErrorAnnotatorTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
         }
     """)
 
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test stable attr on invalid owner E0132`() = checkErrors("""
-        #![feature(start)]
-        #[<error descr="Start attribute can be placed only on functions [E0132]">start</error>]
-        struct Foo;
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test stable attr on fn with return mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn test_name(_argc: isize, _argv: *const *const u8) -> <error descr="Functions with a `start` attribute must return `isize` [E0132]">u32</error> { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test stable attr on fn without return E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn <error descr="Functions with a `start` attribute must return `isize` [E0132]">test_name</error>(_argc: isize, _argv: *const *const u8) { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test inner stable attr on fn with return mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        fn test_name(_argc: isize, _argv: *const *const u8) -> <error descr="Functions with a `start` attribute must return `isize` [E0132]">u32</error> {
-            #![start]
-            0
-        }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test param count mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn <error descr="Functions with a `start` attribute must have the following signature: `fn(isize, *const *const u8) -> isize` [E0132]">test_name</error>(_argc: isize, _argv: *const *const u8, foo: bool) -> isize {
-            0
-        }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test 1st param mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn lets_go(_argc: <error descr="Functions with a `start` attribute must have `isize` as first parameter [E0132]">usize</error>, _argv: *const *const u8) -> isize { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test 2nd param mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn lets_go(_argc: isize, _argv: <error descr="Functions with a `start` attribute must have `*const *const u8` as second parameter [E0132]">*const *const bool</error>) -> isize { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test all params mismatch E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn lets_go(_argc: <error descr="Functions with a `start` attribute must have `isize` as first parameter [E0132]">usize</error>, _argv: <error descr="Functions with a `start` attribute must have `*const *const u8` as second parameter [E0132]">*const *const bool</error>) -> isize { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test valid E0132`() = checkErrors("""
-        #![feature(start)]
-        #[start]
-        fn valid(_argc: isize, _argv: *const *const u8) -> isize { 0 }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test valid E0132 with normalizable associated type`() = checkErrors("""
-        #![feature(start)]
-
-        struct IsizeStruct;
-        struct ConstConstU8Struct;
-        trait Trait { type Item; }
-        impl Trait for IsizeStruct { type Item = isize; }
-        impl Trait for ConstConstU8Struct { type Item = *const *const u8; }
-
-        #[start]
-        fn valid(_argc: <IsizeStruct as Trait>::Item, _argv: <ConstConstU8Struct as Trait>::Item) -> <IsizeStruct as Trait>::Item { 0 }
-    """)
-
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test missing feature E0132`() = checkErrors("""
-        #[<error descr="#[start] function is experimental [E0658]">start</error>]
-        fn valid(_argc: isize, _argv: *const *const u8) -> isize { 0 }
-    """)
-
     fun `test inclusive range with no end E0586`() = checkErrors("""
         fn foo() {
             let x = 1<error descr="inclusive ranges must be bounded at the end (`..=b` or `a..=b`) [E0586]">..=</error>;
@@ -3577,26 +3489,6 @@ class RsErrorAnnotatorTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
             let bar: usize = 42;
             let a: [u8; <error descr="Calls in constants are limited to constant functions, tuple structs and tuple variants [E0015]">foo</error>(1, <error descr="A non-constant value was used in a constant expression [E0435]">bar</error>)];
         }
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    @ProjectDescriptor(WithDependencyRustProjectDescriptor::class)
-    fun `test custom start proc macro attr`() = checkByFileTree("""
-    //- dep-proc-macro/lib.rs
-        use proc_macro::TokenStream;
-
-        #[proc_macro_attribute]
-        pub fn start(attr: TokenStream, item: TokenStream) -> TokenStream {
-            item
-        }
-    //- main.rs
-        #![feature(start)]
-        extern crate dep_proc_macro;
-
-        use dep_proc_macro::start;
-
-        #[<error descr="Start attribute can be placed only on functions [E0132]">start/*caret*/</error>]
-        type Foo = i32;
     """)
 
     @ProjectDescriptor(WithDependencyRustProjectDescriptor::class)

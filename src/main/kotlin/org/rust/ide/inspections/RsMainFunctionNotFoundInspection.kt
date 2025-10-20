@@ -7,8 +7,6 @@ package org.rust.ide.inspections
 
 import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
-import org.rust.lang.core.CompilerFeature.Companion.START
-import org.rust.lang.core.FeatureAvailability
 import org.rust.lang.core.crate.asNotFake
 import org.rust.lang.core.psi.RsFile
 import org.rust.lang.core.psi.RsFunction
@@ -32,7 +30,6 @@ class RsMainFunctionNotFoundInspection : RsLocalInspectionTool() {
                     if (!file.isCrateRoot) return
 
                     if (file.queryAttributes.hasAttribute("no_main")) return
-                    if (START.availability(file) == FeatureAvailability.AVAILABLE) return
                     val hasMainFunction = file.processExpandedItemsExceptImplsAndUses { it is RsFunction && "main" == it.name }
                     if (!hasMainFunction) {
                         RsDiagnostic.MainFunctionNotFound(file, crate.presentableName).addToHolder(holder)

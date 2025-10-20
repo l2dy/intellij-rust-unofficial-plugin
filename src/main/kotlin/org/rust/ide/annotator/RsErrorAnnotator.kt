@@ -61,7 +61,6 @@ import org.rust.lang.core.CompilerFeature.Companion.OR_PATTERNS
 import org.rust.lang.core.CompilerFeature.Companion.PARAM_ATTRS
 import org.rust.lang.core.CompilerFeature.Companion.RAW_REF_OP
 import org.rust.lang.core.CompilerFeature.Companion.SLICE_PATTERNS
-import org.rust.lang.core.CompilerFeature.Companion.START
 import org.rust.lang.core.CompilerFeature.Companion.UNBOXED_CLOSURES
 import org.rust.lang.core.FeatureAvailability.*
 import org.rust.lang.core.FeatureState
@@ -1251,9 +1250,6 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
         checkTypesAreSized(holder, fn)
         checkEmptyFunctionReturnType(holder, fn)
         checkRecursiveAsyncFunction(holder, fn)
-
-        fn.innerAttrList.forEach { checkStartAttribute(holder, it) }
-        fn.outerAttrList.forEach { checkStartAttribute(holder, it) }
     }
 
     private fun collectDiagnostics(holder: RsAnnotationHolder, element: RsInferenceContextOwner) {
@@ -1265,9 +1261,6 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
     private fun checkAttr(holder: RsAnnotationHolder, attr: RsAttr) {
         checkDeriveAttribute(holder, attr)
         checkInlineAttr(holder, attr)
-
-        if (attr.owner !is RsFunction)
-            checkStartAttribute(holder, attr)
     }
 
     private fun checkDeriveAttribute(holder: RsAnnotationHolder, attr: RsAttr) {
@@ -1277,47 +1270,6 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
             checkImplBothCopyAndDrop(holder, attr)
         } else {
             RsDiagnostic.DeriveAttrUnsupportedItem(attr).addToHolder(holder)
-        }
-    }
-
-    // E0132: Invalid `start` attribute
-    private fun checkStartAttribute(holder: RsAnnotationHolder, attr: RsAttr) {
-        if (attr.metaItem.name != "start") return
-
-        START.check(holder, attr.metaItem, RsBundle.message("start.function"))
-
-        when (val owner = attr.owner) {
-            is RsFunction -> {
-                // Check if signature matches `fn(isize, *const *const u8) -> isize`
-                val params = owner.valueParameters
-                if (owner.normReturnType !is TyInteger.ISize) {
-                    RsDiagnostic.InvalidStartAttrError.ReturnMismatch(owner.retType?.typeReference ?: owner.identifier)
-                        .addToHolder(holder)
-                }
-                if (params.size != 2) {
-                    RsDiagnostic.InvalidStartAttrError.InvalidParam(owner.identifier)
-                        .addToHolder(holder)
-                    // Don't check specific param types if param count is invalid to avoid overloading the user
-                    // with errors
-                    return
-                }
-                if (params[0].typeReference?.normType !is TyInteger.ISize) {
-                    RsDiagnostic.InvalidStartAttrError.InvalidParam(params[0].typeReference ?: params[0], 0)
-                        .addToHolder(holder)
-                }
-                if (params[1].typeReference?.normType?.isEquivalentTo(TyPointer(
-                        TyPointer(TyInteger.U8.INSTANCE, Mutability.IMMUTABLE),
-                        Mutability.IMMUTABLE
-                    )) == false
-                ) {
-                    RsDiagnostic.InvalidStartAttrError.InvalidParam(params[1].typeReference ?: params[1], 1)
-                        .addToHolder(holder)
-                }
-            }
-            else ->
-                RsDiagnostic
-                    .InvalidStartAttrError.InvalidOwner(attr.metaItem.path?.referenceNameElement ?: attr.metaItem)
-                    .addToHolder(holder)
         }
     }
 

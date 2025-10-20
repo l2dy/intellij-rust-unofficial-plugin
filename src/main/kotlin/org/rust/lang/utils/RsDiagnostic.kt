@@ -727,43 +727,6 @@ sealed class RsDiagnostic(
         }
     }
 
-    sealed class InvalidStartAttrError(
-        element: PsiElement
-    ) : RsDiagnostic(element) {
-        class ReturnMismatch(element: PsiElement) : RsDiagnostic(element) {
-            override fun prepare() = PreparedAnnotation(
-                ERROR,
-                E0132,
-                RsBundle.message("inspection.message.functions.with.start.attribute.must.return.isize")
-            )
-        }
-
-        class InvalidOwner(element: PsiElement) : RsDiagnostic(element) {
-            override fun prepare() = PreparedAnnotation(
-                ERROR,
-                E0132,
-                RsBundle.message("inspection.message.start.attribute.can.be.placed.only.on.functions")
-            )
-        }
-
-        class InvalidParam(
-            element: PsiElement,
-            private val num: Int = -1
-        ) : RsDiagnostic(element) {
-            override fun prepare() = PreparedAnnotation(
-                ERROR,
-                E0132,
-                RsBundle.message(
-                    "inspection.message.functions.with.start.attribute.must.have", when (num) {
-                    0 -> "`isize` as first parameter"
-                    1 -> "`*const *const u8` as second parameter"
-                    else -> "the following signature: `fn(isize, *const *const u8) -> isize`"
-                }
-                )
-            )
-        }
-    }
-
     class ReservedLifetimeNameError(
         element: PsiElement,
         private val lifetimeName: String

@@ -6,7 +6,6 @@
 package org.rust.ide.inspections
 
 import org.junit.Test
-import org.rust.MockRustcVersion
 
 class RsAsyncMainFunctionInspectionTest: RsInspectionsTestBase(RsAsyncMainFunctionInspection::class) {
     fun `test main function is async`() = checkByText("""
@@ -56,26 +55,6 @@ class RsAsyncMainFunctionInspectionTest: RsInspectionsTestBase(RsAsyncMainFuncti
         #![no_main]/*caret*/
     """)
 
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test start entry point`() = checkByText("""
-        #![feature(start)]
-
-        #[start]
-        /*error descr="`start` function is not allowed to be `async` [E0752]"*/async/*error**/ fn start(_argc: isize, _argv: *const *const u8) -> isize {
-        0/*caret*/
-        }
-    """)
-
-    @MockRustcVersion("1.0.0")
-    fun `test start feature not available`() = checkByText("""
-        #![feature(start)]
-
-        #[start]
-        async fn start(_argc: isize, _argv: *const *const u8) -> isize {
-        0/*caret*/
-        }
-    """)
-
     fun `test custom bin`() = checkByFileTree("""
     //- bin/a.rs
         /*error descr="`main` function is not allowed to be `async` [E0752]"*/async/*error**/ fn main() {
@@ -114,17 +93,4 @@ class RsAsyncMainFunctionInspectionTest: RsInspectionsTestBase(RsAsyncMainFuncti
         fn main() {}
     """)
 
-    @Test(expected = Throwable::class) // Please remove once highlighting insde macro expansion is enabled back.
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test fix E0752 with start`() = checkFixByText("Remove async", """
-        #![feature(start)]
-
-        #[start]
-        /*error descr="`start` function is not allowed to be `async` [E0752]"*/async/*caret*//*error**/ fn start() {}
-    """, """
-        #![feature(start)]
-
-        #[start]
-        fn start() {}
-    """)
 }

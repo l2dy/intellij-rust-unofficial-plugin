@@ -5,19 +5,10 @@
 
 package org.rust.ide.annotator.fixes
 
-import com.intellij.openapi.project.Project
-import com.intellij.util.Urls
-import org.rust.MockRustcVersion
-import org.rust.ProjectDescriptor
-import org.rust.RustProjectDescriptorBase
-import org.rust.cargo.project.workspace.CargoWorkspace
-import org.rust.cargo.project.workspace.CargoWorkspaceData
-import org.rust.cargo.project.workspace.PackageId
 import org.rust.ide.annotator.RsAnnotatorTestBase
 import org.rust.ide.annotator.RsErrorAnnotator
 import org.rust.ide.inspections.RsAsyncMainFunctionInspection
 import org.rust.ide.inspections.RsInspectionsTestBase
-import java.nio.file.Paths
 
 class AddTokioMainFixTest : RsInspectionsTestBase(RsAsyncMainFunctionInspection::class) {
     fun `test fix add tokio main`() = checkFixByFileTree("Add `#[tokio::main]`", """
@@ -36,22 +27,6 @@ class AddTokioMainFixTest : RsInspectionsTestBase(RsAsyncMainFunctionInspection:
     //- main.rs
         #[tokio::main]
         pub async fn main() {}
-    """)
-
-    @MockRustcVersion("1.0.0-nightly")
-    fun `test fix add tokio with start`() = checkFixByFileTree("Add `#[tokio::main]`", """
-    //- main.rs
-        #![feature(start)]
-
-        #[start]
-        /*error descr="`start` function is not allowed to be `async` [E0752]"*/async/*caret*//*error**/ fn start() {}
-    """, """
-    //- main.rs
-        #![feature(start)]
-
-        #[tokio::main]
-        #[start]
-        async fn start() {}
     """)
 
     fun `test fix add tokio dependency`() = checkFixByFileTree("Add `#[tokio::main]`", """

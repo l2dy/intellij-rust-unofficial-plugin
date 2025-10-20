@@ -40,6 +40,8 @@ val RsFunction.isMain: Boolean get() {
     if (parent.queryAttributes.hasAttribute("no_main")) return false
     val targetKind = containingCargoTarget?.kind ?: return false
     if (!(targetKind.isBin || targetKind.isExampleBin || targetKind.isCustomBuild)) return false
+    // rust-lang/rust#134299 removed the unstable #[start] attribute (1.86),
+    // but keep supporting it for users on older toolchains.
     val hasStartFeature = CompilerFeature.START.availability(parent) == FeatureAvailability.AVAILABLE
     return (hasStartFeature && queryAttributes.hasAtomAttribute("start")) || name == "main"
 }
