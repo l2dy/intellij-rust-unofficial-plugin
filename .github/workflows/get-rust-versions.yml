@@ -20,7 +20,7 @@ on:
 env:
     STABLE: "1.84.0"
     NIGHTLY: "nightly-2024-11-08"
-    OLD: "1.82.0"
+    OLD: "1.56.0"
 
 jobs:
     get_versions:
