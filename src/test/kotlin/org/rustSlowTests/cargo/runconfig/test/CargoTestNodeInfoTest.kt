@@ -139,6 +139,7 @@ class CargoTestNodeInfoTest : CargoTestRunnerTestBase() {
           aaa - bbb
     """)
 
+    @MinRustcVersion("1.85.0")
     fun `test failed output`() = checkOutput("""
         println!("
                   aaa - bbb");
@@ -146,6 +147,7 @@ class CargoTestNodeInfoTest : CargoTestRunnerTestBase() {
                   ccc - ddd");
     """, """
           aaa - bbb
+
 
 
           ccc - ddd
