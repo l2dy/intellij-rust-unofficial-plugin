@@ -213,10 +213,10 @@ class RsUnsafeExpressionErrorAnnotatorTest : RsAnnotatorTestBase(RsUnsafeExpress
     fun `test unsafe intrinsics`() = checkErrors("""
         #![feature(core_intrinsics)]
 
-        use std::intrinsics::breakpoint;
+        use std::intrinsics::transmute;
 
         fn main() {
-            <error descr="Call to unsafe function requires unsafe function or block [E0133]">breakpoint()</error>;
+            let _: bool = <error descr="Call to unsafe function requires unsafe function or block [E0133]">transmute::<u8, bool>(1u8)</error>;
         }
     """)
 
