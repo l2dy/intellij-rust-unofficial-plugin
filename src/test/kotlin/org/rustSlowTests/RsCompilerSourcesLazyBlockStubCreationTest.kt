@@ -6,6 +6,7 @@
 package org.rustSlowTests
 
 import com.intellij.openapi.vfs.VirtualFile
+import org.rust.MinRustcVersion
 import org.rust.ProjectDescriptor
 import org.rust.WithStdlibRustProjectDescriptor
 import org.rust.lang.core.stubs.RsLazyBlockStubCreationTestBase
@@ -13,6 +14,7 @@ import org.rust.lang.core.stubs.RsLazyBlockStubCreationTestBase
 @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
 class RsCompilerSourcesLazyBlockStubCreationTest : RsLazyBlockStubCreationTestBase() {
 
+    @MinRustcVersion("1.87.0")
     fun `test stdlib source`() {
         val sources = rustSrcDir()
         checkRustFiles(
