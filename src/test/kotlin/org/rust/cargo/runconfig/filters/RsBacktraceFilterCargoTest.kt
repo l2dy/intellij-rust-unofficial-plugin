@@ -45,7 +45,7 @@ class RsBacktraceFilterCargoTest : RsWithToolchainTestBase() {
         )
     }
 
-    @MinRustcVersion("1.70.0-nightly")
+    @MinRustcVersion("1.85.0")
     fun `test resolve cargo crate sparse registry`() {
         fileTree {
             toml("Cargo.toml", """
@@ -65,8 +65,8 @@ class RsBacktraceFilterCargoTest : RsWithToolchainTestBase() {
 
         checkHighlights(
             filter,
-            " at /cargo/registry/src/index.crates.io-6f17d22bba15001f/left-pad-1.0.1/src/lib.rs:21",
-            " at [/cargo/registry/src/index.crates.io-6f17d22bba15001f/left-pad-1.0.1/src/lib.rs:21 -> lib.rs]"
+            " at /cargo/registry/src/index.crates.io-1949cf8c6b5b557f/left-pad-1.0.1/src/lib.rs:21",
+            " at [/cargo/registry/src/index.crates.io-1949cf8c6b5b557f/left-pad-1.0.1/src/lib.rs:21 -> lib.rs]"
         )
     }
 }

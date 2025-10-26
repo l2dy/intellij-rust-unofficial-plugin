@@ -277,11 +277,23 @@ class CratesLocalIndexServiceImpl : CratesLocalIndexService, Disposable {
 
         // Currently, for crates.io only
         private val cargoRegistryIndexPath: Path
-            get() = Paths.get(cargoHome, "registry/index/", CRATES_IO_HASH, ".git/")
+            get() {
+                val indexDir = Paths.get(cargoHome, "registry/index/")
+                // Try new hash first (Rust 1.85.0+), then fall back to old hash
+                for (hash in listOf(CRATES_IO_HASH_NEW, CRATES_IO_HASH_OLD)) {
+                    val path = indexDir.resolve(hash).resolve(".git/")
+                    if (path.exists()) {
+                        return path
+                    }
+                }
+                // Default to new hash if neither exists
+                return indexDir.resolve(CRATES_IO_HASH_NEW).resolve(".git/")
+            }
 
-        // Crates.io index hash is permanent.
-        // See https://github.com/rust-lang/cargo/issues/8572
-        private const val CRATES_IO_HASH = "github.com-1ecc6299db9ec823"
+        // Crates.io index hash changed in Rust 1.85.0
+        // Previously, see https://github.com/rust-lang/cargo/issues/8572
+        private const val CRATES_IO_HASH_NEW = "github.com-25cdd57fae9f0462"
+        private const val CRATES_IO_HASH_OLD = "github.com-1ecc6299db9ec823"
 
 
         private const val CORRUPTION_MARKER_NAME: String = "corruption.marker"
