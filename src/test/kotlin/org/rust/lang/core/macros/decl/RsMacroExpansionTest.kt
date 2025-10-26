@@ -873,9 +873,12 @@ class RsMacroExpansionTest : RsMacroExpansionTestBase() {
         // language=Rust
         val expansion = when {
             rustcVersion < RUST_1_63 -> "(<[_]>::into_vec(box [1, 2, 3]))"
-            else -> """<[_]>::into_vec(
+            rustcVersion < RUST_1_86 -> """<[_]>::into_vec(
                 #[rustc_box]
                     IntellijRustDollarCrate::boxed::Box::new([1, 2, 3])
+            )"""
+            else -> """<[_]>::into_vec(
+                IntellijRustDollarCrate::boxed::box_new([1, 2, 3])
             )"""
         }
         checkSingleMacro("""
@@ -1409,5 +1412,7 @@ class RsMacroExpansionTest : RsMacroExpansionTestBase() {
     companion object {
         // BACKCOMPAT: Rust 1.62
         private val RUST_1_63 = "1.63.0".parseSemVer()
+        // BACKCOMPAT: Rust 1.85
+        private val RUST_1_86 = "1.86.0".parseSemVer()
     }
 }
