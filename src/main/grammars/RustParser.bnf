@@ -84,6 +84,7 @@
         TRY       = 'try_kw'
         GEN       = 'gen_kw'
         RAW       = 'raw_kw'
+        SAFE      = 'safe'
 
         MACRO_KW  = 'macro'
         CSELF     = 'Self'
@@ -533,7 +534,7 @@ RetType ::= '->' TypeReferenceNoImplicitTraitType {
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
-upper Function ::= async? const? unsafe? ExternAbi?
+upper Function ::= async? const? unsafe? safe? ExternAbi?
                    fn identifier
                    TypeParameterList?
                    FnParameters
@@ -650,7 +651,7 @@ PatField ::= PatFieldFull | box? PatBinding
 
 BindingMode ::= ref mut? | mut
 
-upper Constant ::= (static mut? | const) (identifier | '_') TypeAscription? [ '=' AnyExpr ] ';' {
+upper Constant ::= ((safe | unsafe) static mut? | static mut? | const) (identifier | '_') TypeAscription? [ '=' AnyExpr ] ';' {
   pin = 2
   name = ""
   implements = [ "org.rust.lang.core.psi.ext.RsQualifiedNamedElement"
