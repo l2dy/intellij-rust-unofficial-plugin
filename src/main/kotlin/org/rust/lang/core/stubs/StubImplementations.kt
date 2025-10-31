@@ -43,6 +43,7 @@ import org.rust.lang.core.stubs.RsAttributeOwnerStub.CommonStubAttrFlags.MAY_HAV
 import org.rust.lang.core.stubs.RsAttributeOwnerStub.FileStubAttrFlags.MAY_HAVE_RECURSION_LIMIT
 import org.rust.lang.core.stubs.RsAttributeOwnerStub.FileStubAttrFlags.MAY_HAVE_STDLIB_ATTRIBUTES
 import org.rust.lang.core.stubs.RsAttributeOwnerStub.FunctionStubAttrFlags.MAY_BE_PROC_MACRO_DEF
+import org.rust.lang.core.stubs.RsAttributeOwnerStub.ConstantStubAttrFlags
 import org.rust.lang.core.stubs.RsAttributeOwnerStub.ModStubAttrFlags.MAY_HAVE_MACRO_USE
 import org.rust.lang.core.stubs.RsAttributeOwnerStub.UseItemStubAttrFlags.MAY_HAVE_PRELUDE_IMPORT
 import org.rust.lang.core.stubs.RsEmptyStmtType.shouldCreateStub
@@ -86,7 +87,7 @@ class RsFileStub(
 
     object Type : IStubFileElementType<RsFileStub>(RsLanguage) {
         // Bump this number if Stub structure changes
-        private const val STUB_VERSION = 234
+        private const val STUB_VERSION = 235
 
         override fun getStubVersion(): Int =
             RustParserDefinition.PARSER_VERSION + RS_BUILTIN_ATTRIBUTES_VERSION + STUB_VERSION
@@ -893,6 +894,7 @@ class RsFunctionStub(
     val isUnsafe: Boolean get() = BitUtil.isSet(flags, UNSAFE_MASK)
     val isExtern: Boolean get() = BitUtil.isSet(flags, EXTERN_MASK)
     val isVariadic: Boolean get() = BitUtil.isSet(flags, VARIADIC_MASK)
+    val isSafe: Boolean get() = BitUtil.isSet(flags, SAFE_MASK)
     val isAsync: Boolean get() = BitUtil.isSet(flags, ASYNC_MASK)
 
     // Method resolve optimization: stub field access is much faster than PSI traversing
@@ -946,6 +948,7 @@ class RsFunctionStub(
             flags = BitUtil.set(flags, UNSAFE_MASK, psi.isUnsafe)
             flags = BitUtil.set(flags, EXTERN_MASK, psi.isExtern)
             flags = BitUtil.set(flags, VARIADIC_MASK, psi.isVariadic)
+            flags = BitUtil.set(flags, SAFE_MASK, psi.isSafe)
             flags = BitUtil.set(flags, ASYNC_MASK, psi.isAsync)
             flags = BitUtil.set(flags, HAS_SELF_PARAMETER_MASK, psi.hasSelfParameters)
 
@@ -980,6 +983,7 @@ class RsFunctionStub(
             nextBitMask()  // second bit
             mask.countTrailingZeroBits()
         }
+        private val SAFE_MASK: Int = nextBitMask()
     }
 }
 
@@ -996,6 +1000,10 @@ class RsConstantStub(
         get() = BitUtil.isSet(flags, IS_MUT_MASK)
     val isConst: Boolean
         get() = BitUtil.isSet(flags, IS_CONST_MASK)
+    val isSafe: Boolean
+        get() = BitUtil.isSet(flags, IS_SAFE_MASK)
+    val isUnsafe: Boolean
+        get() = BitUtil.isSet(flags, IS_UNSAFE_MASK)
 
     object Type : RsStubElementType<RsConstantStub, RsConstant>("CONSTANT") {
         override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?) =
@@ -1021,6 +1029,8 @@ class RsConstantStub(
             var flags = RsAttributeOwnerStub.extractFlags(psi)
             flags = BitUtil.set(flags, IS_MUT_MASK, psi.isMut)
             flags = BitUtil.set(flags, IS_CONST_MASK, psi.isConst)
+            flags = BitUtil.set(flags, IS_SAFE_MASK, psi.isSafe)
+            flags = BitUtil.set(flags, IS_UNSAFE_MASK, psi.isUnsafe)
 
             val procMacroInfo = RsAttrProcMacroOwnerStub.extractTextAndOffset(flags, psi)
 
@@ -1030,9 +1040,11 @@ class RsConstantStub(
         override fun indexStub(stub: RsConstantStub, sink: IndexSink) = sink.indexConstant(stub)
     }
 
-    companion object : BitFlagsBuilder(CommonStubAttrFlags, BYTE) {
+    companion object : BitFlagsBuilder(ConstantStubAttrFlags, INT) {
         private val IS_MUT_MASK: Int = nextBitMask()
         private val IS_CONST_MASK: Int = nextBitMask()
+        private val IS_SAFE_MASK: Int = nextBitMask()
+        private val IS_UNSAFE_MASK: Int = nextBitMask()
     }
 }
 
@@ -1082,6 +1094,7 @@ class RsForeignModStub(
     override val flags: Int,
     override val procMacroInfo: RsProcMacroStubInfo?,
     val abi: String?,
+    val isUnsafe: Boolean
 ) : RsAttrProcMacroOwnerStubBase<RsForeignModItem>(parent, elementType) {
 
     object Type : RsStubElementType<RsForeignModStub, RsForeignModItem>("FOREIGN_MOD_ITEM") {
@@ -1092,6 +1105,7 @@ class RsForeignModStub(
                 dataStream.readUnsignedByte(),
                 RsProcMacroStubInfo.deserialize(dataStream),
                 abi = dataStream.readNameString(),
+                isUnsafe = dataStream.readBoolean()
             )
 
         override fun serialize(stub: RsForeignModStub, dataStream: StubOutputStream) =
@@ -1099,6 +1113,7 @@ class RsForeignModStub(
                 writeByte(stub.flags)
                 RsProcMacroStubInfo.serialize(stub.procMacroInfo, dataStream)
                 writeName(stub.abi)
+                writeBoolean(stub.isUnsafe)
             }
 
         override fun createPsi(stub: RsForeignModStub) =
@@ -1111,6 +1126,7 @@ class RsForeignModStub(
                 parentStub, this,
                 flags, procMacroInfo,
                 abi = psi.abi,
+                isUnsafe = psi.isUnsafe
             )
         }
     }

@@ -25,6 +25,9 @@ val RsForeignModItem.abi: String?
         }
     }
 
+val RsForeignModItem.isUnsafe: Boolean
+    get() = greenStub?.isUnsafe ?: (unsafe != null)
+
 abstract class RsForeignModItemImplMixin : RsStubbedElementImpl<RsForeignModStub>,
                                            RsForeignModItem {
 

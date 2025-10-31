@@ -75,6 +75,9 @@ val RsFunction.isVariadic: Boolean
         return stub?.isVariadic ?: (valueParameterList?.variadic != null)
     }
 
+val RsFunction.isSafe: Boolean
+    get() = greenStub?.isSafe ?: (safe != null)
+
 val RsFunction.literalAbiName: String?
     get() {
         val stub = greenStub

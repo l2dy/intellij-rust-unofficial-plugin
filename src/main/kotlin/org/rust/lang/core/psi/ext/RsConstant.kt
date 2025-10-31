@@ -28,6 +28,10 @@ val RsConstant.isMut: Boolean get() = greenStub?.isMut ?: (mut != null)
 
 val RsConstant.isConst: Boolean get() = greenStub?.isConst ?: (const != null)
 
+val RsConstant.isSafe: Boolean get() = greenStub?.isSafe ?: (safe != null)
+
+val RsConstant.isUnsafe: Boolean get() = greenStub?.isUnsafe ?: (unsafe != null)
+
 val RsConstant.kind: RsConstantKind get() = when {
     isMut -> RsConstantKind.MUT_STATIC
     isConst -> RsConstantKind.CONST
