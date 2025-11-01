@@ -164,16 +164,24 @@ val RsFunction.declaration: String
  * A function is unsafe if defined with `unsafe` modifier or if defined inside a certain `extern`
  * block. But [RsFunction.isUnsafe] takes into account only `unsafe` modifier. [isActuallyUnsafe]
  * takes into account both cases.
+ *
+ * For functions in unsafe extern blocks, items marked with `safe` are safe to call.
+ * Items without explicit marker default to unsafe.
  */
 val RsFunction.isActuallyUnsafe: Boolean
     get() {
+        // Explicit unsafe modifier always makes it unsafe
         if (isUnsafe) return true
+
         val context = context
         return if (context is RsForeignModItem) {
-            // functions inside `extern` block are unsafe in most cases
+            // Explicit safe marker makes it safe
+            if (isSafe) return false
+
+            // Special cases that override default unsafe behavior
             when {
                 // #[wasm_bindgen] is a procedural macro that removes the following
-                // extern block, so all function inside it become safe.
+                // extern block, so all functions inside it become safe.
                 // See https://github.com/rustwasm/wasm-bindgen
                 context.queryAttributes.hasAttribute("wasm_bindgen") -> false
                 // Some Rust intrinsics are safe. This info is hardcoded in compiler
