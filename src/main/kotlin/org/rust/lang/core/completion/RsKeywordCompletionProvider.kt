@@ -34,7 +34,7 @@ fun InsertionContext.addSuffix(suffix: String) {
 }
 
 private val ALWAYS_NEEDS_SPACE = setOf("as", "crate", "const", "async", "enum", "extern", "fn", "for", "impl", "let", "mod", "mut",
-    "static", "struct", "trait", "type", "union", "unsafe", "use", "where")
+    "static", "struct", "trait", "type", "union", "safe", "unsafe", "use", "where")
 
 
 private fun addInsertionHandler(keyword: String, builder: LookupElementBuilder, parameters: CompletionParameters): LookupElementBuilder {
