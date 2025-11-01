@@ -17,5 +17,5 @@ extern "R\u{0075}st" {}
 extern r"system" {}
 extern 'C' {} // semantically invalid
 pub extern {} // semantically invalid
-unsafe extern {} // semantically invalid
-pub unsafe extern {} // semantically invalid
+unsafe extern {} // semantically valid in edition 2024
+pub unsafe extern {} // semantically valid in edition 2024
