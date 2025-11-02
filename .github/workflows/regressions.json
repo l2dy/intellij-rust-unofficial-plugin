@@ -2,7 +2,6 @@
     {
         "name": "regressions-1",
         "projects": [
-            {"name": "cargo", "repository": "rust-lang/cargo"},
             {"name": "tokio", "repository": "tokio-rs/tokio"}
         ]
     },
