@@ -726,6 +726,8 @@ class ImplLookup(
             }
 
             items.Sized -> assembleBuiltinBoundCandidates(sizedConditions(ref), candidates)
+            items.MetaSized -> assembleBuiltinBoundCandidates(sizedConditions(ref), candidates)
+            items.PointeeSized -> assembleBuiltinBoundCandidates(sizedConditions(ref), candidates)
             items.Unsize -> assembleCandidatesForUnsizing(ref, candidates)
             items.Destruct -> candidates.list.add(ConstDestructCandidate)
             else -> {
@@ -1002,7 +1004,7 @@ class ImplLookup(
         val obligations = if (hasNested) {
             val conditions = when (trait) {
                 items.Copy, items.Clone -> copyCloneConditions(ref.selfTy)
-                items.Sized -> sizedConditions(ref)
+                items.Sized, items.MetaSized, items.PointeeSized -> sizedConditions(ref)
                 else -> {
                     error("unexpected builtin trait $trait")
                 }

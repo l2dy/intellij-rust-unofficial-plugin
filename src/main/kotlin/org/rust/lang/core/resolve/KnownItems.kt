@@ -118,6 +118,8 @@ class KnownItems(
     val Deref: RsTraitItem? get() = findLangItem("deref")
     val Drop: RsTraitItem? get() = findLangItem("drop")
     val Sized: RsTraitItem? get() = findLangItem("sized")
+    val MetaSized: RsTraitItem? get() = findLangItem("meta_sized")
+    val PointeeSized: RsTraitItem? get() = findLangItem("pointee_sized")
     val Unsize: RsTraitItem? get() = findLangItem("unsize")
     val CoerceUnsized: RsTraitItem? get() = findLangItem("coerce_unsized")
     val Destruct: RsTraitItem? get() = findLangItem("destruct")
