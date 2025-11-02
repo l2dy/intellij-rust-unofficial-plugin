@@ -81,10 +81,10 @@ class ApplySuggestionFixTest : RsWithToolchainTestBase() {
         }
     """, externalLinter = ExternalLinter.CLIPPY)
 
-    @MinRustcVersion("1.50.0")
+    @MinRustcVersion("1.89.0")
     fun `test multi-fix suggestion`() = checkFixIsUnavailable("""
         #[deny(clippy::unnecessary_wraps)]
-        <error>fn foo() -> Option<i32> { Some(1) }</error>
+        <error>fn foo() -> Option<i32></error> { Some(1) }
     """, externalLinter = ExternalLinter.CLIPPY)
 
     fun `test multi-primary fix suggestion`() = checkFixIsUnavailable("""
