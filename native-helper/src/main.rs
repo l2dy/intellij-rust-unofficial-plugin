@@ -1,5 +1,6 @@
 use std::{env, io, process};
 
+mod proc_macro_server;
 mod rustc_wrapper;
 
 fn main() {
@@ -18,6 +19,6 @@ fn try_main() -> io::Result<()> {
             Some(exit_code) => process::exit(exit_code)
         }
     } else {
-        ra_ap_proc_macro_srv::cli::run()
+        proc_macro_server::run()
     };
 }
