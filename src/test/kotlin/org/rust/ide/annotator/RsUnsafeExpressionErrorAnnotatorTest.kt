@@ -136,6 +136,66 @@ class RsUnsafeExpressionErrorAnnotatorTest : RsAnnotatorTestBase(RsUnsafeExpress
         }
     """)
 
+    fun `test safe foreign function call without unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub safe fn sqrt(x: f64) -> f64;
+        }
+
+        fn main() {
+            sqrt(4.0);  // OK - no error
+        }
+    """)
+
+    fun `test unsafe foreign function call requires unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub unsafe fn dangerous();
+        }
+
+        fn main() {
+            <error descr="Call to unsafe function requires unsafe function or block [E0133]">dangerous()</error>;
+        }
+    """)
+
+    fun `test default foreign function call requires unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub fn implicit_unsafe();
+        }
+
+        fn main() {
+            <error descr="Call to unsafe function requires unsafe function or block [E0133]">implicit_unsafe()</error>;
+        }
+    """)
+
+    fun `test safe foreign function call in unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub safe fn sqrt(x: f64) -> f64;
+        }
+
+        fn main() {
+            unsafe { sqrt(4.0); }  // OK - safe functions don't need unsafe, but allowed
+        }
+    """)
+
+    fun `test safe foreign static access without unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub safe static SAFE_CONSTANT: i32;
+        }
+
+        fn main() {
+            let x = SAFE_CONSTANT;  // OK - no error
+        }
+    """)
+
+    fun `test unsafe foreign static access requires unsafe block`() = checkErrors("""
+        unsafe extern "C" {
+            pub unsafe static UNSAFE_PTR: *const u8;
+        }
+
+        fn main() {
+            let x = <error descr="Use of extern static is unsafe and requires unsafe function or block [E0133]">UNSAFE_PTR</error>;
+        }
+    """)
+
     fun `test access union field outside unsafe block`() = checkErrors("""
         union Foo {
             x: u32,

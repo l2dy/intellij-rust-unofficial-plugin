@@ -27,6 +27,7 @@ class RsCompleteParsingTestCase : RsParsingTestCaseBase("complete") {
     fun `test extern crates`() = doTest(true)
     fun `test extern fns`() = doTest(true)
     fun `test extern block`() = doTest(true)
+    fun `test unsafe extern blocks`() = doTest(true)
     fun `test precedence`() = doTest(true)
     fun `test way too many parens`() = doTest(true)
     fun `test way too many braces`() = doTest(true)

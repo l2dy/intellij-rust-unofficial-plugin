@@ -10,6 +10,7 @@ import com.intellij.codeInsight.completion.impl.CompletionSorterImpl
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementWeigher
 import org.rust.lang.core.RsPsiPattern
+import org.rust.lang.core.RsPsiPattern.baseForeignModDeclarationPattern
 import org.rust.lang.core.RsPsiPattern.declarationPattern
 import org.rust.lang.core.RsPsiPattern.inherentImplDeclarationPattern
 import org.rust.lang.core.completion.lint.RsClippyLintCompletionProvider
@@ -48,6 +49,7 @@ class RsCompletionContributor : CompletionContributor() {
         extend(CompletionType.BASIC, RsLambdaExprCompletionProvider)
         extend(CompletionType.BASIC, RsPsiPattern.fieldVisibility, RsVisibilityCompletionProvider())
         extend(CompletionType.BASIC, declarationPattern() or inherentImplDeclarationPattern(), RsVisibilityCompletionProvider())
+        extend(CompletionType.BASIC, baseForeignModDeclarationPattern(), RsVisibilityCompletionProvider())
         extend(CompletionType.BASIC, RsReprCompletionProvider)
         extend(CompletionType.BASIC, RsCrateTypeAttrCompletionProvider)
         extend(CompletionType.BASIC, RsExternAbiCompletionProvider)

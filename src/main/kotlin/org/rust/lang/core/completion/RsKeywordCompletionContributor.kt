@@ -26,6 +26,7 @@ import org.rust.ide.template.postfix.fillMatchArms
 import org.rust.ide.utils.template.newTemplateBuilder
 import org.rust.lang.core.*
 import org.rust.lang.core.RsPsiPattern.baseDeclarationPattern
+import org.rust.lang.core.RsPsiPattern.baseForeignModDeclarationPattern
 import org.rust.lang.core.RsPsiPattern.baseInherentImplDeclarationPattern
 import org.rust.lang.core.RsPsiPattern.baseTraitOrImplDeclaration
 import org.rust.lang.core.RsPsiPattern.declarationPattern
@@ -87,6 +88,8 @@ class RsKeywordCompletionContributor : CompletionContributor(), DumbAware {
             RsKeywordCompletionProvider("const", "fn", "type", "unsafe"))
         extend(CompletionType.BASIC, unsafeTraitOrImplDeclarationPattern(),
             RsKeywordCompletionProvider("fn"))
+        extend(CompletionType.BASIC, foreignModDeclarationPattern(),
+            RsKeywordCompletionProvider("fn", "static", "type", "safe", "unsafe"))
         extend(CompletionType.BASIC, asyncDeclarationPattern(),
             RsKeywordCompletionProvider("fn"))
         extend(CompletionType.BASIC, afterVisInherentImplDeclarationPattern(),
@@ -339,6 +342,10 @@ class RsKeywordCompletionContributor : CompletionContributor(), DumbAware {
 
     private fun unsafeTraitOrImplDeclarationPattern(): PsiElementPattern.Capture<PsiElement> {
         return baseTraitOrImplDeclaration().and(statementBeginningPattern("unsafe"))
+    }
+
+    private fun foreignModDeclarationPattern(): PsiElementPattern.Capture<PsiElement> {
+        return baseForeignModDeclarationPattern().and(statementBeginningPattern())
     }
 
     private fun afterVisInherentImplDeclarationPattern(): PsiElementPattern.Capture<PsiElement> {

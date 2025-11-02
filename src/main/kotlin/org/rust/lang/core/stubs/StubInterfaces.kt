@@ -73,6 +73,8 @@ interface RsAttributeOwnerStub : RsAttributeOwnerPsiOrStub<RsMetaItemStub> {
         val MAY_BE_PROC_MACRO_DEF: Int = nextBitMask()
     }
 
+    object ConstantStubAttrFlags : BitFlagsBuilder(CommonStubAttrFlags, Limit.BYTE)
+
     object UseItemStubAttrFlags : BitFlagsBuilder(CommonStubAttrFlags, Limit.BYTE) {
         val MAY_HAVE_PRELUDE_IMPORT: Int = nextBitMask()
     }

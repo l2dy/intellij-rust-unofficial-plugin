@@ -4252,4 +4252,43 @@ class RsErrorAnnotatorTest : RsAnnotatorTestBase(RsErrorAnnotator::class) {
             cr#"foo"#;
         }
     """)
+
+    @MockEdition(Edition.EDITION_2024)
+    fun `test missing unsafe on extern in edition 2024`() = checkErrors("""
+        <error descr="Extern blocks must be unsafe in Edition 2024">extern</error> "C" {
+            fn foo();
+        }
+    """)
+
+    @MockEdition(Edition.EDITION_2024)
+    fun `test unsafe extern in edition 2024`() = checkErrors("""
+        unsafe extern "C" {
+            fn foo();
+        }
+    """)
+
+    @MockEdition(Edition.EDITION_2021)
+    fun `test extern without unsafe in edition 2021 is allowed`() = checkErrors("""
+        extern "C" {
+            fn foo();
+        }
+    """)
+
+    fun `test safe mutable static in extern block is error`() = checkErrors("""
+        unsafe extern "C" {
+            pub <error descr="Mutable static items in extern blocks cannot be marked safe">safe</error> static mut FOO: i32;
+        }
+    """)
+
+    fun `test safe immutable static in extern block is ok`() = checkErrors("""
+        unsafe extern "C" {
+            pub safe static BAR: i32;
+        }
+    """)
+
+    fun `test unsafe mutable static in extern block is ok`() = checkErrors("""
+        unsafe extern "C" {
+            pub unsafe static mut FOO: i32;
+        }
+    """)
 }
