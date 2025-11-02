@@ -522,8 +522,8 @@ ForLifetimes ::= for '<' LifetimesParams '>' {
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
-TildeConst ::= '~' const {
-  pin = 1
+TildeConst ::= '~'? const {
+  pin = 2
 }
 
 ExternAbi ::= extern LitExpr?
