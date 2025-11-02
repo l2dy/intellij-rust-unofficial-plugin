@@ -53,7 +53,6 @@ class RsSyntaxErrorsAnnotator : AnnotatorBase() {
                     is RsConstant -> checkConstant(holder, element)
                     is RsModItem -> checkModItem(holder, element)
                     is RsModDeclItem -> checkModDeclItem(holder, element)
-                    is RsForeignModItem -> checkForeignModItem(holder, element)
                 }
             }
             is RsMacro -> checkMacro(holder, element)
@@ -562,10 +561,6 @@ private fun checkModDeclItem(holder: AnnotationHolder, element: RsModDeclItem) {
 
 private fun checkModItem(holder: AnnotationHolder, element: RsModItem) {
     checkInvalidUnsafe(holder, element.unsafe, "Module")
-}
-
-private fun checkForeignModItem(holder: AnnotationHolder, element: RsForeignModItem) {
-    checkInvalidUnsafe(holder, element.unsafe, "Extern block")
 }
 
 private fun checkInvalidUnsafe(holder: AnnotationHolder, unsafe: PsiElement?, itemName: String) {

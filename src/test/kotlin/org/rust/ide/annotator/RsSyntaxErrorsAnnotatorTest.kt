@@ -436,13 +436,6 @@ class RsSyntaxErrorsAnnotatorTest : RsAnnotatorTestBase(RsSyntaxErrorsAnnotator:
         pub <error descr="Module cannot be declared unsafe">unsafe</error> mod unsafe_mod_delc;
     """)
 
-    fun `test unsafe extern block`() = checkErrors("""
-        extern {}
-        extern "C" {}
-        <error descr="Extern block cannot be declared unsafe">unsafe</error> extern {}
-        <error descr="Extern block cannot be declared unsafe">unsafe</error> extern "Rust" {}
-    """)
-
     fun `test let chains`() = checkErrors("""
         fn foo(x: Option<i32>) {
             if let Some(_) = x {};
