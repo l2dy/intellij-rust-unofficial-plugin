@@ -70,6 +70,7 @@ import org.rust.lang.core.macros.macroExpansionManager
 import org.rust.lang.core.macros.proc.ProcMacroApplicationService
 import org.rust.lang.core.psi.*
 import org.rust.lang.core.psi.RsElementTypes.IDENTIFIER
+import org.rust.lang.core.psi.RsElementTypes.SAFE
 import org.rust.lang.core.psi.ext.*
 import org.rust.lang.core.resolve.*
 import org.rust.lang.core.resolve.ref.deepResolve
@@ -1270,7 +1271,7 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
 
         // Mutable statics cannot be marked safe
         if (element.isMut && element.isSafe) {
-            val safeKeyword = element.safe ?: return
+            val safeKeyword = element.node.findChildByType(SAFE)?.psi ?: return
             holder.createErrorAnnotation(
                 safeKeyword,
                 RsBundle.message("inspection.message.mutable.static.items.in.extern.blocks.cannot.be.marked.safe")

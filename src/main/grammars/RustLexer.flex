@@ -220,7 +220,6 @@ EOL_DOC_LINE  = {LINE_WS}*!(!("///".*)|("////".*))
   "pub"                           { return PUB; }
   "ref"                           { return REF; }
   "return"                        { return RETURN; }
-  "safe"                          { return SAFE; }
   "Self"                          { return CSELF; }
   "self"                          { return SELF; }
   "static"                        { return STATIC; }

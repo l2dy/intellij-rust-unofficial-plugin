@@ -76,7 +76,7 @@ val RsFunction.isVariadic: Boolean
     }
 
 val RsFunction.isSafe: Boolean
-    get() = greenStub?.isSafe ?: (safe != null)
+    get() = greenStub?.isSafe ?: (node.findChildByType(RsElementTypes.SAFE) != null)
 
 val RsFunction.literalAbiName: String?
     get() {

@@ -84,7 +84,7 @@
         TRY       = 'try_kw'
         GEN       = 'gen_kw'
         RAW       = 'raw_kw'
-        SAFE      = 'safe'
+        SAFE      = 'safe_kw'
 
         MACRO_KW  = 'macro'
         CSELF     = 'Self'
@@ -318,6 +318,7 @@ private asyncBlock ::= <<asyncBlockKeyword>>
 private try ::= <<tryKeyword>>
 private gen ::= <<genKeyword>>
 private raw ::= <<rawKeyword>>
+private safe ::= <<safeKeyword>>
 
 private AttrsAndVis ::= OuterAttr* Vis?
 private AttrsAndVis_first ::= '#' | crate | pub
