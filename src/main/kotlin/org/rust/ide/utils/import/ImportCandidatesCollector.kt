@@ -186,6 +186,7 @@ private fun ImportContext.convertToCandidates(
             val usePath = it.info.usePath
             (it.item !is RsTraitItem || isUsefulTraitImport(usePath))
                 && excludedPaths.none { excludedPath -> matchesExcludedPath(usePath, excludedPath) }
+                && !isUnstableSyncModule(usePath)
         }
         // for items which belongs to multiple namespaces (e.g. unit structs)
         .distinctBy { it.item to it.info.usePath }
@@ -486,6 +487,25 @@ private fun matchesExcludedPath(usePath: String, excludedPath: String): Boolean 
     } else {
         usePath == excludedPath
     }
+
+/**
+ * Filters out paths through unstable `std::sync` reorganization modules.
+ *
+ * In Rust 1.90+, `std::sync::poison` and `std::sync::nonpoison` became public modules
+ * (tracking issues #134646 and #134645) to allow users to explicitly choose between
+ * poisoning and non-poisoning synchronization primitives. However, these modules are
+ * currently unstable and require feature gates.
+ *
+ * Items like `Mutex` are reexported at `std::sync::Mutex` (the stable, canonical path)
+ * while also being available as `std::sync::poison::Mutex` (unstable). Auto-import should
+ * prefer the stable reexport to avoid suggesting unstable API paths to users.
+ *
+ * When these modules are stabilized, this filter may need to be reconsidered to allow
+ * users to explicitly choose the poison/nonpoison variants.
+ */
+private fun isUnstableSyncModule(usePath: String): Boolean {
+    return usePath.contains("::sync::poison::") || usePath.contains("::sync::nonpoison::")
+}
 
 private fun Project.getExcludedPaths(usedForMethod: Boolean): List<String> {
     val excludedPaths = RsCodeInsightSettings.getInstance().getExcludedPaths() +
