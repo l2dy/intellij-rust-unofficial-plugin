@@ -34,7 +34,11 @@ class RsCompilerSourcesPerfTest : RsTestBase() {
         val sources = rustSrcDir()
         parseRustFiles(
             sources,
-            ignored = setOf("test", "doc", "etc", "grammar"),
+            ignored = setOf(
+                "test", "doc", "etc", "grammar",
+                // Test crates from compiler-builtins
+                "libm-test", "builtins-test", "builtins-test-intrinsics",
+            ),
             expectedNumberOfFiles = 500,
             checkForErrors = true
         )
