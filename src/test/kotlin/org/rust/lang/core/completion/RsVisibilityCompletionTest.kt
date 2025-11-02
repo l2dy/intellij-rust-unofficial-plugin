@@ -149,6 +149,42 @@ class RsVisibilityCompletionTest : RsCompletionTestBase() {
         /*caret*/mod foo;
     """)
 
+    fun `test pub completion in extern block`() = checkContainsCompletion(DEFAULT_VISIBILITIES, """
+        extern "C" {
+            /*caret*/
+        }
+    """)
+
+    fun `test pub completion before fn in extern block`() = checkCompletion("pub", """
+        unsafe extern "C" {
+            /*caret*/fn foo();
+        }
+    """, """
+        unsafe extern "C" {
+            pub /*caret*/fn foo();
+        }
+    """)
+
+    fun `test pub completion before static in extern block`() = checkCompletion("pub", """
+        unsafe extern "C" {
+            /*caret*/static FOO: i32;
+        }
+    """, """
+        unsafe extern "C" {
+            pub /*caret*/static FOO: i32;
+        }
+    """)
+
+    fun `test pub completion before safe fn in extern block`() = checkCompletion("pub", """
+        unsafe extern "C" {
+            /*caret*/safe fn sqrt(x: f64) -> f64;
+        }
+    """, """
+        unsafe extern "C" {
+            pub /*caret*/safe fn sqrt(x: f64) -> f64;
+        }
+    """)
+
     companion object {
         private val DEFAULT_VISIBILITIES = listOf("pub", "pub(crate)", "pub(super)", "pub()")
     }

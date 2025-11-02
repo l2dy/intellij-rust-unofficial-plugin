@@ -291,6 +291,80 @@ class RsKeywordCompletionContributorTest : RsCompletionTestBase() {
         extern fn /*caret*/
     """)
 
+    fun `test keywords inside extern block`() = checkCompletion(EXTERN_BLOCK_KEYWORDS, """
+        unsafe extern "C" {
+            /*caret*/
+            fn foo();
+        }
+    """, """
+        unsafe extern "C" {
+            /*lookup*/ /*caret*/
+            fn foo();
+        }
+    """)
+
+    fun `test keywords inside extern block after statement`() = checkCompletion(EXTERN_BLOCK_KEYWORDS, """
+        unsafe extern "C" {
+            fn foo();
+            /*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            fn foo();
+            /*lookup*/ /*caret*/
+        }
+    """)
+
+    fun `test safe inside extern block`() = checkCompletion("safe", """
+        unsafe extern "C" {
+            saf/*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            safe /*caret*/
+        }
+    """)
+
+    fun `test unsafe inside extern block`() = checkCompletion("unsafe", """
+        unsafe extern "C" {
+            uns/*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            unsafe /*caret*/
+        }
+    """)
+
+    fun `test fn inside extern block`() = checkCompletion("fn", """
+        unsafe extern "C" {
+            f/*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            fn /*caret*/
+        }
+    """)
+
+    fun `test static inside extern block`() = checkCompletion("static", """
+        unsafe extern "C" {
+            sta/*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            static /*caret*/
+        }
+    """)
+
+    fun `test type inside extern block`() = checkCompletion("type", """
+        unsafe extern "C" {
+            typ/*caret*/
+        }
+    """, """
+        unsafe extern "C" {
+            type /*caret*/
+        }
+    """)
+
     fun `test unsafe fn`() = checkCompletion("fn", """
         unsafe f/*caret*/
     """, """
@@ -1364,5 +1438,6 @@ class RsKeywordCompletionContributorTest : RsCompletionTestBase() {
 
     companion object {
         private val MEMBERS_KEYWORDS = listOf("fn", "type", "const", "unsafe")
+        private val EXTERN_BLOCK_KEYWORDS = listOf("fn", "static", "type", "safe", "unsafe")
     }
 }
