@@ -58,7 +58,6 @@ class CargoStdlibPackagesTest : RsWithToolchainTestBase() {
                     "arch": "aarch64",
                     "target-endian": "little",
                     "target-pointer-width": "64",
-                    "target-c-int-width": "32",
                     "os": "none",
                     "executables": true,
                     "linker-flavor": "ld.lld",
