@@ -19,7 +19,13 @@ class RsCompilerSourcesLazyBlockStubCreationTest : RsLazyBlockStubCreationTestBa
         val sources = rustSrcDir()
         checkRustFiles(
             sources,
-            ignored = setOf("tests", "test", "doc", "etc", "grammar")
+            ignored = setOf(
+                "tests", "test", "doc", "etc", "grammar",
+                // Test crates from compiler-builtins
+                "libm-test", "builtins-test", "builtins-test-intrinsics",
+                // Math library crate that extensively uses attr proc macros
+                "libm",
+            )
         )
     }
 
