@@ -699,6 +699,9 @@ object RustParserUtil : GeneratedParserUtilBase() {
     fun rawKeyword(b: PsiBuilder, level: Int): Boolean = contextualKeywordWithRollback(b, "raw", RAW)
 
     @JvmStatic
+    fun safeKeyword(b: PsiBuilder, level: Int): Boolean = contextualKeyword(b, "safe", SAFE)
+
+    @JvmStatic
     fun parseSecondPlusInIncrement(b: PsiBuilder, level: Int): Boolean = noWhiteSpaceBefore(b, PLUS)
 
     @JvmStatic

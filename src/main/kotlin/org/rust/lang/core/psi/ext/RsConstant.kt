@@ -13,6 +13,7 @@ import org.rust.ide.icons.RsIcons
 import org.rust.lang.core.macros.RsExpandedElement
 import org.rust.lang.core.psi.RsConstant
 import org.rust.lang.core.psi.RsElementTypes.DEFAULT
+import org.rust.lang.core.psi.RsElementTypes.SAFE
 import org.rust.lang.core.psi.RsPsiImplUtil
 import org.rust.lang.core.stubs.RsConstantStub
 import org.rust.lang.core.types.ty.Mutability
@@ -27,6 +28,10 @@ enum class RsConstantKind {
 val RsConstant.isMut: Boolean get() = greenStub?.isMut ?: (mut != null)
 
 val RsConstant.isConst: Boolean get() = greenStub?.isConst ?: (const != null)
+
+val RsConstant.isSafe: Boolean get() = greenStub?.isSafe ?: (node.findChildByType(SAFE) != null)
+
+val RsConstant.isUnsafe: Boolean get() = greenStub?.isUnsafe ?: (unsafe != null)
 
 val RsConstant.kind: RsConstantKind get() = when {
     isMut -> RsConstantKind.MUT_STATIC

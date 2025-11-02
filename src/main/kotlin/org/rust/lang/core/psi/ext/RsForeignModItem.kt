@@ -8,6 +8,7 @@ package org.rust.lang.core.psi.ext
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.IStubElementType
+import org.rust.cargo.project.workspace.CargoWorkspace
 import org.rust.lang.core.macros.RsExpandedElement
 import org.rust.lang.core.psi.RsForeignModItem
 import org.rust.lang.core.stubs.RsForeignModStub
@@ -24,6 +25,9 @@ val RsForeignModItem.abi: String?
             externAbi.litExpr?.stringValue
         }
     }
+
+val RsForeignModItem.isUnsafe: Boolean
+    get() = greenStub?.isUnsafe ?: (unsafe != null)
 
 abstract class RsForeignModItemImplMixin : RsStubbedElementImpl<RsForeignModStub>,
                                            RsForeignModItem {

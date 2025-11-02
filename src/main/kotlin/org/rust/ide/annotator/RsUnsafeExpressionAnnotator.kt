@@ -59,7 +59,11 @@ class RsUnsafeExpressionAnnotator : AnnotatorBase() {
     private fun annotateUnsafeStaticRef(expr: RsPathExpr, element: RsConstant, holder: RsAnnotationHolder) {
         val constantType = when {
             element.kind == RsConstantKind.MUT_STATIC -> RsBundle.message("inspection.message.mutable")
-            element.kind == RsConstantKind.STATIC && element.parent is RsForeignModItem -> RsBundle.message("inspection.message.extern")
+            element.kind == RsConstantKind.STATIC && element.parent is RsForeignModItem -> {
+                // Safe statics in foreign blocks don't require unsafe
+                if (element.isSafe) return
+                RsBundle.message("inspection.message.extern")
+            }
             else -> return
         }
 

@@ -275,6 +275,15 @@ object RsPsiPattern {
         return baseInherentImplDeclarationPattern().and(identifierStatementBeginningPattern())
     }
 
+    fun baseForeignModDeclarationPattern(): PsiElementPattern.Capture<PsiElement> {
+        return psiElement().withParent(
+            or(
+                psiElement<RsForeignModItem>(),
+                psiElement().withParent(RsForeignModItem::class.java)
+            )
+        )
+    }
+
     private inline fun <reified I : RsDocAndAttributeOwner> onItem(): PsiElementPattern.Capture<PsiElement> {
         return psiElement().withSuperParent(2, rootMetaItem(ownerPattern = psiElement<I>()))
     }

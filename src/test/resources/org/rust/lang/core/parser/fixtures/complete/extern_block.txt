@@ -217,7 +217,7 @@ FILE
     PsiElement(})('}')
   PsiWhiteSpace(' ')
   RsForeignModItemImpl(FOREIGN_MOD_ITEM)
-    PsiComment(<EOL_COMMENT>)('// semantically invalid')
+    PsiComment(<EOL_COMMENT>)('// semantically valid')
     PsiWhiteSpace('\n')
     RsVisImpl(VIS)
       PsiElement(pub)('pub')
