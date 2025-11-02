@@ -12,6 +12,7 @@ enum class ProMacroExpanderVersion {
     HAS_GLOBAL_SPANS,
     RUST_ANALYZER_SPAN_SUPPORT,
     EXTENDED_LEAF_DATA,
+    HASHED_AST_ID,
     ;
 
     companion object {
