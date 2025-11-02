@@ -713,6 +713,7 @@ fun CargoWorkspace.Package.additionalRoots(): List<VirtualFile> {
                     it.findFileByRelativePath("portable-simd/crates/std_float"),
                 )
             } ?: emptyList()
+            "compiler_builtins" -> listOfNotNull(contentRoot?.parent?.findFileByRelativePath("libm"))
             else -> emptyList()
         }
     } else {
