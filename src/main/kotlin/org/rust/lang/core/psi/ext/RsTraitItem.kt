@@ -35,6 +35,9 @@ val RsTraitItem.isSizedTrait: Boolean get() = langAttribute == "sized"
 val RsTraitItem.isAuto: Boolean
     get() = greenStub?.isAuto ?: (node.findChildByType(RsElementTypes.AUTO) != null)
 
+val RsTraitItem.isConstTrait: Boolean
+    get() = greenStub?.isConstTrait ?: (bracketConstTrait != null || node.findChildByType(RsElementTypes.CONST) != null)
+
 val RsTraitItem.isKnownDerivable: Boolean
     get() {
         val derivableTrait = KNOWN_DERIVABLE_TRAITS[name] ?: return false

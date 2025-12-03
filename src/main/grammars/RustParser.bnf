@@ -346,7 +346,7 @@ Item ::= AttrsAndVis default_? (Constant
   hooks = [ leftBinder = "ADJACENT_LINE_COMMENTS" ]
 }
 
-private Item_first ::= '#' | pub | crate | fn | const | extern | unsafe | struct | enum | use | identifier | mod | trait
+private Item_first ::= '#' | '[' | pub | crate | fn | const | extern | unsafe | struct | enum | use | identifier | mod | trait
   | static | TYPE_KW | impl | "union" | "default" | "auto" | "dyn" | "async" | MACRO_KW | self | super | '::'
 
 private RootItem_with_recover ::= !<<eof>> Item {
@@ -497,7 +497,7 @@ Polybound ::= '(' PolyboundInner ')' | PolyboundInner {
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
-private PolyboundInner ::= [ ForLifetimes | '?' | TildeConst | ConstBound ] Bound
+private PolyboundInner ::= [ ForLifetimes | '?' | TildeConst | ConstBound | BracketConst ] Bound
 
 WhereClause ::= where <<comma_separated_list WherePred>>? {
   extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
@@ -527,6 +527,10 @@ TildeConst ::= '~' const {
 }
 
 ConstBound ::= const {
+  pin = 1
+}
+
+BracketConst ::= '[' const ']' {
   pin = 1
 }
 
@@ -882,7 +886,11 @@ TupleFieldDecl ::= AttrsAndVis TypeReference DefaultParameterValue? {
 // Trait & Impl
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-upper TraitItem ::= unsafe? auto? trait identifier TypeParameterList? TypeParamBounds? WhereClause? Members {
+BracketConstTrait ::= '[' const ']' {
+  pin = 1
+}
+
+upper TraitItem ::= (BracketConstTrait | const)? unsafe? auto? trait identifier TypeParameterList? TypeParamBounds? WhereClause? Members {
   pin = "trait"
   name = ""
   implements = [ "org.rust.lang.core.psi.ext.RsTraitOrImpl"
