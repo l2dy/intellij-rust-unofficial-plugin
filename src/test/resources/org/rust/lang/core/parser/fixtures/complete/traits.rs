@@ -17,3 +17,11 @@ trait bar<T> {
 
 trait TrailingPlusIsOk: Clone+{}
 trait EmptyBoundsAreValid: {}
+
+[const] trait ConstDefault { fn default() -> Self; }
+[const] unsafe trait ConstUnsafe {}
+[const] unsafe auto trait ConstAutoUnsafe {}
+
+const trait ConstDefaultAlt { fn default() -> Self; }
+const unsafe trait ConstUnsafeAlt {}
+const unsafe auto trait ConstAutoUnsafeAlt {}

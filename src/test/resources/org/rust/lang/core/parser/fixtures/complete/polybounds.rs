@@ -52,3 +52,7 @@ fn gat_bounds2<T: Foo<Item<T>: Bar+Baz>>(t: T) {}
 fn gat_bounds3<T: Foo<Item1<T>: Bar, Item2<T> = ()>>(t: T) {}
 fn gat_bounds4<T: Foo<Item1<T> = (), Item2<T>: Bar>>(t: T) {}
 fn gat_in_args(t: &dyn Foo<Item<T>: Bar>) {}
+
+fn bracket_const_bound<T: [const] Default>() {}
+fn parenthesized_bracket_const_bound<T: ([const] Default)>() {}
+fn mixed_const_bounds<T: [const] Clone + ~const Copy>() {}

@@ -87,7 +87,7 @@ class RsFileStub(
 
     object Type : IStubFileElementType<RsFileStub>(RsLanguage) {
         // Bump this number if Stub structure changes
-        private const val STUB_VERSION = 235
+        private const val STUB_VERSION = 236
 
         override fun getStubVersion(): Int =
             RustParserDefinition.PARSER_VERSION + RS_BUILTIN_ATTRIBUTES_VERSION + STUB_VERSION
@@ -754,6 +754,8 @@ class RsTraitItemStub(
         get() = BitUtil.isSet(flags, UNSAFE_MASK)
     val isAuto: Boolean
         get() = BitUtil.isSet(flags, AUTO_MASK)
+    val isConstTrait: Boolean
+        get() = BitUtil.isSet(flags, CONST_TRAIT_MASK)
 
     object Type : RsStubElementType<RsTraitItemStub, RsTraitItem>("TRAIT_ITEM") {
         override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): RsTraitItemStub {
@@ -780,6 +782,7 @@ class RsTraitItemStub(
             var flags = RsAttributeOwnerStub.extractFlags(psi)
             flags = BitUtil.set(flags, UNSAFE_MASK, psi.isUnsafe)
             flags = BitUtil.set(flags, AUTO_MASK, psi.isAuto)
+            flags = BitUtil.set(flags, CONST_TRAIT_MASK, psi.isConstTrait)
 
             val procMacroInfo = RsAttrProcMacroOwnerStub.extractTextAndOffset(flags, psi)
             return RsTraitItemStub(parentStub, this, psi.name, flags, procMacroInfo)
@@ -791,6 +794,7 @@ class RsTraitItemStub(
     companion object : BitFlagsBuilder(CommonStubAttrFlags, BYTE) {
         private val UNSAFE_MASK: Int = nextBitMask()
         private val AUTO_MASK: Int = nextBitMask()
+        private val CONST_TRAIT_MASK: Int = nextBitMask()
     }
 }
 
@@ -2198,7 +2202,8 @@ private fun RsStubLiteralKind?.serialize(dataStream: StubOutputStream) {
 class RsPolyboundStub(
     parent: StubElement<*>?, elementType: IStubElementType<*, *>,
     val hasQ: Boolean,
-    val hasConst: Boolean
+    val hasConst: Boolean,
+    val hasBracketConst: Boolean
 ) : StubBase<RsPolybound>(parent, elementType) {
 
     object Type : RsStubElementType<RsPolyboundStub, RsPolybound>("POLYBOUND") {
@@ -2208,6 +2213,7 @@ class RsPolyboundStub(
             RsPolyboundStub(
                 parentStub, this,
                 dataStream.readBoolean(),
+                dataStream.readBoolean(),
                 dataStream.readBoolean()
             )
 
@@ -2215,13 +2221,14 @@ class RsPolyboundStub(
             with(dataStream) {
                 writeBoolean(stub.hasQ)
                 writeBoolean(stub.hasConst)
+                writeBoolean(stub.hasBracketConst)
             }
 
         override fun createPsi(stub: RsPolyboundStub): RsPolybound =
             RsPolyboundImpl(stub, this)
 
         override fun createStub(psi: RsPolybound, parentStub: StubElement<*>?) =
-            RsPolyboundStub(parentStub, this, psi.hasQ, psi.hasConst)
+            RsPolyboundStub(parentStub, this, psi.hasQ, psi.hasConst, psi.hasBracketConst)
     }
 }
 

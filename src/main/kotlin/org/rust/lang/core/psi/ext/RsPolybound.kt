@@ -26,3 +26,13 @@ val RsPolybound.hasQ: Boolean
  */
 val RsPolybound.hasConst: Boolean
     get() = greenStub?.hasConst ?: (tildeConst != null)
+
+/**
+ * Return true if there is the bracket const before a bound:
+ * ```
+ * fn foo<T: [const] A>() {}
+ *              //^
+ * ```
+ */
+val RsPolybound.hasBracketConst: Boolean
+    get() = greenStub?.hasBracketConst ?: (bracketConst != null)
