@@ -604,7 +604,9 @@ class Cargo(
         private val JSON_MAPPER: ObjectMapper = ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .registerKotlinModule()
-        private val TOML_MAPPER = TomlMapper()
+        private val TOML_MAPPER: TomlMapper = TomlMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .registerKotlinModule()
 
         @JvmStatic
         val TEST_NOCAPTURE_ENABLED_KEY: RegistryValue = Registry.get("org.rust.cargo.test.nocapture")
