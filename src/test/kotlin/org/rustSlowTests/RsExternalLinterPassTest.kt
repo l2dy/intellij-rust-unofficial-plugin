@@ -265,6 +265,11 @@ class RsExternalLinterPassTest : RsWithToolchainTestBase() {
             .single { it.description == RsExternalLinterUtils.TEST_MESSAGE }
         // Since 2023.2 `highlight.toolTip` is always wrapped into `html` tag
         val toolTip = highlight.toolTip?.let { XmlStringUtil.stripHtml(it) }
-        assertEquals(tooltip.trimIndent().replace("\n", "<br>"), toolTip)
+        // Normalize Clippy URLs: replace version-specific paths (rust-X.Y.Z) with "master"
+        val normalizedToolTip = toolTip?.replace(
+            Regex("rust-lang\\.github\\.io/rust-clippy/rust-\\d+\\.\\d+\\.\\d+/"),
+            "rust-lang.github.io/rust-clippy/master/"
+        )
+        assertEquals(tooltip.trimIndent().replace("\n", "<br>"), normalizedToolTip)
     }
 }
