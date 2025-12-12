@@ -53,7 +53,7 @@ class CustomTargetCfgResolveTest : RsWithToolchainTestBase() {
         }.checkReferenceIsResolved<RsPath>("src/main.rs", toFile = ".../src/enabled.rs")
     }
 
-    @MinRustcVersion("1.52.0")
+    @MinRustcVersion("1.91.0")
     fun `test custom json target`() {
         buildProject {
             toml("Cargo.toml", """
@@ -74,7 +74,7 @@ class CustomTargetCfgResolveTest : RsWithToolchainTestBase() {
                     "data-layout": "e-m:e-i64:64-f80:128-n8:16:32:64-S128",
                     "arch": "aarch64",
                     "target-endian": "little",
-                    "target-pointer-width": "64",
+                    "target-pointer-width": 64,
                     "os": "none",
                     "executables": true,
                     "linker-flavor": "ld.lld",

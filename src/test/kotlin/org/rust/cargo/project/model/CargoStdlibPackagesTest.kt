@@ -6,6 +6,7 @@
 package org.rust.cargo.project.model
 
 import com.intellij.util.io.delete
+import org.rust.MinRustcVersion
 import org.rust.cargo.RsWithToolchainTestBase
 import org.rust.cargo.project.model.impl.testCargoProjects
 import org.rust.cargo.project.workspace.*
@@ -43,6 +44,7 @@ class CargoStdlibPackagesTest : RsWithToolchainTestBase() {
         }
     }
 
+    @MinRustcVersion("1.91.0")
     fun `test target specific dependencies with custom build target`() {
         buildProject {
             dir(".cargo") {
@@ -57,7 +59,7 @@ class CargoStdlibPackagesTest : RsWithToolchainTestBase() {
                     "data-layout": "e-m:e-i64:64-f80:128-n8:16:32:64-S128",
                     "arch": "aarch64",
                     "target-endian": "little",
-                    "target-pointer-width": "64",
+                    "target-pointer-width": 64,
                     "os": "none",
                     "executables": true,
                     "linker-flavor": "ld.lld",

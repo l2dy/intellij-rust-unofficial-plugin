@@ -61,6 +61,7 @@ class CargoConfigTest : RsWithToolchainTestBase() {
         assertEquals(listOf("wasm32-unknown-unknown", "aarch64-apple-darwin"), buildTargets)
     }
 
+    @MinRustcVersion("1.91.0")
     fun `test custom build target`() {
         val testProject = buildProject {
             dir(".cargo") {
@@ -75,7 +76,7 @@ class CargoConfigTest : RsWithToolchainTestBase() {
                     "data-layout": "e-m:e-i64:64-f80:128-n8:16:32:64-S128",
                     "arch": "aarch64",
                     "target-endian": "little",
-                    "target-pointer-width": "64",
+                    "target-pointer-width": 64,
                     "os": "none",
                     "executables": true,
                     "linker-flavor": "ld.lld",
@@ -95,7 +96,7 @@ class CargoConfigTest : RsWithToolchainTestBase() {
         assertEquals(testProject.root.findChild("custom-target.json")!!.path, buildTargets.first())
     }
 
-    @MinRustcVersion("1.64.0")
+    @MinRustcVersion("1.91.0")
     fun `test multiple custom build targets`() {
         val testProject = buildProject {
             dir(".cargo") {
@@ -110,7 +111,7 @@ class CargoConfigTest : RsWithToolchainTestBase() {
                     "data-layout": "e-m:e-i64:64-f80:128-n8:16:32:64-S128",
                     "arch": "aarch64",
                     "target-endian": "little",
-                    "target-pointer-width": "64",
+                    "target-pointer-width": 64,
                     "os": "none",
                     "executables": true,
                     "linker-flavor": "ld.lld",
@@ -150,7 +151,7 @@ class CargoConfigTest : RsWithToolchainTestBase() {
                   "target-family": [
                     "wasm"
                   ],
-                  "target-pointer-width": "32",
+                  "target-pointer-width": 32,
                   "tls-model": "local-exec"
                 }
             """)
