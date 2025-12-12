@@ -172,14 +172,14 @@ class RsExternalLinterPassTest : RsWithToolchainTestBase() {
         mismatched types [<a href="https://doc.rust-lang.org/error-index.html#E0308">E0308</a>]<br>expected `()`, found integer
     """)
 
-    @MinRustcVersion("1.44.1")
+    @MinRustcVersion("1.91.0")
     fun `test don't add reference to index for compiler errors not from index`() = checkTooltip("""
         fn main() {
             let x = ();
         }
     """, """
         unused variable: `x`
-        Note: `#[warn(unused_variables)]` on by default
+        Note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
         Help: if this is intentional, prefix it with an underscore
     """)
 
