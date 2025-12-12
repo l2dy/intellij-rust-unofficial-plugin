@@ -285,11 +285,11 @@ class CargoTestEventsConverter(
         private val LINE_NUMBER_RE: Regex = """\s+\(line\s+(?<line>\d+)\)\s*""".toRegex()
 
         private val ERROR_MESSAGE_RE_OLD: Regex =
-            """thread '.*' panicked at '(?<fullMessage>(assertion failed: `\(left (?<sign>.*) right\)`\s*left: `(?<left>.*?)`,\s*right: `(?<right>.*?)`(: )?)?(?<message>.*))',"""
+            """thread '.*'( \(\d+\))? panicked at '(?<fullMessage>(assertion failed: `\(left (?<sign>.*) right\)`\s*left: `(?<left>.*?)`,\s*right: `(?<right>.*?)`(: )?)?(?<message>.*))',"""
                 .toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
 
         private val ERROR_MESSAGE_RE: Regex =
-            """thread '.*' panicked at (\S*)\n(?<fullMessage>(assertion `left (?<sign>.*) right` failed(: )?)?(?<message>.*?)\n\s*(left: (?<left>.*?)\n\s*right: (?<right>.*?)\n)?)(note|stack backtrace):"""
+            """thread '.*'( \(\d+\))? panicked at (\S*)\n(?<fullMessage>(assertion `left (?<sign>.*) right` failed(: )?)?(?<message>.*?)\n\s*(left: (?<left>.*?)\n\s*right: (?<right>.*?)\n)?)(note|stack backtrace):"""
                 .toRegex(setOf(RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL))
 
         private val NodeId.name: String
