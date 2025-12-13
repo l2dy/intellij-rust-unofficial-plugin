@@ -225,7 +225,10 @@ class TyLowering private constructor(
                     if (typeParam != null) {
                         result.add(CapturedParameter.TypeParam(typeParam))
                     }
-                    // TODO: Handle const parameters
+                    val constParam = resolveConstParamByName(name, type)
+                    if (constParam != null) {
+                        result.add(CapturedParameter.ConstParam(constParam))
+                    }
                 }
                 element.cself != null -> {
                     val selfType = resolveSelfType(type)
@@ -267,6 +270,17 @@ class TyLowering private constructor(
                 ?.find { it.name == name }
             if (param != null) {
                 return TyTypeParameter.named(param)
+            }
+        }
+        return null
+    }
+
+    private fun resolveConstParamByName(name: String, context: RsElement): CtConstParameter? {
+        for (scope in context.contexts.filterIsInstance<RsGenericDeclaration>()) {
+            val param = scope.typeParameterList?.constParameterList
+                ?.find { it.name == name }
+            if (param != null) {
+                return CtConstParameter(param)
             }
         }
         return null
