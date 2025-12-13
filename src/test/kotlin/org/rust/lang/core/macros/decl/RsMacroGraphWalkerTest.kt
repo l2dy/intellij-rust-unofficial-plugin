@@ -6,6 +6,7 @@
 package org.rust.lang.core.macros.decl
 
 import org.intellij.lang.annotations.Language
+import org.rust.MinRustcVersion
 import org.rust.ProjectDescriptor
 import org.rust.RsTestBase
 import org.rust.WithStdlibRustProjectDescriptor
@@ -169,6 +170,7 @@ class RsMacroGraphWalkerTest : RsTestBase() {
         }
     """, hashSetOf(FragmentKind.Ty))
 
+    @MinRustcVersion("1.92.0")
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
     fun `test thread_local 1`() = check("""
         fn main() {
@@ -176,8 +178,9 @@ class RsMacroGraphWalkerTest : RsTestBase() {
                pub static FOO: RefCell<i/*caret*/> = RefCell::new(1);
             }
         }
-    """, hashSetOf(FragmentKind.Ty))
+    """, hashSetOf(FragmentKind.Tt))
 
+    @MinRustcVersion("1.92.0")
     @ProjectDescriptor(WithStdlibRustProjectDescriptor::class)
     fun `test thread_local 2`() = check("""
         fn main() {
@@ -185,7 +188,7 @@ class RsMacroGraphWalkerTest : RsTestBase() {
                pub static FOO: RefCell<i32> = RefCell::new(i/*caret*/);
             }
         }
-    """, hashSetOf(FragmentKind.Expr))
+    """, hashSetOf(FragmentKind.Tt))
 
     fun `test cond reduce`() = check("""
         macro_rules! cond_reduce {
