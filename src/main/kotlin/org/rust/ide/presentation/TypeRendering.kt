@@ -176,13 +176,16 @@ private data class TypeRenderer(
             }
             is TyTraitObject -> ty.traits.joinToString("+", "dyn ") { formatTrait(it, render) }
             is TyAnon -> buildString {
-                append("impl ")
+                append("impl")
                 if (ty.hasExplicitCaptures) {
-                    append("use<")
+                    append(" use<")
                     append(ty.capturedParams.joinToString(", ") { renderCapturedParam(it, render) })
-                    append("> ")
+                    append(">")
                 }
-                append(ty.traits.joinToString("+") { formatTrait(it, render) })
+                if (ty.traits.isNotEmpty()) {
+                    append(" ")
+                    append(ty.traits.joinToString("+") { formatTrait(it, render) })
+                }
             }
             is TyAdt -> buildString {
                 append(getName(ty.item) ?: return anonymous)

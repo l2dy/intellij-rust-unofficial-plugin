@@ -87,7 +87,7 @@ class RsFileStub(
 
     object Type : IStubFileElementType<RsFileStub>(RsLanguage) {
         // Bump this number if Stub structure changes
-        private const val STUB_VERSION = 236
+        private const val STUB_VERSION = 237
 
         override fun getStubVersion(): Int =
             RustParserDefinition.PARSER_VERSION + RS_BUILTIN_ATTRIBUTES_VERSION + STUB_VERSION
@@ -272,6 +272,8 @@ fun factory(name: String): RsStubElementType<*, *> = when (name) {
     "PATH_TYPE" -> RsPathTypeStub.Type
     "FOR_IN_TYPE" -> RsPlaceholderStub.Type("FOR_IN_TYPE", ::RsForInTypeImpl)
     "TRAIT_TYPE" -> RsTraitTypeStub.Type
+    "USE_BOUNDS_CLAUSE" -> RsPlaceholderStub.Type("USE_BOUNDS_CLAUSE", ::RsUseBoundsClauseImpl)
+    "USE_BOUNDS_ELEMENT" -> RsPlaceholderStub.Type("USE_BOUNDS_ELEMENT", ::RsUseBoundsElementImpl)
     "MACRO_TYPE" -> RsPlaceholderStub.Type("MACRO_TYPE", ::RsMacroTypeImpl)
 
     "VALUE_PARAMETER_LIST" -> RsPlaceholderStub.Type("VALUE_PARAMETER_LIST", ::RsValueParameterListImpl)
