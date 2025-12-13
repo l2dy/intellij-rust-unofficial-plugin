@@ -62,7 +62,7 @@ class RsNeedlessLifetimesInspection : RsLintInspection() {
 private fun couldUseElision(fn: RsFunction): Boolean {
     if (hasWhereLifetimes(fn.whereClause)) return false
 
-    val typeParametersBounds = fn.typeParameters.flatMap { it.bounds }.map { it.bound }
+    val typeParametersBounds = fn.typeParameters.flatMap { it.bounds }.mapNotNull { it.bound }
     if (typeParametersBounds.any { hasNamedReferenceLifetime(it) }) return false
 
     val (inputLifetimeCollector, outputLifetimesCollector) = collectLifetimesFromFnSignature(fn) ?: return false
@@ -136,9 +136,10 @@ private class LifetimesCollector(val isForInputParams: Boolean = false) : RsRecu
 
     override fun visitTraitType(trait: RsTraitType) {
         for (polybound in trait.polyboundList) {
-            polybound.bound.lifetime?.let { record(null) }
+            val bound = polybound.bound ?: continue  // Skip use<> bounds
+            bound.lifetime?.let { record(null) }
             if (isForInputParams) {
-                abort = abort || hasNamedReferenceLifetime(polybound.bound)
+                abort = abort || hasNamedReferenceLifetime(bound)
             }
         }
         super.visitTraitType(trait)
@@ -255,7 +256,7 @@ private fun hasWhereLifetimes(whereClause: RsWhereClause?): Boolean {
         val boundLifetimeParams = predicate.forLifetimes?.lifetimeParameterList.orEmpty()
         val allowedLifetimes = allowedLifetimesFrom(boundLifetimeParams)
         // now walk the bounds
-        predicate.typeParamBounds?.polyboundList?.map { it.bound }?.forEach { it.accept(collector) }
+        predicate.typeParamBounds?.polyboundList?.mapNotNull { it.bound }?.forEach { it.accept(collector) }
         // and check that all lifetimes are allowed
         if (!allowedLifetimes.containsAll(collector.lifetimes)) return true
     }

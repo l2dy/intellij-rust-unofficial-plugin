@@ -75,8 +75,8 @@ class TyTypeParameter private constructor(
 private fun traitBounds(parameter: RsTypeParameter): List<BoundElement<RsTraitItem>> =
     parameter.bounds.mapNotNull {
         if (it.hasQ) return@mapNotNull null // Ignore `T: ?Sized`
-        it.bound.traitRef?.resolveToBoundTrait()
+        it.bound?.traitRef?.resolveToBoundTrait()
     }
 
 private fun regionBounds(parameter: RsTypeParameter): List<Region> =
-    parameter.bounds.mapNotNull { it.bound.lifetime?.resolve() }
+    parameter.bounds.mapNotNull { it.bound?.lifetime?.resolve() }

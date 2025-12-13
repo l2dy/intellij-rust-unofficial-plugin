@@ -497,7 +497,8 @@ private fun PsiElement.generateDocumentation(buffer: StringBuilder, prefix: Stri
             if (q != null) {
                 buffer += "?"
             }
-            (bound.lifetime ?: bound.traitRef)?.generateDocumentation(buffer)
+            (bound?.lifetime ?: bound?.traitRef)?.generateDocumentation(buffer)
+            useBoundsClause?.generateDocumentation(buffer)
         }
         is RsTypeArgumentList -> (lifetimeList + typeReferenceList + exprList + assocTypeBindingList)
             .sortedBy { it.startOffset }

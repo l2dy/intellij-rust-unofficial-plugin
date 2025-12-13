@@ -435,7 +435,7 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
     private fun checkTraitObjectBounds(holder: RsAnnotationHolder, traitType: RsTraitType) {
         if (traitType.isImpl) return
         val regularTraits = traitType.polyboundList
-            .filter { it.bound.traitRef?.resolveToTrait()?.isAuto == false }
+            .filter { it.bound?.traitRef?.resolveToTrait()?.isAuto == false }
 
         if (regularTraits.size > 1) {
             RsDiagnostic.OnlyAutoTraitsInTraitObjectError(regularTraits[1]).addToHolder(holder)
@@ -1362,7 +1362,7 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
     }
 
     private fun checkPolybound(holder: RsAnnotationHolder, o: RsPolybound) {
-        if (o.lparen != null && o.bound.lifetime != null) {
+        if (o.lparen != null && o.bound?.lifetime != null) {
             holder.createErrorAnnotation(o, RsBundle.message("inspection.message.parenthesized.lifetime.bounds.are.not.supported"))
         }
     }

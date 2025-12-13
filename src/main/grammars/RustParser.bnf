@@ -497,7 +497,7 @@ Polybound ::= '(' PolyboundInner ')' | PolyboundInner {
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
-private PolyboundInner ::= [ ForLifetimes | '?' | TildeConst | ConstBound | BracketConst ] Bound
+private PolyboundInner ::= UseBoundsClause | [ ForLifetimes | '?' | TildeConst | ConstBound | BracketConst ] Bound
 
 WhereClause ::= where <<comma_separated_list WherePred>>? {
   extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
@@ -1043,6 +1043,18 @@ TupleOrParenType ::= '(' !')' TypeReference (TupleType_upper | ')') {
 upper TupleType_upper ::= ',' [ TypeReference (',' TypeReference)* ','? ] ')' { pin = 1 elementType = TupleType }
 
 Bound ::= Lifetime | TraitRef {
+  extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
+  stubClass = "org.rust.lang.core.stubs.RsPlaceholderStub<?>"
+  elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
+}
+
+UseBoundsClause ::= use '<' [ UseBoundsElement (',' UseBoundsElement)* ','? ] '>' {
+  extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
+  stubClass = "org.rust.lang.core.stubs.RsPlaceholderStub<?>"
+  elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
+}
+
+UseBoundsElement ::= Lifetime | identifier | 'Self' {
   extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
   stubClass = "org.rust.lang.core.stubs.RsPlaceholderStub<?>"
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"

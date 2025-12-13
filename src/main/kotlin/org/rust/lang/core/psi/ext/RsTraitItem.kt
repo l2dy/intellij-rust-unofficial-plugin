@@ -119,7 +119,7 @@ private val RsTraitItem.superTraits: Sequence<BoundElement<RsTraitItem>>
         val bounds = typeParamBounds?.polyboundList.orEmpty().asSequence() + whereBounds
         return bounds
             .filter { !it.hasQ } // ignore `?Sized`
-            .mapNotNull { it.bound.traitRef?.resolveToBoundTrait() }
+            .mapNotNull { it.bound?.traitRef?.resolveToBoundTrait() }
     }
 
 abstract class RsTraitItemImplMixin : RsStubbedNamedElementImpl<RsTraitItemStub>, RsTraitItem {
