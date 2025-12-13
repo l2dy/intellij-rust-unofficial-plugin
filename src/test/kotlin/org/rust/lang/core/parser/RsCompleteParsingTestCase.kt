@@ -93,6 +93,8 @@ class RsCompleteParsingTestCase : RsParsingTestCaseBase("complete") {
 
     fun `test inc dec`() = doTest(true)
 
+    fun `test use capturing`() = doTest(true)
+
     override fun checkResult(targetDataName: String, file: PsiFile) {
         super.checkResult(targetDataName, file)
         check(!hasError(file)) {
