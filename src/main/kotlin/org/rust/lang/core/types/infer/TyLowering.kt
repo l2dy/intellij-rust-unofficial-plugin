@@ -154,7 +154,8 @@ class TyLowering private constructor(
                         hasSizedUnbound = true
                         null
                     } else {
-                        val path = it.bound.traitRef?.path ?: return@mapNotNull null
+                        val bound = it.bound ?: return@mapNotNull null  // Skip use<> bounds
+                        val path = bound.traitRef?.path ?: return@mapNotNull null
                         val res = rawMultiResolvePath(path).singleOrNull()
                         if (res == null) {
                             hasUnresolvedBound = true
@@ -171,10 +172,11 @@ class TyLowering private constructor(
                     } else {
                         traitBounds
                     }
-                    return TyAnon(type, traitBoundsWithImplicitSized)
+                    val (capturedParams, hasExplicitCaptures) = extractCapturedParams(type)
+                    return TyAnon(type, traitBoundsWithImplicitSized, capturedParams, hasExplicitCaptures)
                 }
                 if (traitBounds.isEmpty()) return TyUnknown
-                val lifetimeBounds = type.polyboundList.mapNotNull { it.bound.lifetime }
+                val lifetimeBounds = type.polyboundList.mapNotNull { it.bound?.lifetime }
                 val regionBound = lifetimeBounds.firstOrNull()?.resolve() ?: defaultTraitObjectRegion ?: ReStatic
                 TyTraitObject(traitBounds, regionBound, hasUnresolvedBound)
             }
@@ -185,6 +187,112 @@ class TyLowering private constructor(
             }
 
             else -> TyUnknown
+        }
+    }
+
+    private fun extractCapturedParams(type: RsTraitType): Pair<List<CapturedParameter>, Boolean> {
+        val useBounds = type.useBoundsClause
+
+        return when {
+            useBounds != null -> {
+                val params = extractExplicitCaptures(useBounds, type)
+                Pair(params, true)
+            }
+            type.isAtLeastEdition2024 -> {
+                val params = collectInScopeParams(type)
+                Pair(params, false)
+            }
+            else -> Pair(emptyList(), false)
+        }
+    }
+
+    private fun extractExplicitCaptures(
+        useBounds: RsUseBoundsClause,
+        type: RsTraitType
+    ): List<CapturedParameter> {
+        val result = mutableListOf<CapturedParameter>()
+
+        for (element in useBounds.useBoundsElementList) {
+            when {
+                element.lifetime != null -> {
+                    val resolved = element.lifetime?.resolve()
+                    if (resolved != null) {
+                        result.add(CapturedParameter.Lifetime(resolved))
+                    }
+                }
+                element.identifier != null -> {
+                    val name = element.identifier!!.text
+                    val typeParam = resolveTypeParamByName(name, type)
+                    if (typeParam != null) {
+                        result.add(CapturedParameter.TypeParam(typeParam))
+                    }
+                    val constParam = resolveConstParamByName(name, type)
+                    if (constParam != null) {
+                        result.add(CapturedParameter.ConstParam(constParam))
+                    }
+                }
+                element.cself != null -> {
+                    val selfType = resolveSelfType(type)
+                    if (selfType is TyTypeParameter) {
+                        result.add(CapturedParameter.TypeParam(selfType))
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
+    private fun collectInScopeParams(type: RsTraitType): List<CapturedParameter> {
+        val result = mutableListOf<CapturedParameter>()
+
+        for (scope in type.contexts.filterIsInstance<RsGenericDeclaration>()) {
+            val typeParamList = scope.typeParameterList ?: continue
+
+            typeParamList.lifetimeParameterList.forEach { param ->
+                result.add(CapturedParameter.Lifetime(ReEarlyBound(param)))
+            }
+
+            typeParamList.typeParameterList.forEach { param ->
+                result.add(CapturedParameter.TypeParam(TyTypeParameter.named(param)))
+            }
+
+            typeParamList.constParameterList.forEach { param ->
+                result.add(CapturedParameter.ConstParam(CtConstParameter(param)))
+            }
+        }
+
+        return result
+    }
+
+    private fun resolveTypeParamByName(name: String, context: RsElement): TyTypeParameter? {
+        for (scope in context.contexts.filterIsInstance<RsGenericDeclaration>()) {
+            val param = scope.typeParameterList?.typeParameterList
+                ?.find { it.name == name }
+            if (param != null) {
+                return TyTypeParameter.named(param)
+            }
+        }
+        return null
+    }
+
+    private fun resolveConstParamByName(name: String, context: RsElement): CtConstParameter? {
+        for (scope in context.contexts.filterIsInstance<RsGenericDeclaration>()) {
+            val param = scope.typeParameterList?.constParameterList
+                ?.find { it.name == name }
+            if (param != null) {
+                return CtConstParameter(param)
+            }
+        }
+        return null
+    }
+
+    private fun resolveSelfType(context: RsElement): Ty? {
+        val implOrTrait = context.contexts.find { it is RsImplItem || it is RsTraitItem }
+        return when (implOrTrait) {
+            is RsImplItem -> implOrTrait.typeReference?.rawType
+            is RsTraitItem -> TyTypeParameter.self(implOrTrait)
+            else -> null
         }
     }
 
