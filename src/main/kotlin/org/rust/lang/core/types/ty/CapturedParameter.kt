@@ -19,6 +19,12 @@ sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
 
         override fun visitWith(visitor: TypeVisitor): Boolean =
             region.visitWith(visitor)
+
+        override fun superFoldWith(folder: TypeFolder): CapturedParameter =
+            Lifetime(region.foldWith(folder))
+
+        override fun superVisitWith(visitor: TypeVisitor): Boolean =
+            region.visitWith(visitor)
     }
 
     data class TypeParam(val param: TyTypeParameter) : CapturedParameter() {
@@ -27,6 +33,12 @@ sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
 
         override fun visitWith(visitor: TypeVisitor): Boolean =
             param.visitWith(visitor)
+
+        override fun superFoldWith(folder: TypeFolder): CapturedParameter =
+            TypeParam(param.foldWith(folder) as TyTypeParameter)
+
+        override fun superVisitWith(visitor: TypeVisitor): Boolean =
+            param.visitWith(visitor)
     }
 
     data class ConstParam(val param: CtConstParameter) : CapturedParameter() {
@@ -34,6 +46,12 @@ sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
             ConstParam(param.foldWith(folder) as CtConstParameter)
 
         override fun visitWith(visitor: TypeVisitor): Boolean =
+            param.visitWith(visitor)
+
+        override fun superFoldWith(folder: TypeFolder): CapturedParameter =
+            ConstParam(param.foldWith(folder) as CtConstParameter)
+
+        override fun superVisitWith(visitor: TypeVisitor): Boolean =
             param.visitWith(visitor)
     }
 }
