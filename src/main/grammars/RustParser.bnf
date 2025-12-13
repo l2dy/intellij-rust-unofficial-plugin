@@ -1048,6 +1048,18 @@ Bound ::= Lifetime | TraitRef {
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
+UseBoundsClause ::= use '<' [ UseBoundsElement (',' UseBoundsElement)* ','? ] '>' {
+  extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
+  stubClass = "org.rust.lang.core.stubs.RsPlaceholderStub<?>"
+  elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
+}
+
+UseBoundsElement ::= Lifetime | identifier | 'Self' {
+  extends = "org.rust.lang.core.psi.ext.RsStubbedElementImpl<?>"
+  stubClass = "org.rust.lang.core.stubs.RsPlaceholderStub<?>"
+  elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
+}
+
 ForInType ::= ForLifetimes (FnPointerType | TraitRef) {
   pin = 1
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
@@ -1073,7 +1085,7 @@ fake TraitType ::= ExplicitTraitTypeInner | ImplicitTraitTypeInner {
 }
 
 ExplicitTraitType ::= ExplicitTraitTypeInner { elementType = TraitType }
-private ExplicitTraitTypeInner ::= (impl | dyn) Polybound ('+' Polybound)* { pin = 1 }
+private ExplicitTraitTypeInner ::= (impl | dyn) UseBoundsClause? Polybound ('+' Polybound)* { pin = 1 }
 
 ImplicitTraitType ::= ImplicitTraitTypeInner { elementType = TraitType }
 private ImplicitTraitTypeInner ::= Polybound ('+' Polybound)+
