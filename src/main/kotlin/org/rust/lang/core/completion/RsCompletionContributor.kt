@@ -44,6 +44,7 @@ class RsCompletionContributor : CompletionContributor() {
         extend(CompletionType.BASIC, RsClippyLintCompletionProvider)
         extend(CompletionType.BASIC, RsRustcLintCompletionProvider)
         extend(CompletionType.BASIC, RsImplTraitMemberCompletionProvider)
+        extend(CompletionType.BASIC, RsUseBoundsCompletionProvider)
         extend(CompletionType.BASIC, RsFnMainCompletionProvider)
         extend(CompletionType.BASIC, RsVisRestrictionCompletionProvider)
         extend(CompletionType.BASIC, RsLambdaExprCompletionProvider)
