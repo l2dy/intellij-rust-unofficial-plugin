@@ -175,7 +175,15 @@ private data class TypeRenderer(
                 if (includeTypeArguments) append(formatProjectionGenerics(ty, render))
             }
             is TyTraitObject -> ty.traits.joinToString("+", "dyn ") { formatTrait(it, render) }
-            is TyAnon -> ty.traits.joinToString("+", "impl ") { formatTrait(it, render) }
+            is TyAnon -> buildString {
+                append("impl ")
+                if (ty.hasExplicitCaptures) {
+                    append("use<")
+                    append(ty.capturedParams.joinToString(", ") { renderCapturedParam(it, render) })
+                    append("> ")
+                }
+                append(ty.traits.joinToString("+") { formatTrait(it, render) })
+            }
             is TyAdt -> buildString {
                 append(getName(ty.item) ?: return anonymous)
                 if (includeTypeArguments) append(formatAdtGenerics(ty, render))
@@ -193,6 +201,19 @@ private data class TypeRenderer(
 
     private fun render(region: Region): String =
         if (region == ReUnknown) unknownLifetime else region.toString()
+
+    private fun renderCapturedParam(param: CapturedParameter, render: (Ty) -> String): String =
+        when (param) {
+            is CapturedParameter.Lifetime -> {
+                when (val region = param.region) {
+                    is ReStatic -> "'static"
+                    is ReEarlyBound -> region.parameter.name ?: "'_"
+                    else -> "'_"
+                }
+            }
+            is CapturedParameter.TypeParam -> param.param.name ?: "<unknown>"
+            is CapturedParameter.ConstParam -> param.param.parameter.name ?: "<unknown>"
+        }
 
     private fun render(const: Const, wrapParameterInBraces: Boolean = false): String =
         when (const) {
