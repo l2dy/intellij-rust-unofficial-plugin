@@ -1815,4 +1815,43 @@ class RsExpressionTypeInferenceTest : RsTypificationTestBase() {
                   //^ u8
         }
     """)
+
+    fun `test explicit use captures lifetimes`() = testExpr("""
+        fn foo<'a>(x: &'a i32) -> impl use<'a> { *x }
+        fn main() {
+            let x = 1;
+            let y = foo(&x);
+            y;
+          //^ impl use<'a>
+        }
+    """)
+
+    fun `test use empty captures nothing`() = testExpr("""
+        fn foo<'a>(_: &'a i32) -> impl use<> { () }
+        fn main() {
+            let y = foo(&1);
+            y;
+          //^ impl use<>
+        }
+    """)
+
+    @MockEdition(Edition.EDITION_2024)
+    fun `test edition 2024 captures all implicitly`() = testExpr("""
+        fn foo<'a, T>(x: &'a T) -> impl { x }
+        fn main() {
+            let y = foo(&1i32);
+            y;
+          //^ impl
+        }
+    """)
+
+    @MockEdition(Edition.EDITION_2021)
+    fun `test edition 2021 no implicit lifetime capture`() = testExpr("""
+        fn foo<'a>(x: &'a i32) -> impl { *x }
+        fn main() {
+            let y = foo(&1);
+            y;
+          //^ impl
+        }
+    """)
 }
