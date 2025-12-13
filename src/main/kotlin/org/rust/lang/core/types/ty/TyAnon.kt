@@ -20,7 +20,9 @@ import org.rust.lang.core.types.mergeElementFlags
  */
 data class TyAnon(
     val definition: RsTraitType?,
-    val traits: List<BoundElement<RsTraitItem>>
+    val traits: List<BoundElement<RsTraitItem>>,
+    val capturedParams: List<CapturedParameter> = emptyList(),
+    val hasExplicitCaptures: Boolean = false
 ) : Ty(mergeElementFlags(traits) or HAS_TY_OPAQUE_MASK) {
 
     init {
@@ -30,10 +32,16 @@ data class TyAnon(
     }
 
     override fun superFoldWith(folder: TypeFolder): Ty =
-        TyAnon(definition, traits.map { it.foldWith(folder) })
+        TyAnon(
+            definition,
+            traits.map { it.foldWith(folder) },
+            capturedParams.map { it.foldWith(folder) },
+            hasExplicitCaptures
+        )
 
     override fun superVisitWith(visitor: TypeVisitor): Boolean =
-        traits.any { it.visitWith(visitor) }
+        traits.any { it.visitWith(visitor) } ||
+            capturedParams.any { it.visitWith(visitor) }
 
     fun getTraitBoundsTransitively(): Collection<BoundElement<RsTraitItem>> =
         traits.flatMap { it.getFlattenHierarchy(this) }
