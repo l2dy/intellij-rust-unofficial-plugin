@@ -233,7 +233,7 @@ class LazyParamEnv(private val parentItem: RsGenericDeclaration) : ParamEnv {
                 }
             }.mapNotNull {
                 if (it.hasQ) return@mapNotNull null // Ignore `T: ?Sized`
-                it.bound.traitRef?.resolveToBoundTrait()
+                it.bound?.traitRef?.resolveToBoundTrait()
             }
             @Suppress("DEPRECATION")
             ty.getTraitBoundsTransitively().asSequence() + additionalBounds

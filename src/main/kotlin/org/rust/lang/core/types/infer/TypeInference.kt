@@ -1453,7 +1453,7 @@ private fun List<RsPolybound>?.toPredicates(selfTy: Ty): Sequence<PsiPredicate> 
         if (bound.hasQ) { // ?Sized
             return@flatMap sequenceOf(PsiPredicate.Unbound(selfTy))
         }
-        val traitRef = bound.bound.traitRef ?: return@flatMap emptySequence<PsiPredicate>()
+        val traitRef = bound.bound?.traitRef ?: return@flatMap emptySequence<PsiPredicate>()
         val boundTrait = traitRef.resolveToBoundTrait() ?: return@flatMap emptySequence<PsiPredicate>()
 
         val assocTypeBounds = traitRef.path.assocTypeBindings.asSequence()

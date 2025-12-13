@@ -115,7 +115,7 @@ private fun collectSuperTraits(
     }
 
     trait.element.typeParamBounds?.polyboundList?.forEach {
-        val traitRef = it.bound.traitRef ?: return@forEach
+        val traitRef = it.bound?.traitRef ?: return@forEach
         val superTrait = traitRef.resolveToBoundTrait() ?: return@forEach
         substitutions.add(pathPsiSubst(traitRef.path, superTrait.element))
         collectSuperTraits(superTrait.substitute(trait.subst), traitRef, substitutions, ordered, visited)

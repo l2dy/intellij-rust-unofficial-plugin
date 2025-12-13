@@ -93,8 +93,8 @@ private fun firstLine(params: List<RsGenericParameter>): HintLine {
                 val qSizedBound = if (!param.isSized) listOf("?Sized") else emptyList()
                 val declaredBounds = param.bounds
                     // `?Sized`, if needed, in separate val, `Sized` shouldn't be shown
-                    .filter { it.bound.traitRef?.resolveToBoundTrait()?.element?.isSizedTrait == false }
-                    .mapNotNull { it.bound.traitRef?.path?.text }
+                    .filter { it.bound?.traitRef?.resolveToBoundTrait()?.element?.isSizedTrait == false }
+                    .mapNotNull { it.bound?.traitRef?.path?.text }
                 val allBounds = qSizedBound + declaredBounds
                 param.name + (allBounds.nullize()?.joinToString(prefix = ": ", separator = " + ") ?: "")
             }

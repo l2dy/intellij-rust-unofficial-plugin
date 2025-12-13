@@ -35,7 +35,7 @@ class RsPrimitiveTypeImplsTest : RsTestBase() {
         """)
         val typeBounds = findElementInEditor<RsTypeParamBounds>()
         val traitItems = typeBounds.polyboundList.map {
-            it.bound.traitRef?.path?.reference?.resolve() as? RsTraitItem ?: error("Can't find type bounds")
+            it.bound?.traitRef?.path?.reference?.resolve() as? RsTraitItem ?: error("Can't find type bounds")
         }
 
         val lookup = ImplLookup.relativeTo(typeBounds)

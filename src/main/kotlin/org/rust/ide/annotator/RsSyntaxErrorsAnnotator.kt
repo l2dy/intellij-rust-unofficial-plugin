@@ -602,13 +602,14 @@ private fun checkTraitType(holder: AnnotationHolder, element: RsTraitType) {
     if (element.impl != null) return
     val bounds = element.polyboundList
 
-    val lifetimeBounds = bounds.filter { it.bound.lifetime != null }
+    val lifetimeBounds = bounds.filter { it.bound?.lifetime != null }
     if (lifetimeBounds.size > 1) {
         val fixes = lifetimeBounds.map { RemovePolyBoundFix(it) }.toList()
         RsDiagnostic.TooManyLifetimeBoundsOnTraitObjectError(element, fixes).addToHolder(holder)
     }
 
-    if (bounds.none { it.bound.lifetime == null }) {
+    // Check if there's at least one trait bound (excluding use<> and lifetime bounds)
+    if (bounds.none { it.bound?.lifetime == null && it.bound != null }) {
         RsDiagnostic.AtLeastOneTraitForObjectTypeError(element).addToHolder(holder)
     }
 }
