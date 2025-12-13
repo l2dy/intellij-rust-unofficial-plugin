@@ -128,6 +128,9 @@ class RsKeywordCompletionContributor : CompletionContributor(), DumbAware {
             }
         })
 
+        extend(CompletionType.BASIC, useInImplTraitPattern(),
+            RsKeywordCompletionProvider("use"))
+
         extendWithFnTypeCompletion()
 
         extend(CompletionType.BASIC, afterIfOrWhilePattern(), RsKeywordCompletionProvider("let"))
@@ -399,6 +402,11 @@ class RsKeywordCompletionContributor : CompletionContributor(), DumbAware {
             leaf.contexts.any { it is RsExpr && it.endOffset == leafEndOffset }
         }
     )
+
+    private fun useInImplTraitPattern(): PsiElementPattern.Capture<PsiElement> =
+        psiElement()
+            .withParent(psiElement<RsPath>())
+            .inside(psiElement<RsTraitType>().with("isImpl") { it.isImpl })
 
     private fun elseLookupElement() = LookupElementBuilder
         .create("else")
