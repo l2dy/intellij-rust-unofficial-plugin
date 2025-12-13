@@ -381,11 +381,22 @@ open class RsPsiRenderer(
         }
 
         val bound = polyBound.bound
-        val lifetime = bound.lifetime
-        if (renderLifetimes && lifetime != null) {
-            sb.append(lifetime.referenceName)
+        if (bound != null) {
+            val lifetime = bound.lifetime
+            if (renderLifetimes && lifetime != null) {
+                sb.append(lifetime.referenceName)
+            } else {
+                bound.traitRef?.path?.let { appendPath(sb, it) }
+            }
         } else {
-            bound.traitRef?.path?.let { appendPath(sb, it) }
+            // Handle use<> bounds
+            polyBound.useBoundsClause?.let { useBounds ->
+                sb.append("use<")
+                useBounds.useBoundsElementList.joinTo(sb, ", ") { elem ->
+                    elem.lifetime?.referenceName ?: elem.identifier?.text ?: elem.cself?.text ?: ""
+                }
+                sb.append(">")
+            }
         }
     }
 
