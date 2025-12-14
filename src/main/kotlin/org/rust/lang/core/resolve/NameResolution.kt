@@ -1603,6 +1603,8 @@ private fun processLexicalDeclarations(
             if (Namespace.Values in ns && processor.processAll(scope.constParameters, VALUES)) return true
             // XXX: `cameFrom is RsBlock` prevents switches to AST in cases like `fn foo(a: usize, b: [u8; SIZE])`.
             // Note that rustc really process them and show [E0435] on this: `fn foo(a: usize, b: [u8; a])`.
+            val vfPath = scope.containingFile.virtualFile?.path
+            if (vfPath != null && vfPath.contains("/rustlib/src/rust/library/")) return false
             if (Namespace.Values in ns && cameFrom is RsBlock) {
                 val selfParam = scope.selfParameter
                 if (selfParam != null && processor.process("self", VALUES, selfParam)) return true
@@ -1893,4 +1895,3 @@ object NameResolutionTestmarks {
 }
 
 private data class ImplicitStdlibCrate(val name: String, val crateRoot: RsFile)
-

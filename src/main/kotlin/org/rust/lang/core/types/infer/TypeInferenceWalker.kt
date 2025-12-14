@@ -111,6 +111,12 @@ class RsTypeInferenceWalker(
         inferType(ExpectHasType(expected), true)
 
     private fun RsBlock.inferType(expected: Expectation = NoExpectation, coerce: Boolean = false): Ty {
+        val file = containingFile as? RsFile
+        val origin = file?.crate?.origin
+        val isRustlibStd = file?.virtualFile?.path?.contains("/rustlib/src/rust/library/") == true
+        if (origin == PackageOrigin.STDLIB || origin == PackageOrigin.STDLIB_DEPENDENCY || isRustlibStd) {
+            return expected.tyAsNullable(ctx) ?: TyUnknown
+        }
         var isDiverging = false
         val (expandedStmts, tailExpr) = expandedStmtsAndTailExpr
         for (stmt in expandedStmts) {

@@ -27,6 +27,10 @@ val RsBlock.expandedStmtsAndTailExpr: Pair<List<RsStmt>, RsExpr?>
     }
 
 private fun RsBlock.doGetExpandedStmtsAndTailExpr(): Pair<MutableList<RsStmt>, RsExpr?> {
+    val vfPath = containingFile.virtualFile?.path
+    if (vfPath != null && vfPath.contains("/rustlib/src/rust/library/")) {
+        return mutableListOf<RsStmt>() to null
+    }
     val stmts = mutableListOf<RsStmt>()
     processExpandedStmtsInternal { stmt ->
         if (stmt is RsStmt && (stmt !is RsDocAndAttributeOwner || stmt.existsAfterExpansionSelf)) {
