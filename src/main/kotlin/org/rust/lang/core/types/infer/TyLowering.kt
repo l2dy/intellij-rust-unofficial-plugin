@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.rust.lang.core.macros.MacroExpansion
 import org.rust.lang.core.psi.*
 import org.rust.lang.core.psi.ext.*
+import org.rust.lang.core.stubs.RsUseBoundsElementStub
 import org.rust.lang.core.resolve.RsPathResolveResult
 import org.rust.lang.core.resolve.knownItems
 import org.rust.lang.core.resolve.ref.RsPathReferenceImpl
@@ -213,6 +214,7 @@ class TyLowering private constructor(
         val result = mutableListOf<CapturedParameter>()
 
         for (element in useBounds.useBoundsElementList) {
+            val stub = element.greenStub as? RsUseBoundsElementStub
             when {
                 element.lifetime != null -> {
                     val resolved = element.lifetime?.resolve()
@@ -220,16 +222,21 @@ class TyLowering private constructor(
                         result.add(CapturedParameter.Lifetime(resolved))
                     }
                 }
+                stub?.identifier != null -> {
+                    val name = stub.identifier!!
+                    resolveTypeParamByName(name, type)?.let { result.add(CapturedParameter.TypeParam(it)) }
+                    resolveConstParamByName(name, type)?.let { result.add(CapturedParameter.ConstParam(it)) }
+                }
+                stub?.hasSelfKeyword == true -> {
+                    val selfType = resolveSelfType(type)
+                    if (selfType is TyTypeParameter) {
+                        result.add(CapturedParameter.TypeParam(selfType))
+                    }
+                }
                 element.identifier != null -> {
                     val name = element.identifier!!.text
-                    val typeParam = resolveTypeParamByName(name, type)
-                    if (typeParam != null) {
-                        result.add(CapturedParameter.TypeParam(typeParam))
-                    }
-                    val constParam = resolveConstParamByName(name, type)
-                    if (constParam != null) {
-                        result.add(CapturedParameter.ConstParam(constParam))
-                    }
+                    resolveTypeParamByName(name, type)?.let { result.add(CapturedParameter.TypeParam(it)) }
+                    resolveConstParamByName(name, type)?.let { result.add(CapturedParameter.ConstParam(it)) }
                 }
                 element.cself != null -> {
                     val selfType = resolveSelfType(type)

@@ -87,7 +87,7 @@ class RsFileStub(
 
     object Type : IStubFileElementType<RsFileStub>(RsLanguage) {
         // Bump this number if Stub structure changes
-        private const val STUB_VERSION = 237
+        private const val STUB_VERSION = 238
 
         override fun getStubVersion(): Int =
             RustParserDefinition.PARSER_VERSION + RS_BUILTIN_ATTRIBUTES_VERSION + STUB_VERSION
@@ -273,7 +273,7 @@ fun factory(name: String): RsStubElementType<*, *> = when (name) {
     "FOR_IN_TYPE" -> RsPlaceholderStub.Type("FOR_IN_TYPE", ::RsForInTypeImpl)
     "TRAIT_TYPE" -> RsTraitTypeStub.Type
     "USE_BOUNDS_CLAUSE" -> RsPlaceholderStub.Type("USE_BOUNDS_CLAUSE", ::RsUseBoundsClauseImpl)
-    "USE_BOUNDS_ELEMENT" -> RsPlaceholderStub.Type("USE_BOUNDS_ELEMENT", ::RsUseBoundsElementImpl)
+    "USE_BOUNDS_ELEMENT" -> RsUseBoundsElementStub.Type
     "MACRO_TYPE" -> RsPlaceholderStub.Type("MACRO_TYPE", ::RsMacroTypeImpl)
 
     "VALUE_PARAMETER_LIST" -> RsPlaceholderStub.Type("VALUE_PARAMETER_LIST", ::RsValueParameterListImpl)
@@ -2197,6 +2197,41 @@ private fun RsStubLiteralKind?.serialize(dataStream: StubOutputStream) {
         is RsStubLiteralKind.Float -> {
             dataStream.writeDoubleAsNullable(value)
             dataStream.writeByte(ty?.ordinal ?: -1)
+        }
+    }
+}
+
+class RsUseBoundsElementStub(
+    parent: StubElement<*>?,
+    elementType: IStubElementType<*, *>,
+    val identifier: String?,
+    val hasSelfKeyword: Boolean,
+) : StubBase<RsUseBoundsElement>(parent, elementType) {
+
+    object Type : RsStubElementType<RsUseBoundsElementStub, RsUseBoundsElement>("USE_BOUNDS_ELEMENT") {
+        override fun shouldCreateStub(node: ASTNode): Boolean = createStubIfParentIsStub(node)
+
+        override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?) =
+            RsUseBoundsElementStub(
+                parentStub,
+                this,
+                dataStream.readNameAsString(),
+                dataStream.readBoolean(),
+            )
+
+        override fun serialize(stub: RsUseBoundsElementStub, dataStream: StubOutputStream) =
+            with(dataStream) {
+                writeName(stub.identifier)
+                writeBoolean(stub.hasSelfKeyword)
+            }
+
+        override fun createPsi(stub: RsUseBoundsElementStub): RsUseBoundsElement =
+            RsUseBoundsElementImpl(stub, this)
+
+        override fun createStub(psi: RsUseBoundsElement, parentStub: StubElement<*>?): RsUseBoundsElementStub {
+            val identifier = psi.identifier?.text
+            val hasSelfKeyword = psi.cself != null
+            return RsUseBoundsElementStub(parentStub, this, identifier, hasSelfKeyword)
         }
     }
 }
