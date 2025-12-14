@@ -1721,7 +1721,8 @@ fun processNestedScopesUpwards(
         { true }
     }
     val prevScope = hashMapOf<String, Set<Namespace>>()
-    val isStubOnly = (ctx?.context?.containingFile as? PsiFileImpl)?.let { !it.isContentsLoaded } ?: false
+    val containingFile = ctx?.context?.containingFile as? PsiFileImpl
+    val isStubOnly = containingFile?.isContentsLoaded == false
     return walkUp(scopeStart, { it is RsMod }) { cameFrom, scope ->
         if (scope !is RsMod) {
             processWithShadowingAndUpdateScope(prevScope, ns, processor) { shadowingProcessor ->
