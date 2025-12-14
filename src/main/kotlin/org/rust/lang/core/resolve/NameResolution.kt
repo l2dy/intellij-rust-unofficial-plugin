@@ -1721,6 +1721,7 @@ fun processNestedScopesUpwards(
         { true }
     }
     val prevScope = hashMapOf<String, Set<Namespace>>()
+    // Other PSI file implementations always require an AST, so only PsiFileImpl can be stub-only.
     val isStubOnly = when (val file = ctx?.context?.containingFile) {
         is PsiFileImpl -> !file.isContentsLoaded
         else -> false
