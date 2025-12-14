@@ -1507,7 +1507,8 @@ private fun processLexicalDeclarations(
     ns: Set<Namespace>,
     hygieneFilter: (RsPatBinding) -> Boolean,
     ipm: ItemProcessingMode,
-    processor: RsResolveProcessor
+    processor: RsResolveProcessor,
+    isStubOnly: Boolean = false
 ): Boolean {
     testAssert { cameFrom.context == scope }
 
@@ -1603,7 +1604,8 @@ private fun processLexicalDeclarations(
             if (Namespace.Values in ns && processor.processAll(scope.constParameters, VALUES)) return true
             // XXX: `cameFrom is RsBlock` prevents switches to AST in cases like `fn foo(a: usize, b: [u8; SIZE])`.
             // Note that rustc really process them and show [E0435] on this: `fn foo(a: usize, b: [u8; a])`.
-            if (Namespace.Values in ns && cameFrom is RsBlock) {
+            // Skip processing function parameters in stub-only mode because `parameter.pat` requires AST access.
+            if (Namespace.Values in ns && cameFrom is RsBlock && !isStubOnly) {
                 val selfParam = scope.selfParameter
                 if (selfParam != null && processor.process("self", VALUES, selfParam)) return true
 
@@ -1625,7 +1627,9 @@ private fun processLexicalDeclarations(
             // let x = 62; // not visible
             // ```
             val prevScope = hashMapOf<String, Set<Namespace>>()
-            if (Namespace.Values in ns) {
+            // Skip processing let declarations in stub-only mode because
+            // `expandedStmtsAndTailExpr` requires AST access.
+            if (Namespace.Values in ns && !isStubOnly) {
                 val shadowingProcessor = processor.wrapWithShadowingProcessorAndImmediatelyUpdateScope(prevScope, VALUES)
 
                 val letDecls = mutableListOf<RsLetDecl>()
@@ -1716,11 +1720,12 @@ fun processNestedScopesUpwards(
         { true }
     }
     val prevScope = hashMapOf<String, Set<Namespace>>()
+    val isStubOnly = (ctx?.context as? StubBasedPsiElement<*>)?.greenStub != null
     return walkUp(scopeStart, { it is RsMod }) { cameFrom, scope ->
         if (scope !is RsMod) {
             processWithShadowingAndUpdateScope(prevScope, ns, processor) { shadowingProcessor ->
                 val ipm = ItemProcessingMode.WITH_PRIVATE_IMPORTS
-                processLexicalDeclarations(scope, cameFrom, ns, hygieneFilter, ipm, shadowingProcessor)
+                processLexicalDeclarations(scope, cameFrom, ns, hygieneFilter, ipm, shadowingProcessor, isStubOnly)
             }
         } else {
             // Optimization: use `RsModInfo` already stored in the `ctx` (or just calculate it if `ctx` is null)
