@@ -17,6 +17,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.impl.source.PsiFileImpl
 import com.intellij.psi.stubs.StubElement
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
@@ -1720,7 +1721,9 @@ fun processNestedScopesUpwards(
         { true }
     }
     val prevScope = hashMapOf<String, Set<Namespace>>()
-    val isStubOnly = (ctx?.context as? StubBasedPsiElement<*>)?.greenStub != null
+    val isStubOnly = ctx?.context?.containingFile.let { file ->
+        file is PsiFileImpl && !file.isContentsLoaded
+    }
     return walkUp(scopeStart, { it is RsMod }) { cameFrom, scope ->
         if (scope !is RsMod) {
             processWithShadowingAndUpdateScope(prevScope, ns, processor) { shadowingProcessor ->
@@ -1898,4 +1901,3 @@ object NameResolutionTestmarks {
 }
 
 private data class ImplicitStdlibCrate(val name: String, val crateRoot: RsFile)
-
