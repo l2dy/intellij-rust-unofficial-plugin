@@ -1721,7 +1721,8 @@ fun processNestedScopesUpwards(
         { true }
     }
     val prevScope = hashMapOf<String, Set<Namespace>>()
-    // Other PSI file implementations always require an AST, so only PsiFileImpl can be stub-only.
+    // Only real Rust files backed by PsiFileImpl can be stub-only. Code fragments or other PSI file
+    // implementations are created with an AST already, so treat them as not stub-only.
     val isStubOnly = when (val file = ctx?.context?.containingFile) {
         is PsiFileImpl -> !file.isContentsLoaded
         else -> false
