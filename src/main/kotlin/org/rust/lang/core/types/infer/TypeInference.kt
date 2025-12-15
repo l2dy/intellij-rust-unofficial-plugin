@@ -1288,10 +1288,11 @@ class RsInferenceContext(
             val impl = source.value
             val typeParameters = instantiateBounds(impl)
             source.type?.substitute(typeParameters)?.let { combineTypes(selfTy, it) }
+            val selfSubst = mapOf(TyTypeParameter.self() to selfTy).toTypeSubst()
             if (element.owner is RsAbstractableOwner.Trait) {
-                source.implementedTrait?.substitute(typeParameters)?.subst ?: emptySubstitution
+                (source.implementedTrait?.substitute(typeParameters)?.subst ?: emptySubstitution) + selfSubst
             } else {
-                typeParameters
+                typeParameters + selfSubst
             }
         }
         is TraitImplSource.TraitBound -> lookup.getEnvBoundTransitivelyFor(selfTy)

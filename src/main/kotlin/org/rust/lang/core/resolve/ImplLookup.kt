@@ -1309,18 +1309,24 @@ class ImplLookup(
 
     private fun lookupAssociatedType(selfTy: Ty, res: Selection, assocType: BoundElement<RsTypeAlias>): Ty? {
         val resolvedSelfTy = ctx.resolveTypeVarsIfPossible(selfTy)
+        val implSelfTy = (res.impl as? RsImplItem)
+            ?.typeReference
+            ?.rawType
+            ?.substitute(res.subst)
+            ?.let { ctx.resolveTypeVarsIfPossible(it) }
+            ?: resolvedSelfTy
 
-        getAssocTypeFromExplicitImpl(resolvedSelfTy, assocType)?.let { return it }
+        getAssocTypeFromExplicitImpl(implSelfTy, assocType)?.let { return it }
         return when {
-            res.impl is RsImplItem -> lookupAssocTypeInSelection(res, assocType)
+            res.impl is RsImplItem -> lookupAssocTypeInSelection(res, implSelfTy, assocType)
             selfTy is TyTypeParameter -> lookupAssocTypeInBounds(getEnvBoundTransitivelyFor(selfTy), res.impl, assocType)
             selfTy is TyTraitObject -> lookupAssocTypeInBounds(selfTy.getTraitBoundsTransitively().asSequence(), res.impl, assocType)
             else -> {
                 if (res.impl !is RsImplItem) {
-                    getAssocTypeFromExplicitImpl(resolvedSelfTy, assocType)?.let { return it }
+                    getAssocTypeFromExplicitImpl(implSelfTy, assocType)?.let { return it }
                 }
 
-                lookupAssocTypeInSelection(res, assocType)
+                lookupAssocTypeInSelection(res, implSelfTy, assocType)
                     ?: lookupAssocTypeInBounds(getTyFunctionImpls(selfTy).asSequence(), res.impl, assocType)
                     ?: (selfTy as? TyAnon)?.let { lookupAssocTypeInBounds(it.getTraitBoundsTransitively().asSequence(), res.impl, assocType) }
             }
@@ -1333,14 +1339,16 @@ class ImplLookup(
         val selectionSubst = implTrait?.subst ?: emptySubstitution
         val assocImpl = explicitImpl.associatedTypesTransitively.find { it.name == assocType.element.name } ?: return null
         val subst = substFromTraitToImpl(assocType, assocImpl)
-        return assocImpl.typeReference?.rawType?.substitute(selectionSubst + subst)
+        val selfSubst = mapOf(TyTypeParameter.self() to selfTy).toTypeSubst()
+        return assocImpl.typeReference?.rawType?.substitute(selectionSubst + subst + selfSubst)
     }
 
-    private fun lookupAssocTypeInSelection(selection: Selection, assocDef: BoundElement<RsTypeAlias>): Ty? {
+    private fun lookupAssocTypeInSelection(selection: Selection, selfTy: Ty, assocDef: BoundElement<RsTypeAlias>): Ty? {
         val assocImpl = selection.impl.associatedTypesTransitively.find { it.name == assocDef.element.name }
             ?: return null
         val subst = substFromTraitToImpl(assocDef, assocImpl)
-        return assocImpl.typeReference?.rawType?.substitute(selection.subst + subst)
+        val selfSubst = mapOf(TyTypeParameter.self() to selfTy).toTypeSubst()
+        return assocImpl.typeReference?.rawType?.substitute(selection.subst + subst + selfSubst)
     }
 
     private fun findExplicitImplFor(selfTy: Ty, assocType: BoundElement<RsTypeAlias>): RsImplItem? {
