@@ -155,6 +155,39 @@ class RsTypeCheckInspectionTest : RsInspectionsTestBase(RsTypeCheckInspection::c
         }
     """)
 
+    fun `test ct output associated type override`() = checkByText("""
+        struct U32;
+        struct GenericArray<T, N>;
+        struct Sha256VarCore;
+        struct OidSha256;
+        struct CtVariableCoreWrapper<C, N, O>;
+        struct CoreWrapper<C>;
+        struct CtOutput<T>;
+
+        trait FixedOutput {
+            type CoreWrapper;
+            type Output = GenericArray<u8, U32>;
+            fn finalize(self) -> Self::Output;
+        }
+
+        struct Sha256;
+
+        impl FixedOutput for Sha256 {
+            type CoreWrapper = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32, OidSha256>>;
+            type Output = CtOutput<Self::CoreWrapper>;
+
+            fn finalize(self) -> Self::Output {
+                CtOutput
+            }
+        }
+
+        fn use_output(_: CtOutput<CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32, OidSha256>>>) {}
+
+        fn main() {
+            use_output(Sha256.finalize());
+        }
+    """)
+
     fun `test type mismatch E0308 unconstrained integer`() = checkByText("""
         struct S;
         fn main () {
