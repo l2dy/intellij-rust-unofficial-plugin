@@ -1316,6 +1316,7 @@ class ImplLookup(
             ?.let { ctx.resolveTypeVarsIfPossible(it) }
             ?: resolvedSelfTy
 
+
         getAssocTypeFromExplicitImpl(implSelfTy, assocType)?.let { return it }
         return when {
             res.impl is RsImplItem -> lookupAssocTypeInSelection(res, implSelfTy, assocType)

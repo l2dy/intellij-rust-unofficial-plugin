@@ -740,18 +740,33 @@ class RsTypeInferenceWalker(
         val methodType = (callee.element.type)
             .substitute(newSubst)
             .foldWith(associatedTypeNormalizer) as TyFunctionBase
+        var retTy = methodType.retType
+        val source = callee.source
+        if (source is TraitImplSource.ExplicitImpl) {
+            val trait = source.implementedTrait
+            val assoc = trait?.element?.findAssociatedType("Output")
+            val implAssoc = source.value.associatedTypesTransitively.find { it.name == assoc?.name }
+            if (assoc != null && implAssoc != null) {
+                val subst = trait.subst + newSubst
+                val defaultTy = assoc.typeReference?.rawType?.substitute(subst)
+                val overrideTy = implAssoc.typeReference?.rawType?.substitute(subst)
+                if (defaultTy != null && overrideTy != null && retTy.isEquivalentTo(defaultTy)) {
+                    retTy = overrideTy
+                }
+            }
+        }
         // drop first element of paramTypes because it's `self` param
         // and it doesn't have value in `methodCall.valueArgumentList.exprList`
         val formalInputTys = methodType.paramTypes.drop(1)
         val expectedInputTys = if (!callee.element.isAsync) {
-            expectedInputsForExpectedOutput(expected, methodType.retType, formalInputTys)
+            expectedInputsForExpectedOutput(expected, retTy, formalInputTys)
         } else {
             emptyList()
         }
         inferArgumentTypes(formalInputTys, expectedInputTys, argExprs)
         ctx.writeResolvedMethodSubst(methodCall, newSubst, methodType)
 
-        return methodType.retType
+        return retTy
     }
 
     private fun <T : AssocItemScopeEntryBase<*>> filterAssocItems(variants: List<T>, context: RsElement): List<T> {
