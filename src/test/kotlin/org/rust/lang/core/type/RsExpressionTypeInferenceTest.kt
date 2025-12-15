@@ -1816,6 +1816,39 @@ class RsExpressionTypeInferenceTest : RsTypificationTestBase() {
         }
     """)
 
+    fun `test associated type override used in method return`() = testExpr("""
+        struct U32;
+        struct GenericArray<T, N>;
+        struct Sha256VarCore;
+        struct OidSha256;
+        struct CtVariableCoreWrapper<C, N, O>;
+        struct CoreWrapper<C>;
+        struct CtOutput<T>;
+
+        trait FixedOutput {
+            type CoreWrapper;
+            type Output = GenericArray<u8, U32>;
+            fn finalize(self) -> Self::Output;
+        }
+
+        struct Sha256;
+
+        impl FixedOutput for Sha256 {
+            type CoreWrapper = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32, OidSha256>>;
+            type Output = CtOutput<Self::CoreWrapper>;
+
+            fn finalize(self) -> Self::Output {
+                CtOutput
+            }
+        }
+
+        fn main() {
+            let s = Sha256;
+            let output = s.finalize();
+            output;
+        } //^ CtOutput<CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32, OidSha256>>>
+    """)
+
     fun `test explicit use captures lifetimes`() = testExpr("""
         fn foo<'a>(x: &'a i32) -> impl use<'a> { *x }
         fn main() {
