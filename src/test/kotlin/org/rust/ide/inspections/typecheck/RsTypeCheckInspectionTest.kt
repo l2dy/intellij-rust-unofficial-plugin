@@ -200,6 +200,35 @@ class RsTypeCheckInspectionTest : RsInspectionsTestBase(RsTypeCheckInspection::c
         }
     """)
 
+    // Regression test for sha2 output type alias inference mismatch (https://github.com/dani-garcia/sha2_rustrover)
+    fun `test no type mismatch E0308 for sha2 output type alias`() = checkByText("""
+        trait OutputSizeUser { type OutputSize; }
+        type CtOutput<T> = GenericArray<u8, <T as OutputSizeUser>::OutputSize>;
+
+        struct GenericArray<T, N>(T, N);
+        struct U32;
+        struct OidSha256;
+        struct Sha256VarCore;
+        struct CtVariableCoreWrapper<T, N, Oid>(T, N, Oid);
+        struct CoreWrapper<T>(T);
+
+        impl<T: OutputSizeUser> OutputSizeUser for CoreWrapper<T> {
+            type OutputSize = T::OutputSize;
+        }
+
+        impl<N, Oid> OutputSizeUser for CtVariableCoreWrapper<Sha256VarCore, N, Oid> {
+            type OutputSize = N;
+        }
+
+        type Sha256 = CoreWrapper<CtVariableCoreWrapper<Sha256VarCore, U32, OidSha256>>;
+
+        fn finalize<D: OutputSizeUser>() -> CtOutput<D> { unimplemented!() }
+
+        fn main() {
+            let _: GenericArray<u8, U32> = finalize::<Sha256>();
+        }
+    """)
+
     // https://github.com/intellij-rust/intellij-rust/issues/2670
     // https://github.com/intellij-rust/intellij-rust/issues/3791
     fun `test no type mismatch E0308 when matching with string literal`() = checkByText("""
