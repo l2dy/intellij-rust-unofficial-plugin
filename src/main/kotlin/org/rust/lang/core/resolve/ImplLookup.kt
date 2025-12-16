@@ -236,7 +236,7 @@ class LazyParamEnv(private val parentItem: RsGenericDeclaration) : ParamEnv {
                 it.bound?.traitRef?.resolveToBoundTrait()
             }
             @Suppress("DEPRECATION")
-            ty.getTraitBoundsTransitively().asSequence() + additionalBounds
+            (ty.getTraitBoundsTransitively().asSequence() + additionalBounds).distinct()
         } else {
             emptySequence()
         }
