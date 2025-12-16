@@ -282,7 +282,6 @@ project(":plugin") {
 
     intellijPlatform {
         pluginConfiguration {
-            name.set("intellij-rust")
             description.set(provider { file("description.html").readText() })
         }
     }
