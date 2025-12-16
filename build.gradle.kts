@@ -149,7 +149,7 @@ allprojects {
         //   So the binaries are required for the corresponding tests.
         // - `plugin` is root project to build plugin artifact and exactly its sandbox is included into the plugin artifact
         if (project.name in listOf("intellij-rust", "plugin")) {
-            task<Exec>(compileNativeCodeTaskName) {
+            register<Exec>(compileNativeCodeTaskName) {
                 workingDir = rootDir.resolve("native-helper")
                 executable = "cargo"
                 // Hack to use unstable `--out-dir` option work for stable toolchain
@@ -320,7 +320,7 @@ project(":plugin") {
 
     // Add plugin sources to the plugin ZIP.
     // gradle-intellij-plugin will use it as a plugin sources if the plugin is used as a dependency
-    val createSourceJar = task<Jar>("createSourceJar") {
+    val createSourceJar = tasks.register<Jar>("createSourceJar") {
         dependsOn(":generateLexer")
         dependsOn(":generateParser")
 
@@ -387,7 +387,7 @@ project(":plugin") {
     }
 
     // Generates event scheme for Rust plugin FUS events to `plugin/build/eventScheme.json`
-    task<RunIdeTask>("buildEventsScheme") {
+    tasks.register<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
         args("buildEventsScheme", "--outputFile=${layout.buildDirectory.get().asFile.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
         // BACKCOMPAT: 2025.2. Update value to 252 and this comment
@@ -461,7 +461,7 @@ project(":") {
         }
     }
 
-    task("resolveDependencies") {
+    tasks.register("resolveDependencies") {
         doLast {
             rootProject.allprojects
                 .map { it.configurations }
@@ -557,7 +557,7 @@ project(":ml-completion") {
     }
 }
 
-task("updateCargoOptions") {
+tasks.register("updateCargoOptions") {
     doLast {
         val file = File("src/main/kotlin/org/rust/cargo/util/CargoOptions.kt")
         file.bufferedWriter().use {
