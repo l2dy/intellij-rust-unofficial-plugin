@@ -1804,6 +1804,33 @@ class RsGenericExpressionTypeInferenceTest : RsTypificationTestBase() {
         } //^ Bar
     """)
 
+    fun `test associated type bound with multiple child traits sharing parent`() = testExpr("""
+        trait Parent {
+            type Item;
+        }
+        trait Child1: Parent {}
+        trait Child2: Parent {}
+
+        trait Bound<A> {}
+        struct S;
+        struct X;
+
+        impl Bound<i32> for S {}
+        impl Parent for X { type Item = S; }
+        impl Child1 for X {}
+        impl Child2 for X {}
+
+        fn foo<T, U>(t: T) -> U
+            where T: Child1 + Child2,
+                  T::Item: Bound<U>,
+        { unimplemented!() }
+
+        fn main() {
+            let a = foo(X);
+            a;
+        } //^ i32
+    """)
+
     fun `test generic associated type binding in 'impl Trait' 1`() = testExpr("""
         trait Tr {
             type Item<A>;
