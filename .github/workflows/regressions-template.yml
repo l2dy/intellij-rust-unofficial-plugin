@@ -104,7 +104,7 @@ jobs:
               run: python scripts/fetch_projects.py --projects $'${{ toJSON(matrix.batch.projects) }}'
 
             - name: Setup Gradle
-              uses: gradle/actions/setup-gradle@v4
+              uses: gradle/actions/setup-gradle@v5
               with:
                   gradle-home-cache-excludes: |
                       caches/modules-2/files-2.1/com.jetbrains.intellij.idea
