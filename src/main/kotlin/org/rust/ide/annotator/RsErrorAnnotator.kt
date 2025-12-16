@@ -847,9 +847,20 @@ class RsErrorAnnotator : AnnotatorBase(), HighlightRangeExtension {
             RsDiagnostic.IllegalLifetimeName(lifetime).addToHolder(holder)
         }
 
-        if (!lifetime.isPredefined && lifetime.reference.multiResolve().isEmpty()) {
+        if (!lifetime.isPredefined && lifetime.reference.multiResolve().isEmpty() && !isAsyncTrait(lifetime)) {
             RsDiagnostic.UndeclaredLifetimeError(lifetime).addToHolder(holder)
         }
+    }
+
+    private fun isAsyncTrait(lifetime: RsLifetime): Boolean {
+        if (lifetime.referenceName != "'async_trait") return false
+
+        return lifetime.contexts
+            .filterIsInstance<RsAttrProcMacroOwner>()
+            .any { owner ->
+                ProcMacroAttribute.getHardcodedProcMacroAttributes(owner)
+                    .contains(KnownProcMacroKind.ASYNC_TRAIT)
+            }
     }
 
     private fun checkMatchArmGuard(holder: RsAnnotationHolder, guard: RsMatchArmGuard) {
