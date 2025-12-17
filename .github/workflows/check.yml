@@ -95,7 +95,7 @@ jobs:
                       default-edition-for-tests: 2021
 
         runs-on: ${{ matrix.os }}
-        timeout-minutes: 120
+        timeout-minutes: 90
         env:
             ORG_GRADLE_PROJECT_baseIDE: ${{ matrix.base-ide }}
             ORG_GRADLE_PROJECT_platformVersion: ${{ matrix.platform-version }}
