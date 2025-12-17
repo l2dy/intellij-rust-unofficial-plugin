@@ -10,6 +10,7 @@ import org.rust.lang.core.types.infer.TypeFolder
 import org.rust.lang.core.types.infer.TypeFoldable
 import org.rust.lang.core.types.infer.TypeVisitor
 import org.rust.lang.core.types.regions.Region
+import org.rust.lang.core.types.ty.TyInfer.TyVar
 
 sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
 
@@ -29,16 +30,22 @@ sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
 
     data class TypeParam(val param: TyTypeParameter) : CapturedParameter() {
         override fun foldWith(folder: TypeFolder): CapturedParameter =
-            TypeParam(param.foldWith(folder) as TyTypeParameter)
+            TypeParam(asTypeParameter(param.foldWith(folder), param))
 
         override fun visitWith(visitor: TypeVisitor): Boolean =
             param.visitWith(visitor)
 
         override fun superFoldWith(folder: TypeFolder): CapturedParameter =
-            TypeParam(param.foldWith(folder) as TyTypeParameter)
+            TypeParam(asTypeParameter(param.foldWith(folder), param))
 
         override fun superVisitWith(visitor: TypeVisitor): Boolean =
             param.visitWith(visitor)
+
+        private fun asTypeParameter(value: Any, fallback: TyTypeParameter): TyTypeParameter = when (value) {
+            is TyTypeParameter -> value
+            is TyVar -> value.origin as? TyTypeParameter ?: fallback
+            else -> fallback
+        }
     }
 
     data class ConstParam(val param: CtConstParameter) : CapturedParameter() {
