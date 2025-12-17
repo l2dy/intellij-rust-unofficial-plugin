@@ -10,6 +10,7 @@ import org.rust.lang.core.types.infer.TypeFolder
 import org.rust.lang.core.types.infer.TypeFoldable
 import org.rust.lang.core.types.infer.TypeVisitor
 import org.rust.lang.core.types.regions.Region
+import org.rust.lang.core.types.ty.Ty
 import org.rust.lang.core.types.ty.TyInfer.TyVar
 
 sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
@@ -41,9 +42,17 @@ sealed class CapturedParameter : TypeFoldable<CapturedParameter> {
         override fun superVisitWith(visitor: TypeVisitor): Boolean =
             param.visitWith(visitor)
 
-        private fun asTypeParameter(value: Any, fallback: TyTypeParameter): TyTypeParameter = when (value) {
+        /**
+         * Converts a folded type back into a [TyTypeParameter], falling back to the original parameter
+         * when folding produces inference variables or other types. For [TyVar] we only reuse the
+         * stored origin when it is a [TyTypeParameter].
+         */
+        private fun asTypeParameter(value: Ty, fallback: TyTypeParameter): TyTypeParameter = when (value) {
             is TyTypeParameter -> value
-            is TyVar -> value.origin as? TyTypeParameter ?: fallback
+            is TyVar -> {
+                val origin = value.origin
+                if (origin is TyTypeParameter) origin else fallback
+            }
             else -> fallback
         }
     }
