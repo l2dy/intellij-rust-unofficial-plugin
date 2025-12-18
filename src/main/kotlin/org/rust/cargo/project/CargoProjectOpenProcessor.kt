@@ -26,11 +26,24 @@ class CargoProjectOpenProcessor : ProjectOpenProcessor() {
             file.isDirectory && file.findChild(CargoConstants.MANIFEST_FILE) != null
     }
 
-    override fun doOpenProject(virtualFile: VirtualFile, projectToClose: Project?, forceNewFrame: Boolean): Project? {
+    override fun doOpenProject(
+        virtualFile: VirtualFile,
+        projectToClose: Project?,
+        forceOpenInNewFrame: Boolean
+    ): Project? {
+        error("Use `openProjectAsync` instead")
+    }
+
+    override suspend fun openProjectAsync(
+        virtualFile: VirtualFile,
+        projectToClose: Project?,
+        forceOpenInNewFrame: Boolean
+    ): Project? {
         val basedir = if (virtualFile.isDirectory) virtualFile else virtualFile.parent
 
-        return PlatformProjectOpenProcessor.getInstance().doOpenProject(basedir, projectToClose, forceNewFrame)?.also {
-            StartupManager.getInstance(it).runWhenProjectIsInitialized { guessAndSetupRustProject(it) }
-        }
+        return PlatformProjectOpenProcessor.getInstance().openProjectAsync(basedir, projectToClose, forceOpenInNewFrame)
+            ?.also {
+                StartupManager.getInstance(it).runWhenProjectIsInitialized { guessAndSetupRustProject(it) }
+            }
     }
 }

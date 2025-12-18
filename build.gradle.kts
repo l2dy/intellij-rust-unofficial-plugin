@@ -30,9 +30,11 @@ val baseVersion = versionForIde(baseIDE)
 //
 // https://plugins.jetbrains.com/docs/intellij/api-changes-list-2024.html#json-plugin-new-20243
 val jsonPlugin = "com.intellij.modules.json"
+// https://blog.jetbrains.com/grazie/2025/10/grazie-s-next-step-built-in-language-intelligence-for-your-ide/
+// https://plugins.jetbrains.com/docs/intellij/spell-checking.html#grammar-checks
+val graziePlugin = "tanvd.grazi"
 
 val tomlPlugin: String by project
-val graziePlugin: String by project
 val psiViewerPlugin: String by project
 val copyrightPlugin = "com.intellij.copyright"
 val javaPlugin = "com.intellij.java"
@@ -205,11 +207,17 @@ allprojects {
             // used in MacroExpansionManager.kt and ResolveCommonThreadPool.kt
             testFramework(TestFrameworkType.Platform, configurationName = Configurations.INTELLIJ_PLATFORM_DEPENDENCIES)
 
-            bundledPlugins(listOf(jsonPlugin))
+            bundledPlugins(
+                listOf(
+                    jsonPlugin,
+                    graziePlugin
+                )
+            )
 
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")
             bundledModule("intellij.platform.vcs.impl")
+            bundledModule("intellij.platform.vcs.impl.shared")
             bundledModule("intellij.spellchecker")
 
             testBundledModule("intellij.platform.navbar")
@@ -292,7 +300,6 @@ project(":plugin") {
         intellijPlatform {
             val pluginList = mutableListOf(
                 tomlPlugin,
-                graziePlugin,
                 psiViewerPlugin,
             )
             val bundledPluginList = mutableListOf(
@@ -398,10 +405,10 @@ project(":plugin") {
     tasks.register<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
         args("buildEventsScheme", "--outputFile=${layout.buildDirectory.get().asFile.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
-        // BACKCOMPAT: 2025.2. Update value to 252 and this comment
+        // BACKCOMPAT: 2025.3. Update value to 253 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "252")
+        environment("IDEA_BUILD_NUMBER", "253")
     }
 }
 
@@ -527,10 +534,6 @@ project(":coverage") {
 
 project(":grazie") {
     dependencies {
-        intellijPlatform {
-            plugins(listOf(graziePlugin))
-        }
-
         implementation(project(":"))
         testImplementation(project(":", "testOutput"))
     }

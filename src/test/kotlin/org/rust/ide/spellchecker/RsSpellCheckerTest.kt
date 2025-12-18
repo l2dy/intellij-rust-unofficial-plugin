@@ -5,11 +5,11 @@
 
 package org.rust.ide.spellchecker
 
-import com.intellij.spellchecker.inspections.SpellCheckingInspection
+import com.intellij.grazie.spellcheck.GrazieSpellCheckingInspection
 import org.intellij.lang.annotations.Language
 import org.rust.ide.inspections.RsInspectionsTestBase
 
-class RsSpellCheckerTest : RsInspectionsTestBase(SpellCheckingInspection::class) {
+class RsSpellCheckerTest : RsInspectionsTestBase(GrazieSpellCheckingInspection::class) {
 
     fun `test comments`() = doTest("""// Hello, <TYPO descr="Typo: In word 'Wodrl'">Wodrl</TYPO>!""")
 
@@ -58,8 +58,8 @@ class RsSpellCheckerTest : RsInspectionsTestBase(SpellCheckingInspection::class)
     """)
 
     private fun doTest(@Language("Rust") text: String, processComments: Boolean = true, processLiterals: Boolean = true) {
-        (inspection as SpellCheckingInspection).processLiterals = processLiterals
-        (inspection as SpellCheckingInspection).processComments = processComments
+        (inspection as GrazieSpellCheckingInspection).processLiterals = processLiterals
+        (inspection as GrazieSpellCheckingInspection).processComments = processComments
         checkByText(text, checkWarn = false, checkWeakWarn = true, checkInfo = false)
     }
 }
