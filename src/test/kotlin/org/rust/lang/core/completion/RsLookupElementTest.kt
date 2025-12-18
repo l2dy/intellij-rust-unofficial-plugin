@@ -365,11 +365,11 @@ class RsLookupElementTest : RsTestBase() {
         val context = RsCompletionContext(element)
 
         val lookups = mutableListOf<LookupElement>()
-        val result = object : CompletionResultSet(PrefixMatcher.ALWAYS_TRUE, null, null) {
+        val result = object : CompletionResultSet(PrefixMatcher.ALWAYS_TRUE, {}, null) {
             override fun caseInsensitive(): CompletionResultSet = this
             override fun withPrefixMatcher(matcher: PrefixMatcher): CompletionResultSet = this
             override fun withPrefixMatcher(prefix: String): CompletionResultSet = this
-            override fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>?) {}
+            override fun restartCompletionOnPrefixChange(prefixCondition: ElementPattern<String>) {}
             override fun addLookupAdvertisement(text: String) {}
             override fun withRelevanceSorter(sorter: CompletionSorter): CompletionResultSet = this
             override fun restartCompletionWhenNothingMatches() {}
