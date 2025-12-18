@@ -20,7 +20,7 @@ concurrency:
     cancel-in-progress: true
 
 env:
-    OLD_IDEA_VERSION: 2025.2.2
+    OLD_IDEA_VERSION: 2025.3.1
 
 jobs:
     get-rust-versions:
@@ -82,7 +82,7 @@ jobs:
                 # Make sequence from two outputs with version is not possible here.
                 rust-version: ${{ fromJSON(needs.get-rust-versions.outputs.matrix) }}
                 base-ide: [ IU ]
-                platform-version: [ 252 ]
+                platform-version: [ 253 ]
                 # it's enough to verify plugin structure only once per platform version
                 verify-plugin: [ false ]
                 default-edition-for-tests: [ 2021 ]
@@ -90,7 +90,7 @@ jobs:
                     - os: ubuntu-latest
                       rust-version: ${{ needs.get-rust-versions.outputs.old }}
                       base-ide: IU
-                      platform-version: 252
+                      platform-version: 253
                       verify-plugin: true
                       default-edition-for-tests: 2021
 

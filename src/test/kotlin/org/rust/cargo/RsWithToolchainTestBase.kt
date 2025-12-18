@@ -116,7 +116,7 @@ abstract class RsWithToolchainTestBase : CodeInsightFixtureTestCase<ModuleFixtur
         runAll(
             {
                 // Fixes flaky tests
-                (ProjectLevelVcsManagerEx.getInstance(project) as ProjectLevelVcsManagerImpl).waitForInitialized()
+                (ProjectLevelVcsManagerEx.getInstanceEx(project) as ProjectLevelVcsManagerImpl).waitForInitialized()
             },
             { Disposer.dispose(earlyTestRootDisposable) },
             { rustupFixture.tearDown() },

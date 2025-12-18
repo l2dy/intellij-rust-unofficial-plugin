@@ -117,7 +117,7 @@ abstract class RsTestBase : BasePlatformTestCase(), RsTestCase {
             { dumbModeToken?.close() },
             {
                 // Fixes flaky tests
-                (ProjectLevelVcsManagerEx.getInstance(project) as ProjectLevelVcsManagerImpl).waitForInitialized()
+                (ProjectLevelVcsManagerEx.getInstanceEx(project) as ProjectLevelVcsManagerImpl).waitForInitialized()
             },
             { super.tearDown() },
             { checkTempDirs(oldTempDirRootUrl, newTempDirRootUrl) }
