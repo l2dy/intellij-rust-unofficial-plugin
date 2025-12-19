@@ -6,15 +6,17 @@
 package org.rust.ide.settings
 
 import com.intellij.application.options.CodeCompletionOptionsCustomSection
-import com.intellij.openapi.options.ConfigurableBuilder
+import com.intellij.openapi.options.BeanConfigurable
 import org.rust.RsBundle
 
-class RsCodeCompletionConfigurable : ConfigurableBuilder(RsBundle.message("settings.rust.completion.title")),
-                                     CodeCompletionOptionsCustomSection {
+class RsCodeCompletionConfigurable :
+    BeanConfigurable<RsCodeInsightSettings>(RsCodeInsightSettings.getInstance(), RsBundle.message("settings.rust.completion.title")),
+    CodeCompletionOptionsCustomSection {
+
     init {
-        checkBox(
-            RsBundle.message("settings.rust.completion.suggest.out.of.scope.items"),
-            RsCodeInsightSettings.getInstance()::suggestOutOfScopeItems
-        )
+        val settings = instance
+        if (settings != null) {
+            checkBox(RsBundle.message("settings.rust.completion.suggest.out.of.scope.items"), settings::suggestOutOfScopeItems)
+        }
     }
 }
