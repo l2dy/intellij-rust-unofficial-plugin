@@ -8,7 +8,6 @@ package org.rust.lang.core.resolve2
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.testFramework.common.ThreadLeakTracker
 import org.rust.openapiext.isUnitTestMode
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
@@ -27,7 +26,21 @@ class ResolveCommonThreadPool : Disposable {
 
     init {
         if (isUnitTestMode) {
-            ThreadLeakTracker.longRunningThreadCreated(this, THREAD_NAME_PREFIX)
+            registerLongRunningThreadInTests()
+        }
+    }
+
+    /**
+     * Calls `ThreadLeakTracker.longRunningThreadCreated(this, THREAD_NAME_PREFIX)` via reflection.
+     * This avoids direct reference to test framework classes which are not available at runtime.
+     */
+    private fun registerLongRunningThreadInTests() {
+        try {
+            val clazz = Class.forName("com.intellij.testFramework.common.ThreadLeakTracker")
+            val method = clazz.getMethod("longRunningThreadCreated", Disposable::class.java, Array<String>::class.java)
+            method.invoke(null, this, arrayOf(THREAD_NAME_PREFIX))
+        } catch (e: Exception) {
+            throw IllegalStateException("Failed to invoke ThreadLeakTracker.longRunningThreadCreated", e)
         }
     }
 

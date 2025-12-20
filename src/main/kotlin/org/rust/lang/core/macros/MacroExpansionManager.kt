@@ -29,8 +29,6 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.testFramework.IndexingTestUtil
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.io.DataOutputStream
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
@@ -722,7 +720,7 @@ private class MacroExpansionServiceImplInner(
     private fun processMacros(taskType: RsTask.TaskType) {
         if (!isExpansionModeNew || !enabledInUnitTests) return
         if (isUnitTestMode) {
-            IndexingTestUtil.waitUntilIndexesAreReady(project)
+            waitUntilIndexesAreReadyInTests(project)
             if (DumbService.isDumb(project)) return
         }
 
@@ -734,7 +732,7 @@ private class MacroExpansionServiceImplInner(
             taskType,
         )
         submitTask(task)
-        if (isUnitTestMode) IndexingTestUtil.waitUntilIndexesAreReady(project)
+        if (isUnitTestMode) waitUntilIndexesAreReadyInTests(project)
     }
 
     private fun isTemplateActiveInAnyEditor(): Boolean {
@@ -1024,7 +1022,7 @@ private class MacroExpansionServiceImplInner(
             val taskQueue = project.taskQueue
             if (!taskQueue.isEmpty) {
                 while (!taskQueue.isEmpty && !project.isDisposed) {
-                    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+                    dispatchAllEventsInIdeEventQueueInTests()
                     Thread.sleep(10)
                 }
             }
@@ -1230,6 +1228,20 @@ val Project.macroExpansionManager: MacroExpansionManager get() = service()
 // BACKCOMPAT 2019.3: use serviceIfCreated
 val Project.macroExpansionManagerIfCreated: MacroExpansionManager?
     get() = this.getServiceIfCreated(MacroExpansionManager::class.java)
+
+/**
+ * Calls `PlatformTestUtil.dispatchAllEventsInIdeEventQueue()` via reflection.
+ * This avoids direct reference to test framework classes which are not available at runtime.
+ */
+private fun dispatchAllEventsInIdeEventQueueInTests() {
+    try {
+        val clazz = Class.forName("com.intellij.testFramework.PlatformTestUtil")
+        val method = clazz.getMethod("dispatchAllEventsInIdeEventQueue")
+        method.invoke(null)
+    } catch (e: Exception) {
+        throw IllegalStateException("Failed to invoke PlatformTestUtil.dispatchAllEventsInIdeEventQueue", e)
+    }
+}
 
 // "abcdef_i.rs" → "a/b/abcdef_i.rs"
 fun expansionNameToPath(name: String): String = "${name[0]}/${name[1]}/$name"

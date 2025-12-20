@@ -52,7 +52,6 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.psi.stubs.StubIndexKey
-import com.intellij.testFramework.IndexingTestUtil
 import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.util.ui.UIUtil
 import org.jdom.Element
@@ -155,7 +154,7 @@ fun checkIsBackgroundThread() {
 }
 
 fun checkIsSmartMode(project: Project) {
-    if (isUnitTestMode) IndexingTestUtil.waitUntilIndexesAreReady(project)
+    if (isUnitTestMode) waitUntilIndexesAreReadyInTests(project)
     if (DumbService.getInstance(project).isDumb) throw IndexNotReadyException.create()
 }
 
@@ -165,7 +164,24 @@ fun checkCommitIsNotInProgress(project: Project) {
         if ((PsiDocumentManager.getInstance(project) as PsiDocumentManagerBase).isCommitInProgress) {
             error("Accessing indices during PSI event processing can lead to typing performance issues")
         }
-        IndexingTestUtil.waitUntilIndexesAreReady(project)
+        waitUntilIndexesAreReadyInTests(project)
+    }
+}
+
+/**
+ * Calls `IndexingTestUtil.waitUntilIndexesAreReady(project)` via reflection.
+ * This avoids direct reference to test framework classes which are not available at runtime.
+ */
+fun waitUntilIndexesAreReadyInTests(project: Project) {
+    if (!isUnitTestMode) return
+    try {
+        val clazz = Class.forName("com.intellij.testFramework.IndexingTestUtil")
+        val companionField = clazz.getDeclaredField("Companion")
+        val companion = companionField.get(null)
+        val method = companion.javaClass.getMethod("waitUntilIndexesAreReady", Project::class.java)
+        method.invoke(companion, project)
+    } catch (e: Exception) {
+        throw IllegalStateException("Failed to invoke IndexingTestUtil.waitUntilIndexesAreReady", e)
     }
 }
 
