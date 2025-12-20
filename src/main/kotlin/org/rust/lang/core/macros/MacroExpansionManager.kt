@@ -29,11 +29,10 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.psi.util.PsiModificationTracker
-import com.intellij.testFramework.IndexingTestUtil
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.util.io.DataOutputStream
 import com.intellij.util.io.createDirectories
 import com.intellij.util.io.delete
+import com.intellij.util.ui.UIUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -721,10 +720,11 @@ private class MacroExpansionServiceImplInner(
 
     private fun processMacros(taskType: RsTask.TaskType) {
         if (!isExpansionModeNew || !enabledInUnitTests) return
+        val dumbService = DumbService.getInstance(project)
         if (isUnitTestMode) {
-            IndexingTestUtil.waitUntilIndexesAreReady(project)
-            if (DumbService.isDumb(project)) return
+            dumbService.waitForSmartMode()
         }
+        if (dumbService.isDumb) return
 
         val task = MacroExpansionTask(
             project,
@@ -734,7 +734,9 @@ private class MacroExpansionServiceImplInner(
             taskType,
         )
         submitTask(task)
-        if (isUnitTestMode) IndexingTestUtil.waitUntilIndexesAreReady(project)
+        if (isUnitTestMode) {
+            dumbService.waitForSmartMode()
+        }
     }
 
     private fun isTemplateActiveInAnyEditor(): Boolean {
@@ -1024,7 +1026,7 @@ private class MacroExpansionServiceImplInner(
             val taskQueue = project.taskQueue
             if (!taskQueue.isEmpty) {
                 while (!taskQueue.isEmpty && !project.isDisposed) {
-                    PlatformTestUtil.dispatchAllEventsInIdeEventQueue()
+                    UIUtil.dispatchAllInvocationEvents()
                     Thread.sleep(10)
                 }
             }

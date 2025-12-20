@@ -8,8 +8,6 @@ package org.rust.lang.core.resolve2
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.testFramework.common.ThreadLeakTracker
-import org.rust.openapiext.isUnitTestMode
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.ForkJoinPool
 import java.util.concurrent.ForkJoinPool.ForkJoinWorkerThreadFactory
@@ -24,12 +22,6 @@ class ResolveCommonThreadPool : Disposable {
      * - [ForkJoinPool] can start execute a task when joining ([ForkJoinTask.get]) another task
      */
     private val pool: ExecutorService = createPool()
-
-    init {
-        if (isUnitTestMode) {
-            ThreadLeakTracker.longRunningThreadCreated(this, THREAD_NAME_PREFIX)
-        }
-    }
 
     private fun createPool(): ExecutorService {
         val parallelism = Runtime.getRuntime().availableProcessors()
