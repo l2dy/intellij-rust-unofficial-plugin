@@ -606,6 +606,7 @@ val CLIPPY_LINTS: List<Lint> = listOf(
     Lint("reversed_empty_ranges", false),
     Lint("same_functions_in_if_condition", false),
     Lint("same_item_push", false),
+    Lint("same_length_and_capacity", false),
     Lint("same_name_method", false),
     Lint("search_is_some", false),
     Lint("seek_from_current", false),
