@@ -19,7 +19,7 @@ on:
 
 env:
     STABLE: "1.92.0"
-    NIGHTLY: "nightly-2025-11-15"
+    NIGHTLY: "nightly-2026-02-21"
     OLD: "1.82.0"
 
 jobs:
