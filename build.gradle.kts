@@ -122,6 +122,8 @@ allprojects {
         runIde { enabled = false }
         prepareSandbox { enabled = false }
         buildSearchableOptions { enabled = false }
+        prepareJarSearchableOptions { enabled = false }
+        jarSearchableOptions { enabled = false }
 
         test {
             systemProperty("java.awt.headless", "true")
@@ -351,6 +353,12 @@ project(":plugin") {
         verifyPlugin {
         }
         buildSearchableOptions {
+            enabled = prop("enableBuildSearchableOptions").toBoolean()
+        }
+        prepareJarSearchableOptions {
+            enabled = prop("enableBuildSearchableOptions").toBoolean()
+        }
+        jarSearchableOptions {
             enabled = prop("enableBuildSearchableOptions").toBoolean()
         }
         withType<PrepareSandboxTask> {
