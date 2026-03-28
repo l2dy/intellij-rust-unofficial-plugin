@@ -50,7 +50,7 @@ plugins {
     idea
     kotlin("jvm") version "2.2.20"
     id("org.jetbrains.intellij.platform") version "2.13.1"
-    id("org.jetbrains.grammarkit") version "2023.3.0.2"
+    id("org.jetbrains.grammarkit") version "2023.3.0.3"
     id("net.saliman.properties") version "1.5.2"
     id("org.gradle.test-retry") version "1.6.2"
 }
