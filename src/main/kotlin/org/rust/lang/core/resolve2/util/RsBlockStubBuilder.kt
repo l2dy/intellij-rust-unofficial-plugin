@@ -30,9 +30,13 @@ private class RsBlockStubBuilder : DefaultStubBuilder() {
         root: ASTNode,
         parentStub: StubElement<*>
     ) : StubBuildingWalkingVisitor(root, parentStub) {
-        override fun createStub(parentStub: StubElement<*>, node: ASTNode): StubElement<*>? {
+        override fun createStub(
+            parentStub: StubElement<*>,
+            node: ASTNode,
+            stubElementRegistryService: StubElementRegistryService
+        ): StubElement<*>? {
             val nodeType = node.elementType
-            val factory = StubElementRegistryService.getInstance().getStubFactory(nodeType) ?: return null
+            val factory = stubElementRegistryService.getStubFactory(nodeType) ?: return null
             val parentType = (parentStub as? PsiFileStub)?.fileElementType ?: parentStub.elementType
             if (!shouldCreateStub(parentType, nodeType)) return null
 

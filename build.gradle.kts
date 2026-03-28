@@ -216,6 +216,7 @@ allprojects {
 
             bundledModule("intellij.platform.coverage")
             bundledModule("intellij.platform.coverage.agent")
+            bundledModule("intellij.platform.structuralSearch")
             bundledModule("intellij.platform.vcs.impl")
             bundledModule("intellij.platform.vcs.impl.shared")
             bundledModule("intellij.spellchecker")
@@ -405,10 +406,10 @@ project(":plugin") {
     tasks.register<RunIdeTask>("buildEventsScheme") {
         dependsOn(tasks.prepareSandbox)
         args("buildEventsScheme", "--outputFile=${layout.buildDirectory.get().asFile.resolve("eventScheme.json").absolutePath}", "--pluginId=org.rust.lang")
-        // BACKCOMPAT: 2025.3. Update value to 253 and this comment
+        // BACKCOMPAT: 2026.1. Update value to 261 and this comment
         // `IDEA_BUILD_NUMBER` variable is used by `buildEventsScheme` task to write `buildNumber` to output json.
         // It will be used by TeamCity automation to set minimal IDE version for new events
-        environment("IDEA_BUILD_NUMBER", "253")
+        environment("IDEA_BUILD_NUMBER", "261")
     }
 }
 
