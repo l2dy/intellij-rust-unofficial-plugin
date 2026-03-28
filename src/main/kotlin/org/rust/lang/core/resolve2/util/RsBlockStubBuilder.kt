@@ -9,7 +9,7 @@ import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IElementType
-import com.intellij.psi.tree.IStubFileElementType
+import com.intellij.psi.tree.IFileElementType
 import com.intellij.psi.tree.TokenSet
 import org.rust.lang.core.psi.RS_ITEMS
 import org.rust.lang.core.psi.RsBlock
@@ -23,7 +23,7 @@ private class RsBlockStubBuilder : DefaultStubBuilder() {
         val parentStub = PsiFileStubImpl(null)
         RsBlockStubBuildingWalkingVisitor(root.node, parentStub).buildStubTree()
         @Suppress("UNCHECKED_CAST")
-        return parentStub.findChildStubByType(RsBlockStubType as IStubElementType<StubElement<RsBlock>, RsBlock>)
+        return parentStub.findChildStubByElementType(RsBlockStubType) as StubElement<RsBlock>?
     }
 
     private inner class RsBlockStubBuildingWalkingVisitor(
@@ -31,13 +31,14 @@ private class RsBlockStubBuilder : DefaultStubBuilder() {
         parentStub: StubElement<*>
     ) : StubBuildingWalkingVisitor(root, parentStub) {
         override fun createStub(parentStub: StubElement<*>, node: ASTNode): StubElement<*>? {
-            val nodeType = node.elementType as? IStubElementType<*, *> ?: return null
-            val parentType = (parentStub as? PsiFileStub)?.type ?: parentStub.stubType
+            val nodeType = node.elementType
+            val factory = StubElementRegistryService.getInstance().getStubFactory(nodeType) ?: return null
+            val parentType = (parentStub as? PsiFileStub)?.fileElementType ?: parentStub.elementType
             if (!shouldCreateStub(parentType, nodeType)) return null
 
             @Suppress("UNCHECKED_CAST")
-            nodeType as IStubElementType<*, PsiElement>
-            return nodeType.createStub(node.psi, parentStub)
+            factory as StubElementFactory<StubElement<*>, PsiElement>
+            return factory.createStub(node.psi, parentStub)
         }
     }
 
@@ -46,7 +47,7 @@ private class RsBlockStubBuilder : DefaultStubBuilder() {
 
     private fun shouldCreateStub(parentType: IElementType, nodeType: IElementType): Boolean =
         when (nodeType) {
-            BLOCK -> parentType is IStubFileElementType<*>
+            BLOCK -> parentType is IFileElementType
 
             MACRO_CALL -> parentType.isBlockOrLocalMod()
 
