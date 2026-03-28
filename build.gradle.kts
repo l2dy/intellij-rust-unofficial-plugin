@@ -461,6 +461,10 @@ project(":") {
             pathToPsiRoot.set("org/rust/lang/core/psi")
             purgeOldFiles.set(true)
             classpath(project(":$grammarKitFakePsiDeps").sourceSets.main.get().runtimeClasspath)
+            // BACKCOMPAT: grammarkit 2023.3.0.2 doesn't pick up ASM from platform 261.
+            // Its hardcoded list of platform jars doesn't include ASM; fixed in
+            // https://github.com/JetBrains/gradle-grammar-kit-plugin/commit/d46a5dfcd099af6690b7
+            classpath(configurations.compileClasspath.get().filter { it.name.startsWith("intellij.libraries.asm") })
         }
         withType<KotlinCompile> {
             dependsOn(generateLexer, generateParser)
