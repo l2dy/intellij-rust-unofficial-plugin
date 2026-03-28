@@ -129,7 +129,7 @@ object RsPsiPattern {
 
     val pathAttrLiteral: PsiElementPattern.Capture<RsLitExpr> = literal
         .withParent(
-            rootMetaItem("path", psiElement<RsModDeclItem>() or psiElement<RsModItem>())
+            rootMetaItem("path", psiElement<RsModDeclItem>().or<RsDocAndAttributeOwner>(psiElement<RsModItem>()))
         )
 
     val whitespace: PsiElementPattern.Capture<PsiElement> = psiElement().whitespace()
