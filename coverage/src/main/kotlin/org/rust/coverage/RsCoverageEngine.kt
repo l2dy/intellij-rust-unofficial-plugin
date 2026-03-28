@@ -85,8 +85,7 @@ class RsCoverageEngine : CoverageEngine() {
                 val percentage = PercentageCoverageColumnInfo(
                     1,
                     RsBundle.message("column.name.covered"),
-                    mySuitesBundle,
-                    myStateBean
+                    mySuitesBundle
                 )
                 val files = object : ColumnInfo<NodeDescriptor<*>, String>(RsBundle.message("column.name.file")) {
                     override fun valueOf(item: NodeDescriptor<*>?): String = item.toString()
