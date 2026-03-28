@@ -8,6 +8,7 @@ package org.rust.grazie
 import com.intellij.grazie.GrazieConfig
 import com.intellij.grazie.ide.inspection.grammar.GrazieInspection
 import com.intellij.grazie.jlanguage.Lang
+import com.intellij.grazie.utils.TextStyleDomain
 import com.intellij.openapi.util.Disposer
 import com.intellij.testFramework.PlatformTestUtil
 import org.intellij.lang.annotations.Language
@@ -25,6 +26,7 @@ class RsGrammarCheckingTest : RsInspectionsTestBase(GrazieInspection::class) {
 
     override fun setUp() {
         super.setUp()
+        myFixture.enableInspections(GrazieInspection.Grammar::class.java)
         val currentState = GrazieConfig.get()
 
         updateSettings { state ->
@@ -34,9 +36,11 @@ class RsGrammarCheckingTest : RsInspectionsTestBase(GrazieInspection::class) {
                 isCheckInDocumentationEnabled = true,
                 enabledLanguages = setOf(RsLanguage.id),
             )
+            val uppercaseRule = setOf("LanguageTool.EN.UPPERCASE_SENTENCE_START")
             state.copy(
                 enabledLanguages = enabledLanguages,
-                userEnabledRules = setOf("LanguageTool.EN.UPPERCASE_SENTENCE_START"),
+                userEnabledRules = uppercaseRule,
+                domainEnabledRules = TextStyleDomain.entries.associateWith { uppercaseRule },
                 checkingContext = checkingContext
             )
         }
