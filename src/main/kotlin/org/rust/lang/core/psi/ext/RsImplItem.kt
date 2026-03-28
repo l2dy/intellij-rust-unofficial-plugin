@@ -16,6 +16,7 @@ import com.intellij.util.CachedValueImpl
 import org.rust.ide.icons.RsIcons
 import org.rust.ide.presentation.getPresentation
 import org.rust.lang.core.macros.RsExpandedElement
+import org.rust.lang.core.psi.RsElementTypes.CONST
 import org.rust.lang.core.psi.RsElementTypes.DEFAULT
 import org.rust.lang.core.psi.RsElementTypes.EXCL
 import org.rust.lang.core.psi.RsImplItem
@@ -29,6 +30,9 @@ import org.rust.lang.core.types.BoundElement
 import org.rust.lang.core.types.RsPsiTypeImplUtil
 import org.rust.lang.core.types.normType
 import org.rust.lang.core.types.ty.*
+
+val RsImplItem.const: PsiElement?
+    get() = node.findChildByType(CONST)?.psi
 
 val RsImplItem.default: PsiElement?
     get() = node.findChildByType(DEFAULT)?.psi

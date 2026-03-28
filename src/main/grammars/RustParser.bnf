@@ -905,7 +905,7 @@ upper TraitItem ::= (BracketConstTrait | const)? unsafe? auto? trait identifier 
   elementTypeFactory = "org.rust.lang.core.stubs.StubImplementationsKt.factory"
 }
 
-upper ImplItem ::= unsafe? impl TypeParameterList? const? ( TraitImpl | InherentImpl ) WhereClause? Members {
+upper ImplItem ::= const? unsafe? impl TypeParameterList? const? ( TraitImpl | InherentImpl ) WhereClause? Members {
   pin = "impl"
   name = ""
   implements = [ "org.rust.lang.core.psi.ext.RsTraitOrImpl"
