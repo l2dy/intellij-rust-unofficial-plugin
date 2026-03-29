@@ -443,7 +443,7 @@ project(":") {
         implementation("org.eclipse.jgit:org.eclipse.jgit:7.6.0.202603022253-r") {
             exclude("org.slf4j")
         }
-        testImplementation("com.squareup.okhttp3:mockwebserver:5.1.0") {
+        testImplementation("com.squareup.okhttp3:mockwebserver:5.3.2") {
             excludeKotlinDeps()
         }
     }
