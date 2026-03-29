@@ -443,6 +443,42 @@ object WithDependencyRustProjectDescriptor : RustProjectDescriptorBase() {
         Dependency(id, name, listOf(DepKindInfo(depKind)))
 }
 
+object WithOptionalDependencyRustProjectDescriptor : RustProjectDescriptorBase() {
+    override fun createTestCargoWorkspace(project: Project, contentRoot: String): CargoWorkspace {
+        val testPackage = testCargoPackage(contentRoot)
+        val depLib2 = externalPackage("$contentRoot/dep-lib-2", "lib.rs", "dep-lib-2", "dep-lib-target-2")
+
+        val packages = listOf(testPackage, depLib2)
+
+        return CargoWorkspace.deserialize(
+            Paths.get("${Urls.newFromIdea(contentRoot).path}/workspace/Cargo.toml"),
+            CargoWorkspaceData(
+                packages,
+                mapOf(
+                    testPackage.id to setOf(dep(depLib2.id)),
+                ),
+                mapOf(
+                    testPackage.id to listOf(
+                        org.rust.cargo.toolchain.impl.CargoMetadata.RawDependency(
+                            name = "dep-lib-2",
+                            rename = null,
+                            kind = null,
+                            target = null,
+                            optional = true,
+                            uses_default_features = true,
+                            features = emptyList()
+                        )
+                    ),
+                ),
+                contentRoot
+            ),
+        )
+    }
+
+    private fun dep(id: PackageId, name: String? = null, depKind: DepKind = DepKind.Normal): Dependency =
+        Dependency(id, name, listOf(DepKindInfo(depKind)))
+}
+
 private class WithStdlibLikeDependencyRustProjectDescriptor : RustProjectDescriptorBase() {
     override fun createTestCargoWorkspace(project: Project, contentRoot: String): CargoWorkspace {
         val packages = listOf(
