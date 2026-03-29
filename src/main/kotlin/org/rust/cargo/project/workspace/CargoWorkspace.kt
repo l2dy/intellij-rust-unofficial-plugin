@@ -289,7 +289,7 @@ private class WorkspaceImpl(
                                 ?: return@flatMap emptyList()
 
                             if (name in dep.pkg.rawFeatures) {
-                                if (!optional && dep.isOptional) {
+                                if (!optional && dep.isOptional && dep.cargoFeatureDependencyPackageName in pkgFeatures) {
                                     listOf(PackageFeature(pkg, dep.cargoFeatureDependencyPackageName), PackageFeature(dep.pkg, name))
                                 } else {
                                     listOf(PackageFeature(dep.pkg, name))

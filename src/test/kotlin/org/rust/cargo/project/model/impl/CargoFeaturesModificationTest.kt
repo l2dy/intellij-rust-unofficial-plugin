@@ -110,6 +110,25 @@ class CargoFeaturesModificationTest : RsTestBase() {
         dep = []                # [x]
     """))
 
+    @ProjectDescriptor(WithOptionalDependencyRustProjectDescriptor::class)
+    @MockCargoFeatures("test-package/foo=[dep:dep-lib-2, dep-lib-2/dep]", "dep-lib-2/dep")
+    fun `test optional dep with dep colon syntax and cross-crate feature`() = doTestByTree("""
+    #- test-package
+        foo = ["dep:dep-lib-2", "dep-lib-2/dep"] # [x]
+    #- dep-lib-2
+        dep = []                                 # [x]
+    """, disable("foo", """
+    #- test-package
+        foo = ["dep:dep-lib-2", "dep-lib-2/dep"] # [ ]
+    #- dep-lib-2
+        dep = []                                 # [ ]
+    """), enable("foo", """
+    #- test-package
+        foo = ["dep:dep-lib-2", "dep-lib-2/dep"] # [x]
+    #- dep-lib-2
+        dep = []                                 # [x]
+    """))
+
     @ProjectDescriptor(WithDependencyRustProjectDescriptor::class)
     @MockCargoFeatures("test-package/foo=[dep-lib-2/dep]", "test-package/bar=[dep-lib-2/dep]", "dep-lib-2/dep")
     fun `test external dependency 3 dependent features`() = doTestByTree("""
